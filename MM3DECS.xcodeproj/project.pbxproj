@@ -11,6 +11,16 @@
 		B259C2682BA2FABE0049BA2C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2672BA2FABE0049BA2C /* ContentView.swift */; };
 		B259C26A2BA2FABF0049BA2C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B259C2692BA2FABF0049BA2C /* Assets.xcassets */; };
 		B259C26D2BA2FABF0049BA2C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B259C26C2BA2FABF0049BA2C /* Preview Assets.xcassets */; };
+		B259C2792BA2FBD60049BA2C /* Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2782BA2FBD60049BA2C /* Options.swift */; };
+		B259C27B2BA2FBDE0049BA2C /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C27A2BA2FBDE0049BA2C /* MetalView.swift */; };
+		B259C27E2BA2FF710049BA2C /* MathLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C27C2BA2FF710049BA2C /* MathLibrary.swift */; };
+		B259C2832BA3001D0049BA2C /* VertexDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C27F2BA3001D0049BA2C /* VertexDescriptor.swift */; };
+		B259C2842BA3001D0049BA2C /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2802BA3001D0049BA2C /* Renderer.swift */; };
+		B259C2852BA3001D0049BA2C /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2812BA3001D0049BA2C /* Model.swift */; };
+		B259C2862BA3001D0049BA2C /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2822BA3001D0049BA2C /* Transform.swift */; };
+		B259C2892BA303B90049BA2C /* Fragment.metal in Sources */ = {isa = PBXBuildFile; fileRef = B259C2872BA303B80049BA2C /* Fragment.metal */; };
+		B259C28A2BA303B90049BA2C /* Vertex.metal in Sources */ = {isa = PBXBuildFile; fileRef = B259C2882BA303B90049BA2C /* Vertex.metal */; };
+		B259C28D2BA304690049BA2C /* train.usd in Resources */ = {isa = PBXBuildFile; fileRef = B259C28B2BA304690049BA2C /* train.usd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +29,20 @@
 		B259C2672BA2FABE0049BA2C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B259C2692BA2FABF0049BA2C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B259C26C2BA2FABF0049BA2C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		B259C2732BA2FB860049BA2C /* stdbool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stdbool.h; sourceTree = "<group>"; };
+		B259C2742BA2FB860049BA2C /* Lighting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lighting.h; sourceTree = "<group>"; };
+		B259C2752BA2FB860049BA2C /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
+		B259C2762BA2FB860049BA2C /* Vertex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
+		B259C2782BA2FBD60049BA2C /* Options.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Options.swift; sourceTree = "<group>"; };
+		B259C27A2BA2FBDE0049BA2C /* MetalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
+		B259C27C2BA2FF710049BA2C /* MathLibrary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MathLibrary.swift; sourceTree = "<group>"; };
+		B259C27F2BA3001D0049BA2C /* VertexDescriptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VertexDescriptor.swift; sourceTree = "<group>"; };
+		B259C2802BA3001D0049BA2C /* Renderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
+		B259C2812BA3001D0049BA2C /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		B259C2822BA3001D0049BA2C /* Transform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
+		B259C2872BA303B80049BA2C /* Fragment.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Fragment.metal; sourceTree = "<group>"; };
+		B259C2882BA303B90049BA2C /* Vertex.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Vertex.metal; sourceTree = "<group>"; };
+		B259C28B2BA304690049BA2C /* train.usd */ = {isa = PBXFileReference; lastKnownFileType = file; path = train.usd; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,7 +77,16 @@
 			children = (
 				B259C2652BA2FABE0049BA2C /* MM3DECSApp.swift */,
 				B259C2672BA2FABE0049BA2C /* ContentView.swift */,
+				B259C27A2BA2FBDE0049BA2C /* MetalView.swift */,
+				B259C2782BA2FBD60049BA2C /* Options.swift */,
+				B259C2812BA3001D0049BA2C /* Model.swift */,
+				B259C2802BA3001D0049BA2C /* Renderer.swift */,
+				B259C2822BA3001D0049BA2C /* Transform.swift */,
+				B259C27F2BA3001D0049BA2C /* VertexDescriptor.swift */,
 				B259C2692BA2FABF0049BA2C /* Assets.xcassets */,
+				B259C28C2BA304690049BA2C /* Models */,
+				B259C27D2BA2FF710049BA2C /* Utility */,
+				B259C2772BA2FB930049BA2C /* Shaders */,
 				B259C26B2BA2FABF0049BA2C /* Preview Content */,
 			);
 			path = MM3DECS;
@@ -65,6 +98,35 @@
 				B259C26C2BA2FABF0049BA2C /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		B259C2772BA2FB930049BA2C /* Shaders */ = {
+			isa = PBXGroup;
+			children = (
+				B259C2872BA303B80049BA2C /* Fragment.metal */,
+				B259C2882BA303B90049BA2C /* Vertex.metal */,
+				B259C2752BA2FB860049BA2C /* Common.h */,
+				B259C2742BA2FB860049BA2C /* Lighting.h */,
+				B259C2732BA2FB860049BA2C /* stdbool.h */,
+				B259C2762BA2FB860049BA2C /* Vertex.h */,
+			);
+			path = Shaders;
+			sourceTree = "<group>";
+		};
+		B259C27D2BA2FF710049BA2C /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				B259C27C2BA2FF710049BA2C /* MathLibrary.swift */,
+			);
+			path = Utility;
+			sourceTree = "<group>";
+		};
+		B259C28C2BA304690049BA2C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B259C28B2BA304690049BA2C /* train.usd */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -127,6 +189,7 @@
 			files = (
 				B259C26D2BA2FABF0049BA2C /* Preview Assets.xcassets in Resources */,
 				B259C26A2BA2FABF0049BA2C /* Assets.xcassets in Resources */,
+				B259C28D2BA304690049BA2C /* train.usd in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,8 +200,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B259C2832BA3001D0049BA2C /* VertexDescriptor.swift in Sources */,
+				B259C27B2BA2FBDE0049BA2C /* MetalView.swift in Sources */,
+				B259C2842BA3001D0049BA2C /* Renderer.swift in Sources */,
+				B259C2892BA303B90049BA2C /* Fragment.metal in Sources */,
 				B259C2682BA2FABE0049BA2C /* ContentView.swift in Sources */,
+				B259C2792BA2FBD60049BA2C /* Options.swift in Sources */,
 				B259C2662BA2FABE0049BA2C /* MM3DECSApp.swift in Sources */,
+				B259C27E2BA2FF710049BA2C /* MathLibrary.swift in Sources */,
+				B259C28A2BA303B90049BA2C /* Vertex.metal in Sources */,
+				B259C2862BA3001D0049BA2C /* Transform.swift in Sources */,
+				B259C2852BA3001D0049BA2C /* Model.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,6 +360,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.lanterntech.MM3DECS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/mohammadjeragh/Library/CloudStorage/Dropbox/Source/Xcode/XCodeProjects/MM3DECS/MM3DECS/Shaders/Common.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -317,6 +390,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.lanterntech.MM3DECS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/mohammadjeragh/Library/CloudStorage/Dropbox/Source/Xcode/XCodeProjects/MM3DECS/MM3DECS/Shaders/Common.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
