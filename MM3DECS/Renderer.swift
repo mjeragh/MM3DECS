@@ -95,9 +95,9 @@ class Renderer: NSObject {
     depthStencilState = Renderer.buildDepthStencilState()
     super.init()
     metalView.clearColor = MTLClearColor(
-      red: 1.0,
-      green: 1.0,
-      blue: 0.9,
+      red: 0.0,
+      green: 0.0,
+      blue: 0.19,
       alpha: 1.0)
     metalView.depthStencilPixelFormat = .depth32Float
     metalView.delegate = self
