@@ -13,19 +13,20 @@ import MetalKit
 struct MetalView: View {
   let options: Options
   @State private var metalView = MTKView()
+    @State private var renderer:Renderer?
     @State private var previousTranslation = CGSize.zero
   @State private var previousScroll: CGFloat = 1
 
   var body: some View {
     VStack {
       MetalViewRepresentable(
-        gameController: gameController,
+        renderer: renderer,
         metalView: $metalView,
         options: options)
         .onAppear {
-          gameController = GameController(
-            metalView: metalView,
-            options: options)
+            renderer = Renderer(
+              metalView: metalView,
+              options: options)
         }
         
     }
@@ -36,7 +37,8 @@ struct MetalView: View {
 typealias ViewRepresentable = UIViewRepresentable
 
 struct MetalViewRepresentable: ViewRepresentable {
-  @Binding var metalView: MTKView
+  let renderer: Renderer?
+    @Binding var metalView: MTKView
   let options: Options
 
   
@@ -50,7 +52,7 @@ struct MetalViewRepresentable: ViewRepresentable {
   
 
   func updateMetalView() {
-    gameController?.options = options
+    renderer?.options = options
   }
 }
 
