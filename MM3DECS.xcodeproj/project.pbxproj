@@ -76,9 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				B259C2652BA2FABE0049BA2C /* MM3DECSApp.swift */,
-				B259C2672BA2FABE0049BA2C /* ContentView.swift */,
-				B259C27A2BA2FBDE0049BA2C /* MetalView.swift */,
-				B259C2782BA2FBD60049BA2C /* Options.swift */,
+				B259C28E2BA31B5B0049BA2C /* View */,
 				B259C2812BA3001D0049BA2C /* Model.swift */,
 				B259C2802BA3001D0049BA2C /* Renderer.swift */,
 				B259C2822BA3001D0049BA2C /* Transform.swift */,
@@ -127,6 +125,16 @@
 				B259C28B2BA304690049BA2C /* train.usd */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		B259C28E2BA31B5B0049BA2C /* View */ = {
+			isa = PBXGroup;
+			children = (
+				B259C2672BA2FABE0049BA2C /* ContentView.swift */,
+				B259C27A2BA2FBDE0049BA2C /* MetalView.swift */,
+				B259C2782BA2FBD60049BA2C /* Options.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
