@@ -7,26 +7,22 @@
 
 import Foundation
 class RenderSystem: System {
-    var entityManager: EntityManager
-
-    init(entityManager: EntityManager) {
-        self.entityManager = entityManager
-    }
-
-    func update(deltaTime: Float) {
-        let entities = entityManager.entitiesWithComponents(RenderableComponent.self, TransformComponent.self)
+    func update(deltaTime: Float, entityManager: EntityManager) {
+        let entities = entityManager.entitiesWithComponents([RenderableComponent.self, TransformComponent.self])
 
         for entity in entities {
             guard let renderable = entityManager.getComponent(type: RenderableComponent.self, for: entity),
-                  let transform = entityManager.getComponent(type: TransformComponent.self, for: entity) else { continue }
-
-            // Example rendering code, adjust based on your project specifics
-            render(entity: entity, with: renderable, and: transform)
+                  let transform = entityManager.getComponent(type: TransformComponent.self, for: entity) else {
+                continue
+            }
+            
+            // Proceed with the rendering logic for each entity
+            render(entity: entity, with: renderable, transform: transform)
         }
     }
-
-    private func render(entity: Entity, with renderable: RenderableComponent, and transform: TransformComponent) {
-        // Implement the actual rendering logic here
-        // This could involve setting up buffers, textures, and applying transformations before drawing
+    
+    private func render(entity: Entity, with renderable: RenderableComponent, transform: TransformComponent) {
+        // Implement your Metal rendering logic here
+        // This may involve setting vertex buffers, applying transformations, and issuing draw calls
     }
 }

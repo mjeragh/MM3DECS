@@ -6,7 +6,6 @@
 //
 
 protocol System {
-    var entities: [Entity] { get set }
-    func update(deltaTime: Float)
+    func update(deltaTime: Float, entityManager: EntityManager)
 }
 
