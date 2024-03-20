@@ -25,6 +25,7 @@
 		B259C2932BAADD370049BA2C /* Component.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2922BAADD370049BA2C /* Component.swift */; };
 		B259C2952BAADDF50049BA2C /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2942BAADDF50049BA2C /* System.swift */; };
 		B259C2972BAADE760049BA2C /* EntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2962BAADE760049BA2C /* EntityManager.swift */; };
+		B259C29A2BAADF2A0049BA2C /* RendererSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2992BAADF2A0049BA2C /* RendererSystem.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,7 @@
 		B259C2922BAADD370049BA2C /* Component.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Component.swift; sourceTree = "<group>"; };
 		B259C2942BAADDF50049BA2C /* System.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = System.swift; sourceTree = "<group>"; };
 		B259C2962BAADE760049BA2C /* EntityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityManager.swift; sourceTree = "<group>"; };
+		B259C2992BAADF2A0049BA2C /* RendererSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererSystem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,7 +89,7 @@
 				B259C2652BA2FABE0049BA2C /* MM3DECSApp.swift */,
 				B259C28E2BA31B5B0049BA2C /* View */,
 				B259C2812BA3001D0049BA2C /* Model.swift */,
-				B259C2802BA3001D0049BA2C /* Renderer.swift */,
+				B259C2982BAADF050049BA2C /* Renderer */,
 				B259C2822BA3001D0049BA2C /* Transform.swift */,
 				B259C27F2BA3001D0049BA2C /* VertexDescriptor.swift */,
 				B259C2692BA2FABF0049BA2C /* Assets.xcassets */,
@@ -155,6 +157,15 @@
 				B259C2962BAADE760049BA2C /* EntityManager.swift */,
 			);
 			path = ECS;
+			sourceTree = "<group>";
+		};
+		B259C2982BAADF050049BA2C /* Renderer */ = {
+			isa = PBXGroup;
+			children = (
+				B259C2802BA3001D0049BA2C /* Renderer.swift */,
+				B259C2992BAADF2A0049BA2C /* RendererSystem.swift */,
+			);
+			path = Renderer;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -239,6 +250,7 @@
 				B259C2662BA2FABE0049BA2C /* MM3DECSApp.swift in Sources */,
 				B259C2952BAADDF50049BA2C /* System.swift in Sources */,
 				B259C27E2BA2FF710049BA2C /* MathLibrary.swift in Sources */,
+				B259C29A2BAADF2A0049BA2C /* RendererSystem.swift in Sources */,
 				B259C2912BAADD0E0049BA2C /* Entity.swift in Sources */,
 				B259C28A2BA303B90049BA2C /* Vertex.metal in Sources */,
 				B259C2862BA3001D0049BA2C /* Transform.swift in Sources */,

@@ -32,4 +32,23 @@ class EntityManager {
 
     // Additional utility methods...
 }
+extension EntityManager {
+    func entitiesWithComponents<T>(_ componentTypes: T.Type...) -> [Entity] {
+        var matchedEntities: [Entity] = []
+
+        for entity in entities.values {
+            let entityComponents = componentsByType.map { $0.value[entity.id] }.compactMap { $0 }
+            let hasAllComponents = componentTypes.allSatisfy { type in
+                entityComponents.contains { $0 is T }
+            }
+
+            if hasAllComponents {
+                matchedEntities.append(entity)
+            }
+        }
+
+        return matchedEntities
+    }
+}
+
 
