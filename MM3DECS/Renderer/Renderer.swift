@@ -35,6 +35,10 @@ import MetalKit
 // swiftlint:disable implicitly_unwrapped_optional
 
 class Renderer: NSObject {
+    var entityManager: EntityManager = EntityManager()
+    var renderSystem: RenderSystem = RenderSystem()
+    var systems: [System] = []
+    
   static var device: MTLDevice!
   static var commandQueue: MTLCommandQueue!
   static var library: MTLLibrary!
@@ -93,6 +97,12 @@ class Renderer: NSObject {
     }
     self.options = options
     depthStencilState = Renderer.buildDepthStencilState()
+      //This code is marked as the beginning of the refactoring
+      self.entityManager = EntityManager()
+      self.renderSystem = RenderSystem()
+      
+      self.systems = [renderSystem]
+      
     super.init()
     metalView.clearColor = MTLClearColor(
       red: 0.0,
@@ -102,8 +112,17 @@ class Renderer: NSObject {
     metalView.depthStencilPixelFormat = .depth32Float
     metalView.delegate = self
     mtkView(metalView, drawableSizeWillChange: metalView.bounds.size)
-  }
+      setupEntites()
+  }//Init
 
+    func setupEntites() {
+        let trainEntity = Entity()
+               entityManager.addEntity(entity: trainEntity)
+               entityManager.addComponent(component: RenderableComponent(mesh: Mesh(device: Renderer.device, name: "train.usd")), to: trainEntity)
+               entityManager.addComponent(component: TransformComponent(position: SIMD3<Float>(0, 0, 0), rotation: SIMD3<Float>(0, 0, 0), scale: SIMD3<Float>(1, 1, 1)), to: trainEntity)
+               // Add other entities and components as needed
+        
+    }
   static func buildDepthStencilState() -> MTLDepthStencilState? {
   // 1
     let descriptor = MTLDepthStencilDescriptor()
@@ -152,11 +171,7 @@ extension Renderer: MTKViewDelegate {
     model.render(encoder: encoder)
   }
 
-  func renderQuad(encoder: MTLRenderCommandEncoder) {
-    encoder.setRenderPipelineState(quadPipelineState)
-    encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
-  }
-
+ 
   func draw(in view: MTKView) {
     guard
       let commandBuffer = Renderer.commandQueue.makeCommandBuffer(),
