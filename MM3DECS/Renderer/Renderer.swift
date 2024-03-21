@@ -35,8 +35,8 @@ import MetalKit
 // swiftlint:disable implicitly_unwrapped_optional
 
 class Renderer: NSObject {
-    var entityManager: EntityManager = EntityManager()
-    var renderSystem: RenderSystem = RenderSystem()
+    var entityManager: EntityManager
+    var renderSystem: RenderSystem
     var systems: [System] = []
     
   static var device: MTLDevice!
@@ -99,8 +99,7 @@ class Renderer: NSObject {
     depthStencilState = Renderer.buildDepthStencilState()
       //This code is marked as the beginning of the refactoring
       self.entityManager = EntityManager()
-      self.renderSystem = RenderSystem()
-      
+      self.renderSystem = RenderSystem(entityManager: entityManager)
       self.systems = [renderSystem]
       
     super.init()
@@ -187,8 +186,9 @@ extension Renderer: MTKViewDelegate {
       length: MemoryLayout<Uniforms>.stride,
       index: 12)
 
-    renderModel(encoder: renderEncoder)
-    
+    //renderModel(encoder: renderEncoder)
+    let deltaTime = 1 / Float(view.preferredFramesPerSecond)
+      systems.forEach { $0.update(deltaTime: deltaTime, renderEncoder: renderEncoder) }
 
     renderEncoder.endEncoding()
     guard let drawable = view.currentDrawable else {

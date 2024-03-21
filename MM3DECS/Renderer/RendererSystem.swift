@@ -25,11 +25,11 @@ class RenderSystem: System {
             }
             
             // Proceed with the rendering logic for each entity
-            render(entity: entity, with: renderable, transform: transform)
+            render(entity: entity, with: renderable, transform: transform, renderEncoder: renderEncoder)
         }
     }
     
-    private func render(entity: Entity, with renderable: RenderableComponent, transform: TransformComponent) {
+    private func render(entity: Entity, with renderable: RenderableComponent, transform: TransformComponent, renderEncoder: MTLRenderCommandEncoder) {
         // Implement your Metal rendering logic here
         // This may involve setting vertex buffers, applying transformations, and issuing draw calls
     }
