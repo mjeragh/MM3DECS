@@ -6,8 +6,16 @@
 //
 
 import Foundation
+import MetalKit
+
 class RenderSystem: System {
-    func update(deltaTime: Float, entityManager: EntityManager) {
+    var entityManager: EntityManager
+    
+    init(entityManager: EntityManager) {
+        self.entityManager = entityManager
+    }
+    
+    func update(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder) {
         let entities = entityManager.entitiesWithComponents([RenderableComponent.self, TransformComponent.self])
 
         for entity in entities {
