@@ -46,15 +46,11 @@ class Renderer: NSObject {
   var options: Options
 
   var modelPipelineState: MTLRenderPipelineState!
-  var quadPipelineState: MTLRenderPipelineState!
   let depthStencilState: MTLDepthStencilState?
 
-  lazy var model: Model = {
-    Model(device: Renderer.device, name: "train.usd")
-  }()
-
+ 
   var timer: Float = 0
-  var uniforms = Uniforms()
+  static var cameraUniforms = Uniforms()//for the time being, but I need to make it a camera
   var params = Params()
 
   init(metalView: MTKView, options: Options) {
@@ -71,30 +67,23 @@ class Renderer: NSObject {
     let library = device.makeDefaultLibrary()
     Self.library = library
     let modelVertexFunction = library?.makeFunction(name: "vertex_main")
-    let quadVertexFunction = library?.makeFunction(name: "vertex_quad")
     let fragmentFunction =
       library?.makeFunction(name: "fragment_main")
 
-    // create the two pipeline state objects
-    let pipelineDescriptor = MTLRenderPipelineDescriptor()
-    pipelineDescriptor.vertexFunction = quadVertexFunction
-    pipelineDescriptor.fragmentFunction = fragmentFunction
-    pipelineDescriptor.colorAttachments[0].pixelFormat =
-      metalView.colorPixelFormat
-    pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
-    do {
-      quadPipelineState =
-      try device.makeRenderPipelineState(
-        descriptor: pipelineDescriptor)
-      pipelineDescriptor.vertexFunction = modelVertexFunction
-      pipelineDescriptor.vertexDescriptor =
-        MTLVertexDescriptor.defaultLayout
-      modelPipelineState =
-        try device.makeRenderPipelineState(
-          descriptor: pipelineDescriptor)
-    } catch let error {
-      fatalError(error.localizedDescription)
-    }
+      // Create the model pipeline state object
+      let modelPipelineDescriptor = MTLRenderPipelineDescriptor()
+      modelPipelineDescriptor.vertexFunction = modelVertexFunction
+      modelPipelineDescriptor.fragmentFunction = fragmentFunction
+      modelPipelineDescriptor.colorAttachments[0].pixelFormat = metalView.colorPixelFormat
+      modelPipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
+      modelPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor.defaultLayout
+
+      do {
+          modelPipelineState = try device.makeRenderPipelineState(descriptor: modelPipelineDescriptor)
+      } catch let error {
+          fatalError("Failed to create model pipeline state, error: \(error)")
+      }
+
     self.options = options
     depthStencilState = Renderer.buildDepthStencilState()
       //This code is marked as the beginning of the refactoring
@@ -116,9 +105,9 @@ class Renderer: NSObject {
 
     func setupEntites() {
         let trainEntity = Entity()
-               entityManager.addEntity(entity: trainEntity)
-               entityManager.addComponent(component: RenderableComponent(mesh: Mesh(device: Renderer.device, name: "train.usd")), to: trainEntity)
-               entityManager.addComponent(component: TransformComponent(position: SIMD3<Float>(0, 0, 0), rotation: SIMD3<Float>(0, 0, 0), scale: SIMD3<Float>(1, 1, 1)), to: trainEntity)
+                entityManager.addEntity(entity: trainEntity)
+                entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "train.usd"), to: trainEntity)
+                entityManager.addComponent(component: TransformComponent(position: float3(0, 0, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), to: trainEntity)
                // Add other entities and components as needed
         
     }
@@ -147,27 +136,26 @@ extension Renderer: MTKViewDelegate {
         near: 0.1,
         far: 100,
         aspect: aspect)
-    uniforms.projectionMatrix = projectionMatrix
+      Renderer.cameraUniforms.projectionMatrix = projectionMatrix
 
     params.width = UInt32(size.width)
     params.height = UInt32(size.height)
   }
 
   func renderModel(encoder: MTLRenderCommandEncoder) {
-    encoder.setRenderPipelineState(modelPipelineState)
-
-    timer += 0.005
-    uniforms.viewMatrix = float4x4(translation: [0, 0, -2]).inverse
-    model.position.y = -0.6
-    model.rotation.y = sin(timer)
-    uniforms.modelMatrix = model.transform.modelMatrix
-
-    encoder.setVertexBytes(
-      &uniforms,
-      length: MemoryLayout<Uniforms>.stride,
-      index: 11)
-
-    model.render(encoder: encoder)
+    
+//    timer += 0.005
+//      Renderer.cameraUniforms.viewMatrix = float4x4(translation: [0, 0, -2]).inverse
+//    model.position.y = -0.6
+//    model.rotation.y = sin(timer)
+//      Renderer.cameraUniforms.modelMatrix = model.transform.modelMatrix
+//
+//    encoder.setVertexBytes(
+//        &Renderer.cameraUniforms,
+//      length: MemoryLayout<Uniforms>.stride,
+//      index: 11)
+//
+//    model.render(encoder: encoder)
   }
 
  
@@ -185,6 +173,7 @@ extension Renderer: MTKViewDelegate {
       &params,
       length: MemoryLayout<Uniforms>.stride,
       index: 12)
+      renderEncoder.setRenderPipelineState(modelPipelineState)
 
     //renderModel(encoder: renderEncoder)
     let deltaTime = 1 / Float(view.preferredFramesPerSecond)
