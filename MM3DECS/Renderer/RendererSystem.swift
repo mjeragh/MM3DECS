@@ -21,12 +21,11 @@ class RenderSystem: System {
 
         for entity in entities {
                     guard let renderable = entityManager.getComponent(type: RenderableComponent.self, for: entity),
-                          let transform = entityManager.getComponent(type: TransformComponent.self, for: entity),
-                          let uniforms = entityManager.getComponent(type: UniformsComponent.self, for: entity) else {
+                          let transform = entityManager.getComponent(type: TransformComponent.self, for: entity) else {
                         continue
                     }
-
-                    render(entity: entity, with: renderable, transform: transform, uniforms: uniforms, renderEncoder: renderEncoder)
+            let dummyUniforms = UniformsComponent(uniforms: Uniforms())
+                    render(entity: entity, with: renderable, transform: transform, uniforms: dummyUniforms, renderEncoder: renderEncoder)
                 }
     }
     
