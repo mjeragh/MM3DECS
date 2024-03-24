@@ -16,8 +16,6 @@
 		B259C27E2BA2FF710049BA2C /* MathLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C27C2BA2FF710049BA2C /* MathLibrary.swift */; };
 		B259C2832BA3001D0049BA2C /* VertexDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C27F2BA3001D0049BA2C /* VertexDescriptor.swift */; };
 		B259C2842BA3001D0049BA2C /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2802BA3001D0049BA2C /* Renderer.swift */; };
-		B259C2852BA3001D0049BA2C /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2812BA3001D0049BA2C /* Model.swift */; };
-		B259C2862BA3001D0049BA2C /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2822BA3001D0049BA2C /* Transform.swift */; };
 		B259C2892BA303B90049BA2C /* Fragment.metal in Sources */ = {isa = PBXBuildFile; fileRef = B259C2872BA303B80049BA2C /* Fragment.metal */; };
 		B259C28A2BA303B90049BA2C /* Vertex.metal in Sources */ = {isa = PBXBuildFile; fileRef = B259C2882BA303B90049BA2C /* Vertex.metal */; };
 		B259C28D2BA304690049BA2C /* train.usd in Resources */ = {isa = PBXBuildFile; fileRef = B259C28B2BA304690049BA2C /* train.usd */; };
@@ -43,8 +41,6 @@
 		B259C27C2BA2FF710049BA2C /* MathLibrary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MathLibrary.swift; sourceTree = "<group>"; };
 		B259C27F2BA3001D0049BA2C /* VertexDescriptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VertexDescriptor.swift; sourceTree = "<group>"; };
 		B259C2802BA3001D0049BA2C /* Renderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
-		B259C2812BA3001D0049BA2C /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
-		B259C2822BA3001D0049BA2C /* Transform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
 		B259C2872BA303B80049BA2C /* Fragment.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Fragment.metal; sourceTree = "<group>"; };
 		B259C2882BA303B90049BA2C /* Vertex.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Vertex.metal; sourceTree = "<group>"; };
 		B259C28B2BA304690049BA2C /* train.usd */ = {isa = PBXFileReference; lastKnownFileType = file; path = train.usd; sourceTree = "<group>"; };
@@ -89,8 +85,6 @@
 				B259C2652BA2FABE0049BA2C /* MM3DECSApp.swift */,
 				B259C28E2BA31B5B0049BA2C /* View */,
 				B259C2982BAADF050049BA2C /* Renderer */,
-				B259C2812BA3001D0049BA2C /* Model.swift */,
-				B259C2822BA3001D0049BA2C /* Transform.swift */,
 				B259C27F2BA3001D0049BA2C /* VertexDescriptor.swift */,
 				B259C2692BA2FABF0049BA2C /* Assets.xcassets */,
 				B259C28C2BA304690049BA2C /* Models */,
@@ -253,8 +247,6 @@
 				B259C29A2BAADF2A0049BA2C /* RendererSystem.swift in Sources */,
 				B259C2912BAADD0E0049BA2C /* Entity.swift in Sources */,
 				B259C28A2BA303B90049BA2C /* Vertex.metal in Sources */,
-				B259C2862BA3001D0049BA2C /* Transform.swift in Sources */,
-				B259C2852BA3001D0049BA2C /* Model.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
