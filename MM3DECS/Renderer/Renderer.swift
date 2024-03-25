@@ -175,8 +175,7 @@ extension Renderer: MTKViewDelegate {
       index: 12)
       renderEncoder.setRenderPipelineState(modelPipelineState)
 
-    //renderModel(encoder: renderEncoder)
-    let deltaTime = 1 / Float(view.preferredFramesPerSecond)
+     let deltaTime = 1 / Float(view.preferredFramesPerSecond)
       systems.forEach { $0.update(deltaTime: deltaTime, renderEncoder: renderEncoder) }
 
     renderEncoder.endEncoding()
