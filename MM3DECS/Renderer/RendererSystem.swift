@@ -25,18 +25,19 @@ class RenderSystem: System {
                         continue
                     }
             let dummyUniforms = UniformsComponent(uniforms: Uniforms())
-                    render(entity: entity, with: renderable, transform: transform, uniforms: dummyUniforms, renderEncoder: renderEncoder)
+            render(entity: entity, with: renderable, transformConstant: transform, uniforms: dummyUniforms, renderEncoder: renderEncoder)
                 }
     }
     
-    private func render(entity: Entity, with renderable: RenderableComponent, transform: TransformComponent, uniforms: UniformsComponent, renderEncoder: MTLRenderCommandEncoder) {
+    private func render(entity: Entity, with renderable: RenderableComponent, transformConstant: TransformComponent, uniforms: UniformsComponent, renderEncoder: MTLRenderCommandEncoder) {
             // Here, use the renderEncoder to set pipeline states, vertex buffers, and draw.
             // This involves translating the entity's components into Metal draw calls.
             // E.g., setting the pipeline state, updating uniforms, and calling mesh.draw().
         timer += 0.005
+        var transform = transformConstant
+            transform.position.y = -0.6
+            transform.rotation.y = sin(timer)
           Renderer.cameraUniforms.viewMatrix = float4x4(translation: [0, 0, -2]).inverse
-//        transform.position.y = -0.6
-//        transform.rotation.y = sin(timer)
         Renderer.cameraUniforms.modelMatrix = transform.modelMatrix
         renderEncoder.setVertexBytes(
             &Renderer.cameraUniforms,
