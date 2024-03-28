@@ -95,6 +95,25 @@ struct CameraComponent: Component {
     var aspectRatio: Float // This could be dynamic based on the viewport size.
 }
 
+struct ArcballCameraComponent: Component {
+    var aspect: Float
+    var fov: Float
+    var near: Float
+    var far: Float
+    var target: float3
+    var distance: Float
+    var minDistance: Float
+    var maxDistance: Float
+}
+
+struct OrthographicCameraComponent: Component {
+    var aspect: Float
+    var viewSize: Float
+    var near: Float
+    var far: Float
+}
+
+
 struct UniformsComponent: Component {
     var uniforms: Uniforms  // Uniforms is defined in your Common.h
 }
