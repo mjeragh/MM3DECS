@@ -107,7 +107,7 @@ class Renderer: NSObject {
     func createCameraEntity() -> Entity {
         let cameraEntity = Entity()
         entityManager.addEntity(entity: cameraEntity)
-        entityManager.addComponent(component: TransformComponent(position: [0, 0, 5], rotation: [0, 0, 0]), to: cameraEntity)
+        entityManager.addComponent(component: TransformComponent(position: [0, 0, -5], rotation: [0, 0, 0]), to: cameraEntity)
         entityManager.addComponent(component: CameraComponent(fieldOfView: Float(70).degreesToRadians, nearClippingPlane: 0.1, farClippingPlane: 100, aspectRatio: 16/9), to: cameraEntity)
         return cameraEntity
     }
