@@ -45,7 +45,7 @@ class Renderer: NSObject {
 
   var options: Options
 
-  var modelPipelineState: MTLRenderPipelineState!
+  var forwardPassPipelineState: MTLRenderPipelineState!
   let depthStencilState: MTLDepthStencilState?
 
  
@@ -66,20 +66,20 @@ class Renderer: NSObject {
     // create the shader function library
     let library = device.makeDefaultLibrary()
     Self.library = library
-    let modelVertexFunction = library?.makeFunction(name: "vertex_main")
+    let forwardPassVertexFunction = library?.makeFunction(name: "vertex_main")
     let fragmentFunction =
       library?.makeFunction(name: "fragment_main")
 
       // Create the model pipeline state object
-      let modelPipelineDescriptor = MTLRenderPipelineDescriptor()
-      modelPipelineDescriptor.vertexFunction = modelVertexFunction
-      modelPipelineDescriptor.fragmentFunction = fragmentFunction
-      modelPipelineDescriptor.colorAttachments[0].pixelFormat = metalView.colorPixelFormat
-      modelPipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
-      modelPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor.defaultLayout
+      let forwardPassPipelineDescriptor = MTLRenderPipelineDescriptor()
+      forwardPassPipelineDescriptor.vertexFunction = forwardPassVertexFunction
+      forwardPassPipelineDescriptor.fragmentFunction = fragmentFunction
+      forwardPassPipelineDescriptor.colorAttachments[0].pixelFormat = metalView.colorPixelFormat
+      forwardPassPipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
+      forwardPassPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor.defaultLayout
 
       do {
-          modelPipelineState = try device.makeRenderPipelineState(descriptor: modelPipelineDescriptor)
+          forwardPassPipelineState = try device.makeRenderPipelineState(descriptor: forwardPassPipelineDescriptor)
       } catch let error {
           fatalError("Failed to create model pipeline state, error: \(error)")
       }
@@ -103,6 +103,15 @@ class Renderer: NSObject {
       setupEntites()
   }//Init
 
+    func createCameraEntity() -> Entity {
+        let cameraEntity = Entity()
+        entityManager.addEntity(entity: cameraEntity)
+        entityManager.addComponent(component: TransformComponent(position: [0, 0, 5], rotation: [0, 0, 0]), to: cameraEntity)
+        entityManager.addComponent(component: CameraComponent(fieldOfView: Float(60).degreesToRadians, nearClippingPlane: 0.1, farClippingPlane: 100, aspectRatio: 16/9), to: cameraEntity)
+        return cameraEntity
+    }
+
+    
     func setupEntites() {
         let trainEntity = Entity()
                 entityManager.addEntity(entity: trainEntity)
@@ -173,7 +182,7 @@ extension Renderer: MTKViewDelegate {
       &params,
       length: MemoryLayout<Uniforms>.stride,
       index: 12)
-      renderEncoder.setRenderPipelineState(modelPipelineState)
+      renderEncoder.setRenderPipelineState(forwardPassPipelineState)
 
      let deltaTime = 1 / Float(view.preferredFramesPerSecond)
       systems.forEach { $0.update(deltaTime: deltaTime, renderEncoder: renderEncoder) }

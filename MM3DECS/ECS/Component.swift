@@ -88,6 +88,13 @@ extension RenderableComponent{
     }
 }
 
+struct CameraComponent: Component {
+    var fieldOfView: Float
+    var nearClippingPlane: Float
+    var farClippingPlane: Float
+    var aspectRatio: Float // This could be dynamic based on the viewport size.
+}
+
 struct UniformsComponent: Component {
     var uniforms: Uniforms  // Uniforms is defined in your Common.h
 }
