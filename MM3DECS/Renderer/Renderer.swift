@@ -101,13 +101,14 @@ class Renderer: NSObject {
     metalView.delegate = self
     mtkView(metalView, drawableSizeWillChange: metalView.bounds.size)
       setupEntites()
+      entityManager.addEntity(entity: createCameraEntity())
   }//Init
 
     func createCameraEntity() -> Entity {
         let cameraEntity = Entity()
         entityManager.addEntity(entity: cameraEntity)
         entityManager.addComponent(component: TransformComponent(position: [0, 0, 5], rotation: [0, 0, 0]), to: cameraEntity)
-        entityManager.addComponent(component: CameraComponent(fieldOfView: Float(60).degreesToRadians, nearClippingPlane: 0.1, farClippingPlane: 100, aspectRatio: 16/9), to: cameraEntity)
+        entityManager.addComponent(component: CameraComponent(fieldOfView: Float(70).degreesToRadians, nearClippingPlane: 0.1, farClippingPlane: 100, aspectRatio: 16/9), to: cameraEntity)
         return cameraEntity
     }
 
@@ -139,6 +140,15 @@ extension Renderer: MTKViewDelegate {
   ) {
     let aspect =
       Float(view.bounds.width) / Float(view.bounds.height)
+  
+      let cameraEntities = entityManager.entitiesWithComponents([CameraComponent.self])
+      
+      if let cameraEntity = cameraEntities.first,
+         var cameraComponent = entityManager.getComponent(type: CameraComponent.self, for: cameraEntity) {
+            cameraComponent.aspectRatio = aspect
+            entityManager.addComponent(component: cameraComponent, to: cameraEntity)
+      }
+    
     let projectionMatrix =
       float4x4(
         projectionFov: Float(70).degreesToRadians,
@@ -146,7 +156,7 @@ extension Renderer: MTKViewDelegate {
         far: 100,
         aspect: aspect)
       Renderer.cameraUniforms.projectionMatrix = projectionMatrix
-
+      
     params.width = UInt32(size.width)
     params.height = UInt32(size.height)
   }

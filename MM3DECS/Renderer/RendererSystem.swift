@@ -17,6 +17,18 @@ class RenderSystem: System {
     }
     
     func update(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder) {
+        
+        guard let cameraEntity = entityManager.entitiesWithComponents([CameraComponent.self]).first,
+                  let cameraComponent = entityManager.getComponent(type: CameraComponent.self, for: cameraEntity),
+                  let cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity) else {
+                fatalError("Camera entity or components not found")
+            }
+        
+        // Calculate the view and projection matrices
+           let viewMatrix = float4x4(translation: cameraTransform.position).inverse
+           let projectionMatrix = float4x4(projectionFov: cameraComponent.fieldOfView, near: cameraComponent.nearClippingPlane, far: cameraComponent.farClippingPlane, aspect: cameraComponent.aspectRatio, lhs: true)
+           
+        
         let entities = entityManager.entitiesWithComponents([RenderableComponent.self, TransformComponent.self])
 
         for entity in entities {
@@ -24,26 +36,43 @@ class RenderSystem: System {
                           let transform = entityManager.getComponent(type: TransformComponent.self, for: entity) else {
                         continue
                     }
-            let dummyUniforms = UniformsComponent(uniforms: Uniforms())
-            render(entity: entity, with: renderable, transformConstant: transform, uniforms: dummyUniforms, renderEncoder: renderEncoder)
+            render(entity: entity, with: renderable, transformConstant: transform, viewMatrix: viewMatrix, projectionMatrix: projectionMatrix, renderEncoder: renderEncoder)
                 }
     }
     
-    private func render(entity: Entity, with renderable: RenderableComponent, transformConstant: TransformComponent, uniforms: UniformsComponent, renderEncoder: MTLRenderCommandEncoder) {
+    private func render(entity: Entity, with renderable: RenderableComponent, transformConstant: TransformComponent, viewMatrix: float4x4, projectionMatrix: float4x4, renderEncoder: MTLRenderCommandEncoder) {
+        // Animation or temporary transformation adjustments
             // Here, use the renderEncoder to set pipeline states, vertex buffers, and draw.
             // This involves translating the entity's components into Metal draw calls.
             // E.g., setting the pipeline state, updating uniforms, and calling mesh.draw().
+        var modelMatrix = transformConstant.modelMatrix
         timer += 0.005
         var transform = transformConstant
             transform.position.y = -0.6
             transform.rotation.y = sin(timer)
-          Renderer.cameraUniforms.viewMatrix = float4x4(translation: [0, 0, -2]).inverse
-        Renderer.cameraUniforms.modelMatrix = transform.modelMatrix
+        // Combine the matrices
+            let mvpMatrix = projectionMatrix * viewMatrix * modelMatrix
+            
+            // Encode the uniforms
+            var uniforms = Uniforms()
+           
+            uniforms.viewMatrix = float4x4(translation: [0, 0, -2]).inverse
+            uniforms.modelMatrix = transform.modelMatrix
+            uniforms.projectionMatrix = projectionMatrix
         renderEncoder.setVertexBytes(
-            &Renderer.cameraUniforms,
+            &uniforms,
           length: MemoryLayout<Uniforms>.stride,
           index: 11)
 
         renderable.render(encoder: renderEncoder)
         }
+    
+    func updateProjectionMatrix(for entity: Entity) -> float4x4? {
+        guard let camera = entityManager.getComponent(type: CameraComponent.self, for: entity) else {
+            return nil
+        }
+
+        return float4x4(projectionFov: camera.fieldOfView, near: camera.nearClippingPlane, far: camera.farClippingPlane, aspect: camera.aspectRatio, lhs: true)
+    }
+
 }
