@@ -50,7 +50,6 @@ class Renderer: NSObject {
 
  
   var timer: Float = 0
-  static var cameraUniforms = Uniforms()//for the time being, but I need to make it a camera
   var params = Params()
 
   init(metalView: MTKView, options: Options) {
@@ -149,33 +148,11 @@ extension Renderer: MTKViewDelegate {
             entityManager.addComponent(component: cameraComponent, to: cameraEntity)
       }
     
-    let projectionMatrix =
-      float4x4(
-        projectionFov: Float(70).degreesToRadians,
-        near: 0.1,
-        far: 100,
-        aspect: aspect)
-      Renderer.cameraUniforms.projectionMatrix = projectionMatrix
-      
     params.width = UInt32(size.width)
     params.height = UInt32(size.height)
   }
 
-  func renderModel(encoder: MTLRenderCommandEncoder) {
-    
-//    timer += 0.005
-//      Renderer.cameraUniforms.viewMatrix = float4x4(translation: [0, 0, -2]).inverse
-//    model.position.y = -0.6
-//    model.rotation.y = sin(timer)
-//      Renderer.cameraUniforms.modelMatrix = model.transform.modelMatrix
-//
-//    encoder.setVertexBytes(
-//        &Renderer.cameraUniforms,
-//      length: MemoryLayout<Uniforms>.stride,
-//      index: 11)
-//
-//    model.render(encoder: encoder)
-  }
+
 
  
   func draw(in view: MTKView) {
