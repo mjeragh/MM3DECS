@@ -51,5 +51,23 @@ extension EntityManager {
 
         return matchedEntities
     }
-}
+    
+   func entitiesWithAnyComponents(_ componentTypes: [Component.Type]) -> [Entity] {
+            var matchedEntities = [Entity]()
+
+            for entity in entities.values {
+                let hasAnyComponent = componentTypes.contains { componentType in
+                    let componentKey = String(describing: componentType)
+                    return componentsByType[componentKey]?[entity.id] != nil
+                }
+
+                if hasAnyComponent {
+                    matchedEntities.append(entity)
+                }
+            }
+
+            return matchedEntities
+        }
+    }
+
 
