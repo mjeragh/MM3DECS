@@ -88,6 +88,12 @@ extension RenderableComponent{
     }
 }
 
+struct UniformsComponent: Component {
+    var uniforms: Uniforms  // Uniforms is defined in your Common.h
+}
+
+//MARK: - Camera Components
+
 struct CameraComponent: Component {
     var fieldOfView: Float
     var nearClippingPlane: Float
@@ -114,6 +120,3 @@ struct OrthographicCameraComponent: Component {
 }
 
 
-struct UniformsComponent: Component {
-    var uniforms: Uniforms  // Uniforms is defined in your Common.h
-}
