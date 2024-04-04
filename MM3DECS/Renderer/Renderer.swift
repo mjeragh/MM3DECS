@@ -161,24 +161,34 @@ class Renderer: NSObject {
 }
 
 extension Renderer: MTKViewDelegate {
-  func mtkView(
-    _ view: MTKView,
-    drawableSizeWillChange size: CGSize
-  ) {
-    let aspect =
-      Float(view.bounds.width) / Float(view.bounds.height)
-  
-      let cameraEntities = entityManager.entitiesWithComponents([CameraComponent.self])
-      
-      if let cameraEntity = cameraEntities.first,
-         var cameraComponent = entityManager.getComponent(type: CameraComponent.self, for: cameraEntity) {
+    func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+        let aspect = Float(view.bounds.width) / Float(view.bounds.height)
+
+        // Update Perspective Camera
+        if let cameraEntity = entityManager.entitiesWithAnyComponents([CameraComponent.self]).first,
+           var cameraComponent = entityManager.getComponent(type: CameraComponent.self, for: cameraEntity) {
             cameraComponent.aspectRatio = aspect
             entityManager.addComponent(component: cameraComponent, to: cameraEntity)
-      }
-    
-    params.width = UInt32(size.width)
-    params.height = UInt32(size.height)
-  }
+        }
+
+        // Update Arcball Camera
+        if let arcballCameraEntity = entityManager.entitiesWithAnyComponents([ArcballCameraComponent.self]).first,
+           var arcballCameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: arcballCameraEntity) {
+            arcballCameraComponent.aspect = aspect
+            entityManager.addComponent(component: arcballCameraComponent, to: arcballCameraEntity)
+        }
+
+        // Update Orthographic Camera
+        if let orthoCameraEntity = entityManager.entitiesWithAnyComponents([OrthographicCameraComponent.self]).first,
+           var orthoCameraComponent = entityManager.getComponent(type: OrthographicCameraComponent.self, for: orthoCameraEntity) {
+            orthoCameraComponent.aspect = aspect
+            entityManager.addComponent(component: orthoCameraComponent, to: orthoCameraEntity)
+        }
+
+        params.width = UInt32(size.width)
+        params.height = UInt32(size.height)
+    }
+
 
 
 
