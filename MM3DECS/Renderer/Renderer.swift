@@ -34,6 +34,13 @@ import MetalKit
 
 // swiftlint:disable implicitly_unwrapped_optional
 
+enum CameraType {
+    case perspective
+    case arcball
+    case orthographic
+}
+
+
 class Renderer: NSObject {
     var entityManager: EntityManager
     var renderSystem: RenderSystem
@@ -100,16 +107,37 @@ class Renderer: NSObject {
     metalView.delegate = self
     mtkView(metalView, drawableSizeWillChange: metalView.bounds.size)
       setupEntites()
-      entityManager.addEntity(entity: createCameraEntity())
+      entityManager.addEntity(entity: createCameraEntity(type: .perspective))
   }//Init
 
-    func createCameraEntity() -> Entity {
+    func createCameraEntity(type: CameraType) -> Entity {
         let cameraEntity = Entity()
         entityManager.addEntity(entity: cameraEntity)
-        entityManager.addComponent(component: TransformComponent(position: [0, 0, -5], rotation: [0, 0, 0]), to: cameraEntity)
-        entityManager.addComponent(component: CameraComponent(fieldOfView: Float(70).degreesToRadians, nearClippingPlane: 0.1, farClippingPlane: 100, aspectRatio: 16/9), to: cameraEntity)
+        
+        // Common transform component for all cameras
+        entityManager.addComponent(component: TransformComponent(position: [0, 0, -5]), to: cameraEntity)
+        
+        let aspect = Float(16) / Float(9) // Example aspect ratio
+        
+        switch type {
+        case .perspective:
+            let cameraComponent = CameraComponent(fieldOfView: Float(70).degreesToRadians, nearClippingPlane: 0.1, farClippingPlane: 100, aspectRatio: aspect)
+            entityManager.addComponent(component: cameraComponent, to: cameraEntity)
+            
+        case .arcball:
+            let arcballCameraComponent = ArcballCameraComponent(aspect: aspect, fov: Float(70).degreesToRadians, near: 0.1, far: 100, target: [0, 0, 0], distance: 5, minDistance: 1, maxDistance: 20)
+            entityManager.addComponent(component: arcballCameraComponent, to: cameraEntity)
+            
+        case .orthographic:
+            let orthographicCameraComponent = OrthographicCameraComponent(aspect: aspect, viewSize: 10, near: 0.1, far: 100)
+            entityManager.addComponent(component: orthographicCameraComponent, to: cameraEntity)
+        }
+        
         return cameraEntity
     }
+
+
+
 
     
     func setupEntites() {
