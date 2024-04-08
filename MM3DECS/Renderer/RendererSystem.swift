@@ -17,42 +17,33 @@ class RenderSystem: System {
     }
     
     func update(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder) {
-        // Assuming the existence of a function/component to identify the camera type
-        guard let cameraEntity = entityManager.entitiesWithAnyComponents([CameraComponent.self, ArcballCameraComponent.self, OrthographicCameraComponent.self]).first else {
-            fatalError("No camera entity found")
+        //Camera entity for, multple camera maybe later
+        // Fetch entities with any camera component
+        let cameraEntities = entityManager.entitiesWithAnyComponents([PerspectiveCameraComponent.self, ArcballCameraComponent.self, OrthographicCameraComponent.self])
+
+            // Assume that there's only one camera entity for simplicity
+        guard let cameraEntity = cameraEntities.first else {
+            fatalError("No Camere Entity found")
         }
-
-        let viewMatrix: float4x4
-        let projectionMatrix: float4x4
-
-        if let cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity) {
-            viewMatrix = float4x4(translation: cameraTransform.position).inverse
-        } else {
-            fatalError("Camera entity missing TransformComponent")
+        guard  let cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity) else {
+            fatalError("No camera transform component found")
         }
-
-        // Determine the type of camera and calculate the matrices accordingly
-        if let perspectiveCamera = entityManager.getComponent(type: CameraComponent.self, for: cameraEntity) {
-            projectionMatrix = float4x4(projectionFov: perspectiveCamera.fieldOfView, near: perspectiveCamera.nearClippingPlane, far: perspectiveCamera.farClippingPlane, aspect: perspectiveCamera.aspectRatio, lhs: true)
+        let cameraComponent: CameraComponent
+        if let perspectiveCamera = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity) {
+            cameraComponent = perspectiveCamera
         } else if let arcballCamera = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity) {
-            // Arcball camera calculations here
-            projectionMatrix = float4x4(projectionFov: arcballCamera.fov, near: arcballCamera.near, far: arcballCamera.far, aspect: arcballCamera.aspect)
-            // Arcball specific view matrix can also be calculated here if different from the basic view matrix
-        } // Inside the update function of RenderSystem.swift
-        
-        else if let orthographicCamera = entityManager.getComponent(type: OrthographicCameraComponent.self, for: cameraEntity) {
-            let aspectRatio = CGFloat(orthographicCamera.aspect)
-            let viewSize = CGFloat(orthographicCamera.viewSize)
-            let rect = CGRect(x: -viewSize * aspectRatio * 0.5,
-                              y: viewSize * 0.5,
-                              width: viewSize * aspectRatio,
-                              height: viewSize)
-            projectionMatrix = float4x4(orthographic: rect,
-                                        near: orthographicCamera.near,
-                                        far: orthographicCamera.far)
+            cameraComponent = arcballCamera
+        } else if let orthographicCamera = entityManager.getComponent(type: OrthographicCameraComponent.self, for: cameraEntity) {
+            cameraComponent = orthographicCamera
         } else {
-            fatalError("Unsupported camera type")
+            fatalError("No camera component found")
         }
+
+        // Compute the view matrix using the camera's transform
+        let viewMatrix = cameraComponent.calculateViewMatrix(transform: cameraTransform)
+        // The projection matrix is already part of the CameraComponent protocol
+        let projectionMatrix = cameraComponent.projectionMatrix
+
 
         // Render entities with calculated matrices
         let entities = entityManager.entitiesWithComponents([RenderableComponent.self, TransformComponent.self])
@@ -90,7 +81,7 @@ class RenderSystem: System {
         }
     
     func updateProjectionMatrix(for entity: Entity) -> float4x4? {
-        guard let camera = entityManager.getComponent(type: CameraComponent.self, for: entity) else {
+        guard let camera = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: entity) else {
             return nil
         }
 

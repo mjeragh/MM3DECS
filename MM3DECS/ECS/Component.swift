@@ -94,14 +94,41 @@ struct UniformsComponent: Component {
 
 //MARK: - Camera Components
 
-struct CameraComponent: Component {
+// Define a protocol for common camera functionality
+protocol CameraComponent: Component {
+    var projectionMatrix: float4x4 { get }
+    func updateAspect(_ aspect: Float)
+    func calculateViewMatrix(transform: TransformComponent) -> float4x4
+}
+
+// Example implementation for a PerspectiveCameraComponent:
+struct PerspectiveCameraComponent: CameraComponent {
+   
     var fieldOfView: Float
     var nearClippingPlane: Float
     var farClippingPlane: Float
     var aspectRatio: Float // This could be dynamic based on the viewport size.
+
+    var projectionMatrix: float4x4 {
+        return float4x4(projectionFov: fieldOfView, near: nearClippingPlane, far: farClippingPlane, aspect: aspectRatio, lhs: true)
+    }
+
+    func updateAspect(_ aspect: Float) {
+        aspectRatio = aspect
+    }
+    
+    func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
+        let rotationMatrix = float4x4(rotationYXZ: transform.rotation)
+        let translationMatrix = float4x4(translation: transform.position)
+        return (rotationMatrix * translationMatrix).inverse
+    }
 }
 
-struct ArcballCameraComponent: Component {
+// Similar implementations would be needed for ArcballCameraComponent and OrthographicCameraComponent
+
+
+struct ArcballCameraComponent: CameraComponent {
+    
     var aspect: Float
     var fov: Float
     var near: Float
@@ -110,13 +137,50 @@ struct ArcballCameraComponent: Component {
     var distance: Float
     var minDistance: Float
     var maxDistance: Float
+
+    // Implement required properties and methods...
+    func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
+        let lookAtPosition = target + float3(0, 0, distance)
+        let upVector = float3(0, 1, 0)
+        return float4x4(eye: lookAtPosition, center: target, up: upVector)
+    }
+    
+    var projectionMatrix: float4x4 {
+        // Calculate projection matrix
+        float4x4(projectionFov: fov, near: near, far: far, aspect: aspect)
+    }
+    func updateAspect(_ aspect: Float) {
+        self.aspect = aspect
+    }
 }
 
-struct OrthographicCameraComponent: Component {
+struct OrthographicCameraComponent: CameraComponent {
+    
     var aspect: Float
     var viewSize: Float
     var near: Float
     var far: Float
+
+    // Implement required properties and methods...
+    func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
+        let translationMatrix = float4x4(translation: transform.position)
+        let rotationMatrix = float4x4(rotation: transform.rotation)
+        return (translationMatrix * rotationMatrix).inverse
+    }
+    
+    var projectionMatrix: float4x4 {
+        // Calculate projection matrix
+        let aspectRatio = CGFloat(aspect)
+        let viewSize = CGFloat(viewSize)
+        let rect = CGRect(x: -viewSize * aspectRatio * 0.5,
+                        y: viewSize * 0.5,
+                        width: viewSize * aspectRatio,
+                        height: viewSize)
+        return float4x4(orthographic: rect, near: near, far: far)
+    }
+    func updateAspect(_ aspect: Float) {
+        self.aspect = aspect
+    }
 }
 
 
