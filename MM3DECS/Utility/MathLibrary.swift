@@ -207,6 +207,35 @@ extension float3x3 {
   }
 }
 
+// MARK: - float3
+extension float3 {
+    //From chatGPT
+    func rotatedBy(rotation: float3) -> float3 {
+            let rotationMatrix = float4x4(rotationYXZ: rotation)
+            let vector4 = rotationMatrix * float4(self.x, self.y, self.z, 0)
+            return float3(vector4.x, vector4.y, vector4.z)
+        }
+    
+    //From copilot, just added it, I dont know if I ever needed it!
+    var length: Float {
+    length_squared.squareRoot()
+  }
+
+  var normalized: float3 {
+    self / length
+  }
+
+  var length_squared: Float {
+    dot(self, self)
+  }
+
+  // convert from double3
+  init(_ d: SIMD3<Double>) {
+    self.init()
+    self = [Float(d.x), Float(d.y), Float(d.z)]
+  }
+}
+
 // MARK: - float4
 extension float4 {
   var xyz: float3 {

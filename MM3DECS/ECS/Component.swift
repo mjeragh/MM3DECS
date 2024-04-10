@@ -140,9 +140,12 @@ struct ArcballCameraComponent: CameraComponent {
 
     // Implement required properties and methods...
     func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
-        let lookAtPosition = target + float3(0, 0, distance)
-        let upVector = float3(0, 1, 0)
-        return float4x4(eye: lookAtPosition, center: target, up: upVector)
+        // Calculate camera's position based on the transform component
+               let cameraPosition = transform.position
+               let cameraOrientation = transform.rotation
+               let rotatedUp = float3(0, 1, 0).rotatedBy(rotation: cameraOrientation)
+               let lookAtPosition = target + rotatedUp * distance
+               return float4x4(eye: cameraPosition, center: lookAtPosition, up: rotatedUp)
     }
     
     var projectionMatrix: float4x4 {
