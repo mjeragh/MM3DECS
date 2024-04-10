@@ -121,8 +121,8 @@ class Renderer: NSObject {
         
         switch type {
         case .perspective:
-            let cameraComponent = CameraComponent(fieldOfView: Float(70).degreesToRadians, nearClippingPlane: 0.1, farClippingPlane: 100, aspectRatio: aspect)
-            entityManager.addComponent(component: cameraComponent, to: cameraEntity)
+            let perspectiveCameraComponent = PerspectiveCameraComponent(fieldOfView: Float(70).degreesToRadians, nearClippingPlane: 0.1, farClippingPlane: 100, aspectRatio: aspect)
+            entityManager.addComponent(component: perspectiveCameraComponent, to: cameraEntity)
             
         case .arcball:
             let arcballCameraComponent = ArcballCameraComponent(aspect: aspect, fov: Float(70).degreesToRadians, near: 0.1, far: 100, target: [0, 0, 0], distance: 5, minDistance: 1, maxDistance: 20)
@@ -165,8 +165,8 @@ extension Renderer: MTKViewDelegate {
         let aspect = Float(view.bounds.width) / Float(view.bounds.height)
 
         // Update Perspective Camera
-        if let cameraEntity = entityManager.entitiesWithAnyComponents([CameraComponent.self]).first,
-           var cameraComponent = entityManager.getComponent(type: CameraComponent.self, for: cameraEntity) {
+        if let cameraEntity = entityManager.entitiesWithAnyComponents([PerspectiveCameraComponent.self]).first,
+           var cameraComponent = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity) {
             cameraComponent.aspectRatio = aspect
             entityManager.addComponent(component: cameraComponent, to: cameraEntity)
         }

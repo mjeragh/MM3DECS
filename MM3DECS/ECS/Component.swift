@@ -97,7 +97,7 @@ struct UniformsComponent: Component {
 // Define a protocol for common camera functionality
 protocol CameraComponent: Component {
     var projectionMatrix: float4x4 { get }
-    func updateAspect(_ aspect: Float)
+    mutating func updateAspect(_ aspect: Float)
     func calculateViewMatrix(transform: TransformComponent) -> float4x4
 }
 
@@ -113,7 +113,7 @@ struct PerspectiveCameraComponent: CameraComponent {
         return float4x4(projectionFov: fieldOfView, near: nearClippingPlane, far: farClippingPlane, aspect: aspectRatio, lhs: true)
     }
 
-    func updateAspect(_ aspect: Float) {
+    mutating func updateAspect(_ aspect: Float) {
         aspectRatio = aspect
     }
     
@@ -149,7 +149,7 @@ struct ArcballCameraComponent: CameraComponent {
         // Calculate projection matrix
         float4x4(projectionFov: fov, near: near, far: far, aspect: aspect)
     }
-    func updateAspect(_ aspect: Float) {
+    mutating func updateAspect(_ aspect: Float) {
         self.aspect = aspect
     }
 }
@@ -178,7 +178,7 @@ struct OrthographicCameraComponent: CameraComponent {
                         height: viewSize)
         return float4x4(orthographic: rect, near: near, far: far)
     }
-    func updateAspect(_ aspect: Float) {
+    mutating func updateAspect(_ aspect: Float) {
         self.aspect = aspect
     }
 }
