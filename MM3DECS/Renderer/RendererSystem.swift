@@ -62,14 +62,14 @@ class RenderSystem: System {
             // Here, use the renderEncoder to set pipeline states, vertex buffers, and draw.
             // This involves translating the entity's components into Metal draw calls.
             // E.g., setting the pipeline state, updating uniforms, and calling mesh.draw().
-        timer += 0.005
-        var transform = transformConstant
-            transform.rotation.y = sin(timer)
+//        timer += 0.005
+//        var transform = transformConstant
+//            transform.rotation.y = sin(timer)
         // Encode the uniforms
             var uniforms = Uniforms()
            
             uniforms.viewMatrix = viewMatrix
-            uniforms.modelMatrix = transform.modelMatrix
+            uniforms.modelMatrix = transformConstant.modelMatrix
             uniforms.projectionMatrix = projectionMatrix
         
         renderEncoder.setVertexBytes(

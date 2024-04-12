@@ -108,9 +108,13 @@ class Renderer: NSObject {
     mtkView(metalView, drawableSizeWillChange: metalView.bounds.size)
       setupEntites()
       entityManager.addEntity(entity: createCameraEntity(type: .arcball))
-      let cameraEntity = entityManager.entities(for: ArcballCameraComponent.self).first!
-      var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity)
-      //  cameraTransform.position = [0, 0, 5]
+      if let cameraEntity = entityManager.entities(for: ArcballCameraComponent.self).first,
+         var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity){
+          cameraTransform.position = [0, 0, 5]
+          entityManager.addComponent(component: cameraTransform, to: cameraEntity)
+      } else {
+          print("Failed to retrieve transform component of camera entity.")
+      }
   }//Init
 
     func createCameraEntity(type: CameraType) -> Entity {
@@ -118,7 +122,7 @@ class Renderer: NSObject {
         entityManager.addEntity(entity: cameraEntity)
         
         // Common transform component for all cameras
-        entityManager.addComponent(component: TransformComponent(position: [0, 0, -5]), to: cameraEntity)
+        entityManager.addComponent(component: TransformComponent(position: [0, 0, 5]), to: cameraEntity)
         
         let aspect = Float(16) / Float(9) // Example aspect ratio
         
@@ -128,7 +132,7 @@ class Renderer: NSObject {
             entityManager.addComponent(component: perspectiveCameraComponent, to: cameraEntity)
             
         case .arcball:
-            let arcballCameraComponent = ArcballCameraComponent(aspect: aspect, fov: Float(70).degreesToRadians, near: 0.1, far: 100, target: [0, -2.9, 0], distance: 5, minDistance: 1, maxDistance: 20)
+            let arcballCameraComponent = ArcballCameraComponent(aspect: aspect, fov: Float(70).degreesToRadians, near: 0.1, far: 100, target: [0, 0, 0], distance: 5, minDistance: 1, maxDistance: 20)
             entityManager.addComponent(component: arcballCameraComponent, to: cameraEntity)
             
         case .orthographic:

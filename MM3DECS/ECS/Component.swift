@@ -140,12 +140,32 @@ struct ArcballCameraComponent: CameraComponent {
 
     // Implement required properties and methods...
     func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
-        // Calculate camera's position based on the transform component
-               let cameraPosition = transform.position
-               let cameraOrientation = transform.rotation
-               let rotatedUp = float3(0, 1, 0).rotatedBy(rotation: cameraOrientation)
-               let lookAtPosition = target + rotatedUp * distance
-               return float4x4(eye: cameraPosition, center: lookAtPosition, up: rotatedUp)
+        /**In this code snippet:
+
+        - **'worldPosition'** and **'worldOrientation'** represent the camera's global position and orientation.
+        - **cameraPosition** is calculated by subtracting the normalized vector from the target to the world position, multiplied by the distance. This effectively places the camera a fixed distance from the target.
+        - **cameraRotation** is the rotation of the camera in the world space, based on the transform's rotation.
+        Please adjust the code as necessary to fit the specifics of how you want your arcball camera to behave, especially how you interpret the rotation and position in terms of the camera's movement around the target. The above example assumes the TransformComponent's position is the direction vector from the target to the camera, not the actual position of the camera in the world. If that's not the case, you will need to adjust the cameraPosition calculation accordingly.
+        */
+        
+        // Compute camera's world position based on target and distance
+               let worldPosition = transform.position
+               let worldOrientation = transform.rotation
+               
+               // Calculate the camera position relative to the target
+               // Here you might need to calculate the correct position based on the distance and rotation
+               // For example, if you want the camera to rotate around the target at a fixed distance:
+               let cameraPosition = target - worldPosition.normalized * distance
+               
+               // Calculate the rotation based on the target's position and the world orientation
+               let cameraRotation = float4x4(rotationYXZ: worldOrientation)
+               
+               // Calculate the up vector for the camera based on its rotation
+               let upVector = cameraRotation * float4(0, 1, 0, 0)
+
+               // Use the lookAt matrix to create the view matrix
+               return float4x4(eye: cameraPosition, center: target, up: float3(upVector.x, upVector.y, upVector.z))
+           
     }
     
     var projectionMatrix: float4x4 {
