@@ -140,6 +140,7 @@ struct ArcballCameraComponent: CameraComponent {
 
     // Implement required properties and methods...
     func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
+        ///Calculating the view matrix for the arcball camera
         /**In this code snippet:
 
         - **'worldPosition'** and **'worldOrientation'** represent the camera's global position and orientation.

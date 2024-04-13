@@ -74,7 +74,7 @@ class Renderer: NSObject {
     Self.library = library
     let forwardPassVertexFunction = library?.makeFunction(name: "vertex_main")
     let fragmentFunction =
-      library?.makeFunction(name: "fragment_main")
+      library?.makeFunction(name: "fragment_normals")
 
       // Create the model pipeline state object
       let forwardPassPipelineDescriptor = MTLRenderPipelineDescriptor()
@@ -107,10 +107,12 @@ class Renderer: NSObject {
     metalView.delegate = self
     mtkView(metalView, drawableSizeWillChange: metalView.bounds.size)
       setupEntites()
-      entityManager.addEntity(entity: createCameraEntity(type: .arcball))
-      if let cameraEntity = entityManager.entities(for: ArcballCameraComponent.self).first,
+      entityManager.addEntity(entity: createCameraEntity(type: .orthographic))
+      
+      if let cameraEntity = entityManager.entities(for: OrthographicCameraComponent.self).first,
          var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity){
-          cameraTransform.position = [0, 0, 5]
+          cameraTransform.position = [5, 0, 0]
+          cameraTransform.rotation = [0,-Float.pi / 2,0]
           entityManager.addComponent(component: cameraTransform, to: cameraEntity)
       } else {
           print("Failed to retrieve transform component of camera entity.")

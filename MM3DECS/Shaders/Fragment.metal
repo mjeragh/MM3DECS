@@ -43,3 +43,8 @@ fragment float4 fragment_main(
   float intensity = in.worldNormal.y * 0.5 + 0.5;
   return mix(earth, sky, intensity);
 }
+
+fragment float4 fragment_normals(VertexOut in [[stage_in]]) {
+    return float4(in.worldNormal, 1);
+
+}
