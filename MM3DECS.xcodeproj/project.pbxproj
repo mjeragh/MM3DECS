@@ -24,6 +24,8 @@
 		B259C2952BAADDF50049BA2C /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2942BAADDF50049BA2C /* System.swift */; };
 		B259C2972BAADE760049BA2C /* EntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2962BAADE760049BA2C /* EntityManager.swift */; };
 		B259C29A2BAADF2A0049BA2C /* RendererSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2992BAADF2A0049BA2C /* RendererSystem.swift */; };
+		B2E6D6DA2BCAE74D00F7D9B0 /* SceneManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E6D6D92BCAE74D00F7D9B0 /* SceneManager.swift */; };
+		B2E6D6DC2BCAE7C500F7D9B0 /* GamrScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E6D6DB2BCAE7C500F7D9B0 /* GamrScene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +51,8 @@
 		B259C2942BAADDF50049BA2C /* System.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = System.swift; sourceTree = "<group>"; };
 		B259C2962BAADE760049BA2C /* EntityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityManager.swift; sourceTree = "<group>"; };
 		B259C2992BAADF2A0049BA2C /* RendererSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererSystem.swift; sourceTree = "<group>"; };
+		B2E6D6D92BCAE74D00F7D9B0 /* SceneManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneManager.swift; sourceTree = "<group>"; };
+		B2E6D6DB2BCAE7C500F7D9B0 /* GamrScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamrScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +85,7 @@
 		B259C2642BA2FABE0049BA2C /* MM3DECS */ = {
 			isa = PBXGroup;
 			children = (
+				B2E6D6D82BCAE6D300F7D9B0 /* Scenes */,
 				B259C28F2BAADCE70049BA2C /* ECS */,
 				B259C2652BA2FABE0049BA2C /* MM3DECSApp.swift */,
 				B259C28E2BA31B5B0049BA2C /* View */,
@@ -162,6 +167,15 @@
 			path = Renderer;
 			sourceTree = "<group>";
 		};
+		B2E6D6D82BCAE6D300F7D9B0 /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				B2E6D6D92BCAE74D00F7D9B0 /* SceneManager.swift */,
+				B2E6D6DB2BCAE7C500F7D9B0 /* GamrScene.swift */,
+			);
+			path = Scenes;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -240,6 +254,7 @@
 				B259C2892BA303B90049BA2C /* Fragment.metal in Sources */,
 				B259C2972BAADE760049BA2C /* EntityManager.swift in Sources */,
 				B259C2682BA2FABE0049BA2C /* ContentView.swift in Sources */,
+				B2E6D6DA2BCAE74D00F7D9B0 /* SceneManager.swift in Sources */,
 				B259C2792BA2FBD60049BA2C /* Options.swift in Sources */,
 				B259C2662BA2FABE0049BA2C /* MM3DECSApp.swift in Sources */,
 				B259C2952BAADDF50049BA2C /* System.swift in Sources */,
@@ -247,6 +262,7 @@
 				B259C29A2BAADF2A0049BA2C /* RendererSystem.swift in Sources */,
 				B259C2912BAADD0E0049BA2C /* Entity.swift in Sources */,
 				B259C28A2BA303B90049BA2C /* Vertex.metal in Sources */,
+				B2E6D6DC2BCAE7C500F7D9B0 /* GamrScene.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
