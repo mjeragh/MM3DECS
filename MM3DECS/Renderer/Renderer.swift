@@ -107,12 +107,12 @@ class Renderer: NSObject {
     metalView.delegate = self
     mtkView(metalView, drawableSizeWillChange: metalView.bounds.size)
       setupEntites()
-      entityManager.addEntity(entity: createCameraEntity(type: .orthographic))
+      entityManager.addEntity(entity: createCameraEntity(type: .perspective))
       
-      if let cameraEntity = entityManager.entities(for: OrthographicCameraComponent.self).first,
+      if let cameraEntity = entityManager.entities(for: PerspectiveCameraComponent.self).first,
          var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity){
-          cameraTransform.position = [5, 0, 0]
-          cameraTransform.rotation = [0,-Float.pi / 2,0]
+          cameraTransform.position = [2, 2, -5]
+          cameraTransform.rotation = [0,0,0]
           entityManager.addComponent(component: cameraTransform, to: cameraEntity)
       } else {
           print("Failed to retrieve transform component of camera entity.")
