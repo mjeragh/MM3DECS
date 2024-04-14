@@ -6,7 +6,7 @@
 //
 import MetalKit
 
-protocol SceneContract {
+protocol SceneProtocol {
     func setUp()
     func update(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder)
     func tearDown()
@@ -15,16 +15,16 @@ protocol SceneContract {
 
 
 class SceneManager {
-    private var scenes: [String: SceneContract] = [:]
-    private var currentScene: SceneContract?
+    private var scenes: [String: SceneProtocol] = [:]
+    private var currentScene: SceneProtocol?
     
-    init(scene: SceneContract) {
+    init(scene: SceneProtocol) {
         addScene(scene, name: "Initial Scene")
         currentScene = scene
         scene.setUp()
     }
 
-    func addScene(_ scene: SceneContract, name: String) {
+    func addScene(_ scene: SceneProtocol, name: String) {
         scenes[name] = scene
     }
 

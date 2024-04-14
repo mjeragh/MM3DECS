@@ -7,7 +7,7 @@
 
 import MetalKit
 
-class GameScene: SceneContract {
+class GameScene: SceneProtocol {
     let entityManager: EntityManager
 
     init(entityManager: EntityManager) {
