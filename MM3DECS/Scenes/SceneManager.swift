@@ -21,6 +21,7 @@ class SceneManager {
     init(scene: SceneContract) {
         addScene(scene, name: "Initial Scene")
         currentScene = scene
+        scene.setUp()
     }
 
     func addScene(_ scene: SceneContract, name: String) {

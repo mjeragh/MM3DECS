@@ -70,6 +70,8 @@ class Renderer: NSObject {
     Renderer.commandQueue = commandQueue
     metalView.device = device
 
+      //Scene Managment and entity init
+      
     // create the shader function library
     let library = device.makeDefaultLibrary()
     Self.library = library
@@ -97,8 +99,9 @@ class Renderer: NSObject {
       self.entityManager = EntityManager()
       self.renderSystem = RenderSystem(entityManager: entityManager)
       self.systems = [renderSystem]
-      self.sceneManager = SceneManager(scene: GameScene(entityManager: entityManager)
       let gameScene = GameScene(entityManager: entityManager)
+      self.sceneManager = SceneManager(scene: gameScene)
+      
       
     super.init()
     metalView.clearColor = MTLClearColor(
