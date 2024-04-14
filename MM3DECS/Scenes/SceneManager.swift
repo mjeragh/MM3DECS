@@ -7,8 +7,9 @@
 import MetalKit
 
 protocol SceneProtocol {
+    var entityManager: EntityManager { get }
     func setUp()
-    func update(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder)
+    func update(deltaTime: Float)
     func tearDown()
 }
 
