@@ -7,7 +7,7 @@
 
 import MetalKit
 
-class GameScene: Scene {
+class GameScene: SceneContract {
     let entityManager: EntityManager
 
     init(entityManager: EntityManager) {
@@ -16,6 +16,18 @@ class GameScene: Scene {
 
     func setUp() {
         // Set up entities specific to this scene
+        entityManager.addEntity(entity: entityManager.createCameraEntity(type: .perspective))
+        
+        setupEntites()
+        
+        if let cameraEntity = entityManager.entities(for: PerspectiveCameraComponent.self).first,
+           var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity){
+            cameraTransform.position = [2, 2, -5]
+            cameraTransform.rotation = [0,0,0]
+            entityManager.addComponent(component: cameraTransform, to: cameraEntity)
+        } else {
+            print("Failed to retrieve transform component of camera entity.")
+        }
     }
 
     func update(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder) {
@@ -24,6 +36,15 @@ class GameScene: Scene {
 
     func tearDown() {
         // Clean up the scene before transition
+    }
+
+    func setupEntites() {
+        let trainEntity = Entity()
+                entityManager.addEntity(entity: trainEntity)
+                entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "train.usd"), to: trainEntity)
+        entityManager.addComponent(component: TransformComponent(position: float3(0, -0.6, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), to: trainEntity)
+               // Add other entities and components as needed
+        
     }
 }
 

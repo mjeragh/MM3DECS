@@ -68,6 +68,32 @@ extension EntityManager {
 
             return matchedEntities
         }
+    
+    func createCameraEntity(type: CameraType) -> Entity {
+        let cameraEntity = Entity()
+        self.addEntity(entity: cameraEntity)
+        
+        // Common transform component for all cameras
+        self.addComponent(component: TransformComponent(position: [0, 0, 5]), to: cameraEntity)
+        
+        let aspect = Float(16) / Float(9) // Example aspect ratio
+        
+        switch type {
+        case .perspective:
+            let perspectiveCameraComponent = PerspectiveCameraComponent(fieldOfView: Float(70).degreesToRadians, nearClippingPlane: 0.1, farClippingPlane: 100, aspectRatio: aspect)
+            self.addComponent(component: perspectiveCameraComponent, to: cameraEntity)
+            
+        case .arcball:
+            let arcballCameraComponent = ArcballCameraComponent(aspect: aspect, fov: Float(70).degreesToRadians, near: 0.1, far: 100, target: [0, 0, 0], distance: 5, minDistance: 1, maxDistance: 20)
+            self.addComponent(component: arcballCameraComponent, to: cameraEntity)
+            
+        case .orthographic:
+            let orthographicCameraComponent = OrthographicCameraComponent(aspect: aspect, viewSize: 10, near: 0.1, far: 100)
+            self.addComponent(component: orthographicCameraComponent, to: cameraEntity)
+        }
+        
+        return cameraEntity
+    }
     }
 
 

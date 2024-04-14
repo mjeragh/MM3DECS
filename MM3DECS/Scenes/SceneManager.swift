@@ -6,7 +6,7 @@
 //
 import MetalKit
 
-protocol Scene {
+protocol SceneContract {
     func setUp()
     func update(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder)
     func tearDown()
@@ -15,15 +15,15 @@ protocol Scene {
 
 
 class SceneManager {
-    private var scenes: [String: Scene] = [:]
-    private var currentScene: Scene?
-    let entityManager: EntityManager
-
-    init(entityManager: EntityManager) {
-        self.entityManager = entityManager
+    private var scenes: [String: SceneContract] = [:]
+    private var currentScene: SceneContract?
+    
+    init(scene: SceneContract) {
+        addScene(scene, name: "Initial Scene")
+        currentScene = scene
     }
 
-    func addScene(_ scene: Scene, name: String) {
+    func addScene(_ scene: SceneContract, name: String) {
         scenes[name] = scene
     }
 

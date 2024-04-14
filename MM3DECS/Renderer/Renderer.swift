@@ -43,6 +43,7 @@ enum CameraType {
 
 class Renderer: NSObject {
     var entityManager: EntityManager
+    var sceneManager: SceneManager
     var renderSystem: RenderSystem
     var systems: [System] = []
     
@@ -74,7 +75,7 @@ class Renderer: NSObject {
     Self.library = library
     let forwardPassVertexFunction = library?.makeFunction(name: "vertex_main")
     let fragmentFunction =
-      library?.makeFunction(name: "fragment_normals")
+      library?.makeFunction(name: "fragment_main")
 
       // Create the model pipeline state object
       let forwardPassPipelineDescriptor = MTLRenderPipelineDescriptor()
@@ -96,6 +97,8 @@ class Renderer: NSObject {
       self.entityManager = EntityManager()
       self.renderSystem = RenderSystem(entityManager: entityManager)
       self.systems = [renderSystem]
+      self.sceneManager = SceneManager(scene: GameScene(entityManager: entityManager)
+      let gameScene = GameScene(entityManager: entityManager)
       
     super.init()
     metalView.clearColor = MTLClearColor(
@@ -106,57 +109,11 @@ class Renderer: NSObject {
     metalView.depthStencilPixelFormat = .depth32Float
     metalView.delegate = self
     mtkView(metalView, drawableSizeWillChange: metalView.bounds.size)
-      setupEntites()
-      entityManager.addEntity(entity: createCameraEntity(type: .perspective))
+       
       
-      if let cameraEntity = entityManager.entities(for: PerspectiveCameraComponent.self).first,
-         var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity){
-          cameraTransform.position = [2, 2, -5]
-          cameraTransform.rotation = [0,0,0]
-          entityManager.addComponent(component: cameraTransform, to: cameraEntity)
-      } else {
-          print("Failed to retrieve transform component of camera entity.")
-      }
   }//Init
 
-    func createCameraEntity(type: CameraType) -> Entity {
-        let cameraEntity = Entity()
-        entityManager.addEntity(entity: cameraEntity)
-        
-        // Common transform component for all cameras
-        entityManager.addComponent(component: TransformComponent(position: [0, 0, 5]), to: cameraEntity)
-        
-        let aspect = Float(16) / Float(9) // Example aspect ratio
-        
-        switch type {
-        case .perspective:
-            let perspectiveCameraComponent = PerspectiveCameraComponent(fieldOfView: Float(70).degreesToRadians, nearClippingPlane: 0.1, farClippingPlane: 100, aspectRatio: aspect)
-            entityManager.addComponent(component: perspectiveCameraComponent, to: cameraEntity)
-            
-        case .arcball:
-            let arcballCameraComponent = ArcballCameraComponent(aspect: aspect, fov: Float(70).degreesToRadians, near: 0.1, far: 100, target: [0, 0, 0], distance: 5, minDistance: 1, maxDistance: 20)
-            entityManager.addComponent(component: arcballCameraComponent, to: cameraEntity)
-            
-        case .orthographic:
-            let orthographicCameraComponent = OrthographicCameraComponent(aspect: aspect, viewSize: 10, near: 0.1, far: 100)
-            entityManager.addComponent(component: orthographicCameraComponent, to: cameraEntity)
-        }
-        
-        return cameraEntity
-    }
-
-
-
-
-    
-    func setupEntites() {
-        let trainEntity = Entity()
-                entityManager.addEntity(entity: trainEntity)
-                entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "train.usd"), to: trainEntity)
-        entityManager.addComponent(component: TransformComponent(position: float3(0, -0.6, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), to: trainEntity)
-               // Add other entities and components as needed
-        
-    }
+ 
   static func buildDepthStencilState() -> MTLDepthStencilState? {
   // 1
     let descriptor = MTLDepthStencilDescriptor()
