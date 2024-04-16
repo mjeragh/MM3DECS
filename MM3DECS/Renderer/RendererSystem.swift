@@ -8,15 +8,13 @@
 import Foundation
 import MetalKit
 
-class RenderSystem: System {
-    var entityManager: EntityManager
+class RenderSystem: SystemProtocol {
     var timer : Float = 0.0
     
-    init(entityManager: EntityManager) {
-        self.entityManager = entityManager
+    init() {
     }
     
-    func update(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder) {
+    func update(deltaTime: Float, entityManager: EntityManager, renderEncoder: MTLRenderCommandEncoder) {
         //Camera entity for, multple camera maybe later
         // Fetch entities with any camera component
         let cameraEntities = entityManager.entitiesWithAnyComponents([PerspectiveCameraComponent.self, ArcballCameraComponent.self, OrthographicCameraComponent.self])
@@ -79,13 +77,5 @@ class RenderSystem: System {
 
         renderable.render(encoder: renderEncoder)
         }
-    
-    func updateProjectionMatrix(for entity: Entity) -> float4x4? {
-        guard let camera = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: entity) else {
-            return nil
-        }
-
-        return float4x4(projectionFov: camera.fieldOfView, near: camera.nearClippingPlane, far: camera.farClippingPlane, aspect: camera.aspectRatio, lhs: true)
-    }
-
+   
 }

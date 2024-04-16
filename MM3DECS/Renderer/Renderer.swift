@@ -46,8 +46,8 @@ class Renderer: NSObject {
     var sceneManager: SceneManager
     var renderSystem: RenderSystem
     var systems: [System] = []
-    static var currentScene: SceneProtocol?
     
+    static var currentScene: SceneProtocol?
     static var device: MTLDevice!
     static var commandQueue: MTLCommandQueue!
     static var library: MTLLibrary!
@@ -58,7 +58,6 @@ class Renderer: NSObject {
     let depthStencilState: MTLDepthStencilState?
     
     
-    var timer: Float = 0
     var params = Params()
     
     init(metalView: MTKView, options: Options) {

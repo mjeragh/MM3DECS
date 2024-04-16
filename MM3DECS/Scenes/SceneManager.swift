@@ -8,9 +8,12 @@ import MetalKit
 
 protocol SceneProtocol {
     var entityManager: EntityManager { get }
+    var systems: [SystemProtocol] { get set }
     func setUp()
     func update(deltaTime: Float)
     func tearDown()
+    
+    func updateSystems(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder)
 }
 
 
@@ -36,8 +39,8 @@ class SceneManager {
         scene.setUp()
     }
 
-    func updateCurrentScene(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder) {
-        currentScene?.update(deltaTime: deltaTime, renderEncoder: renderEncoder)
+    func updateCurrentScene(deltaTime: Float) {
+        currentScene?.update(deltaTime: deltaTime)
     }
 }
 

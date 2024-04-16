@@ -5,7 +5,7 @@
 //  Created by Mohammad Jeragh on 20/03/2024.
 //
 import MetalKit
-protocol System {
-    func update(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder)
+protocol SystemProtocol {
+    func update(deltaTime: Float, entityManager: EntityManager, renderEncoder: MTLRenderCommandEncoder)
 }
 

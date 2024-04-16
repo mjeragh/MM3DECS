@@ -8,6 +8,7 @@
 import MetalKit
 
 class GameScene: SceneProtocol {
+
     let entityManager: EntityManager
 
     init(entityManager: EntityManager) {
@@ -30,7 +31,7 @@ class GameScene: SceneProtocol {
         }
     }
 
-    func update(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder) {
+    func update(deltaTime: Float) {
         // Update the scene and entities
     }
 
