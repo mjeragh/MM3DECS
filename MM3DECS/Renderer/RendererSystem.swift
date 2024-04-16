@@ -10,22 +10,26 @@ import MetalKit
 
 class RenderSystem: SystemProtocol {
     var timer : Float = 0.0
+    var cameraEntity: Entity?
+    var cameraComponent: CameraComponent?
     
-    init() {
+    init(cameraEntity: Entity) {
+        updateCameraEntity(cameraEntity)
     }
+    
     
     func update(deltaTime: Float, entityManager: EntityManager, renderEncoder: MTLRenderCommandEncoder) {
         //Camera entity for, multple camera maybe later
-        // Fetch entities with any camera component
-        let cameraEntities = entityManager.entitiesWithAnyComponents([PerspectiveCameraComponent.self, ArcballCameraComponent.self, OrthographicCameraComponent.self])
+        
 
             // Assume that there's only one camera entity for simplicity
-        guard let cameraEntity = cameraEntities.first else {
+        guard let cameraEntity = cameraEntity else {
             fatalError("No Camere Entity found")
         }
         guard  let cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity) else {
             fatalError("No camera transform component found")
         }
+        
         let cameraComponent: CameraComponent
         if let perspectiveCamera = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity) {
             cameraComponent = perspectiveCamera
@@ -50,12 +54,12 @@ class RenderSystem: SystemProtocol {
                   let transform = entityManager.getComponent(type: TransformComponent.self, for: entity) else {
                 continue
             }
-            render(entity: entity, with: renderable, transformConstant: transform, viewMatrix: viewMatrix, projectionMatrix: projectionMatrix, renderEncoder: renderEncoder)
+            render(with: renderable, transformConstant: transform, viewMatrix: viewMatrix, projectionMatrix: projectionMatrix, renderEncoder: renderEncoder)
         }
     }
 
     
-    private func render(entity: Entity, with renderable: RenderableComponent, transformConstant: TransformComponent, viewMatrix: float4x4, projectionMatrix: float4x4, renderEncoder: MTLRenderCommandEncoder) {
+    private func render(with renderable: RenderableComponent, transformConstant: TransformComponent, viewMatrix: float4x4, projectionMatrix: float4x4, renderEncoder: MTLRenderCommandEncoder) {
         // Animation or temporary transformation adjustments
             // Here, use the renderEncoder to set pipeline states, vertex buffers, and draw.
             // This involves translating the entity's components into Metal draw calls.
@@ -76,6 +80,11 @@ class RenderSystem: SystemProtocol {
           index: 11)
 
         renderable.render(encoder: renderEncoder)
+        }
+    
+    // Call this when the camera entity is changed/updated
+        func updateCameraEntity(_ newCameraEntity: Entity) {
+            cameraEntity = newCameraEntity
         }
    
 }

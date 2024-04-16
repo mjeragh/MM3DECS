@@ -25,8 +25,7 @@ class GameScene: SceneProtocol {
     }
 
     func setUp() {
-        //setup Systems
-        systems.append(RenderSystem())
+        
         // Set up entities specific to this scene
         entityManager.addEntity(entity: entityManager.createCameraEntity(type: .perspective))
         
@@ -37,6 +36,8 @@ class GameScene: SceneProtocol {
             cameraTransform.position = [2, 2, -5]
             cameraTransform.rotation = [0,0,0]
             entityManager.addComponent(component: cameraTransform, to: cameraEntity)
+            //setup Systems
+            systems.append(RenderSystem(cameraEntity: cameraEntity))
         } else {
             print("Failed to retrieve transform component of camera entity.")
         }
@@ -48,6 +49,8 @@ class GameScene: SceneProtocol {
 
     func tearDown() {
         // Clean up the scene before transition
+        entityManager.removeAllEntities()
+        systems.removeAll()
     }
 
     func setupEntites() {

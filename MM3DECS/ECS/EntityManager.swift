@@ -31,6 +31,13 @@ class EntityManager {
     }
 
     // Additional utility methods...
+    
+        // Method to remove all entities and components
+        func removeAllEntities() {
+            entities.removeAll()
+            componentsByType.removeAll()
+        }
+
 }
 
 
