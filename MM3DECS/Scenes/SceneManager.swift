@@ -39,8 +39,36 @@ class SceneManager {
         scene.setUp()
     }
 
+    func updateCurrentSceneCamera(with aspectRatio: Float) {
+        // Update Perspective Camera
+        if let cameraEntity = currentScene?.entityManager.entitiesWithAnyComponents([PerspectiveCameraComponent.self]).first,
+           var cameraComponent = currentScene?.entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity) {
+            cameraComponent.aspectRatio = aspectRatio
+            currentScene?.entityManager.addComponent(component: cameraComponent, to: cameraEntity)
+        }
+        
+        // Update Arcball Camera
+        if let arcballCameraEntity = currentScene?.entityManager.entitiesWithAnyComponents([ArcballCameraComponent.self]).first,
+           var arcballCameraComponent = currentScene?.entityManager.getComponent(type: ArcballCameraComponent.self, for: arcballCameraEntity) {
+            arcballCameraComponent.aspect = aspectRatio
+            currentScene?.entityManager.addComponent(component: arcballCameraComponent, to: arcballCameraEntity)
+        }
+        
+        // Update Orthographic Camera
+        if let orthoCameraEntity = currentScene?.entityManager.entitiesWithAnyComponents([OrthographicCameraComponent.self]).first,
+           var orthoCameraComponent = currentScene?.entityManager.getComponent(type: OrthographicCameraComponent.self, for: orthoCameraEntity) {
+            orthoCameraComponent.aspect = aspectRatio
+            currentScene?.entityManager.addComponent(component: orthoCameraComponent, to: orthoCameraEntity)
+        }
+        
+    }
+    
     func updateCurrentScene(deltaTime: Float) {
         currentScene?.update(deltaTime: deltaTime)
+    }
+    
+    func updateCurrentSceneSystems(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder) {
+        currentScene?.updateSystems(deltaTime: deltaTime, renderEncoder: renderEncoder)
     }
 }
 

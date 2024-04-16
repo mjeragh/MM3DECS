@@ -42,12 +42,7 @@ enum CameraType {
 
 
 class Renderer: NSObject {
-    var entityManager: EntityManager
     var sceneManager: SceneManager
-    var renderSystem: RenderSystem
-    var systems: [System] = []
-    
-    static var currentScene: SceneProtocol?
     static var device: MTLDevice!
     static var commandQueue: MTLCommandQueue!
     static var library: MTLLibrary!
@@ -96,10 +91,8 @@ class Renderer: NSObject {
         self.options = options
         depthStencilState = Renderer.buildDepthStencilState()
         //This code is marked as the beginning of the refactoring
-        self.entityManager = EntityManager()
-        self.renderSystem = RenderSystem(entityManager: entityManager)
-        self.systems = [renderSystem]
-        let gameScene = GameScene(entityManager: entityManager)
+        
+        let gameScene = GameScene(entityManager: EntityManager())
         self.sceneManager = SceneManager(scene: gameScene)
         
         
@@ -132,27 +125,7 @@ class Renderer: NSObject {
 extension Renderer: MTKViewDelegate {
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         let aspect = Float(view.bounds.width) / Float(view.bounds.height)
-        
-        // Update Perspective Camera
-        if let cameraEntity = entityManager.entitiesWithAnyComponents([PerspectiveCameraComponent.self]).first,
-           var cameraComponent = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity) {
-            cameraComponent.aspectRatio = aspect
-            entityManager.addComponent(component: cameraComponent, to: cameraEntity)
-        }
-        
-        // Update Arcball Camera
-        if let arcballCameraEntity = entityManager.entitiesWithAnyComponents([ArcballCameraComponent.self]).first,
-           var arcballCameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: arcballCameraEntity) {
-            arcballCameraComponent.aspect = aspect
-            entityManager.addComponent(component: arcballCameraComponent, to: arcballCameraEntity)
-        }
-        
-        // Update Orthographic Camera
-        if let orthoCameraEntity = entityManager.entitiesWithAnyComponents([OrthographicCameraComponent.self]).first,
-           var orthoCameraComponent = entityManager.getComponent(type: OrthographicCameraComponent.self, for: orthoCameraEntity) {
-            orthoCameraComponent.aspect = aspect
-            entityManager.addComponent(component: orthoCameraComponent, to: orthoCameraEntity)
-        }
+        sceneManager.updateCurrentSceneCamera(with: aspect)
         
         params.width = UInt32(size.width)
         params.height = UInt32(size.height)
@@ -179,7 +152,7 @@ extension Renderer: MTKViewDelegate {
         renderEncoder.setRenderPipelineState(forwardPassPipelineState)
         
         let deltaTime = 1 / Float(view.preferredFramesPerSecond)
-        systems.forEach { $0.update(deltaTime: deltaTime, renderEncoder: renderEncoder) }
+        sceneManager.updateCurrentSceneSystems(deltaTime: deltaTime, renderEncoder: renderEncoder) // Update all systems
         
         renderEncoder.endEncoding()
         guard let drawable = view.currentDrawable else {

@@ -8,14 +8,25 @@
 import MetalKit
 
 class GameScene: SceneProtocol {
-
+    var systems: [SystemProtocol] = []
+    
     let entityManager: EntityManager
+    
+    func updateSystems(deltaTime: Float, renderEncoder: any MTLRenderCommandEncoder) {
+        systems.forEach { system in
+            system.update(deltaTime: deltaTime, entityManager: entityManager, renderEncoder: renderEncoder)
+            
+        }
+    }
+
 
     init(entityManager: EntityManager) {
         self.entityManager = entityManager
     }
 
     func setUp() {
+        //setup Systems
+        systems.append(RenderSystem())
         // Set up entities specific to this scene
         entityManager.addEntity(entity: entityManager.createCameraEntity(type: .perspective))
         
