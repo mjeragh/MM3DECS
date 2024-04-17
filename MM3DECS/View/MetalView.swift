@@ -13,20 +13,21 @@ import MetalKit
 struct MetalView: View {
   let options: Options
   @State private var metalView = MTKView()
-    @State private var renderer:Renderer?
+    @State private var engine: Engine?
     @State private var previousTranslation = CGSize.zero
   @State private var previousScroll: CGFloat = 1
 
   var body: some View {
     VStack {
       MetalViewRepresentable(
-        renderer: renderer,
+        engine: engine,
         metalView: $metalView,
         options: options)
         .onAppear {
-            renderer = Renderer(
+            engine = Engine(
               metalView: metalView,
               options: options)
+            engine?.start()
         }
         
     }
@@ -37,7 +38,7 @@ struct MetalView: View {
 typealias ViewRepresentable = UIViewRepresentable
 
 struct MetalViewRepresentable: ViewRepresentable {
-  let renderer: Renderer?
+  let engine: Engine?
     @Binding var metalView: MTKView
   let options: Options
 
@@ -52,7 +53,7 @@ struct MetalViewRepresentable: ViewRepresentable {
   
 
   func updateMetalView() {
-    renderer?.options = options
+      engine?.updateOptions(options: options)
   }
 }
 

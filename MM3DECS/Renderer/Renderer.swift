@@ -47,7 +47,7 @@ class Renderer: NSObject {
     static var commandQueue: MTLCommandQueue!
     static var library: MTLLibrary!
     
-    var options: Options
+    var options: Options?
     
     var forwardPassPipelineState: MTLRenderPipelineState!
     let depthStencilState: MTLDepthStencilState?
@@ -55,7 +55,7 @@ class Renderer: NSObject {
     
     var params = Params()
     
-    init(metalView: MTKView, options: Options) {
+    init(metalView: MTKView) {
         guard
             let device = MTLCreateSystemDefaultDevice(),
             let commandQueue = device.makeCommandQueue() else {
@@ -88,7 +88,6 @@ class Renderer: NSObject {
             fatalError("Failed to create model pipeline state, error: \(error)")
         }
         
-        self.options = options
         depthStencilState = Renderer.buildDepthStencilState()
         //This code is marked as the beginning of the refactoring
         
@@ -160,5 +159,9 @@ extension Renderer: MTKViewDelegate {
         }
         commandBuffer.present(drawable)
         commandBuffer.commit()
+    }
+    
+    func updateOptions(options: Options) {
+        self.options = options
     }
 }
