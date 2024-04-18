@@ -41,11 +41,12 @@ enum CameraType {
 }
 
 
+
 class Renderer: NSObject {
-    var sceneManager: SceneManager
     static var device: MTLDevice!
     static var commandQueue: MTLCommandQueue!
     static var library: MTLLibrary!
+    var sceneManager: SceneManager
     
     var options: Options?
     
@@ -66,7 +67,7 @@ class Renderer: NSObject {
         metalView.device = device
         
         //Scene Managment and entity init
-        
+        self.sceneManager = SceneManager(scene: GameScene(entityManager: EntityManager()))//dummy scene
         // create the shader function library
         let library = device.makeDefaultLibrary()
         Self.library = library
@@ -90,11 +91,7 @@ class Renderer: NSObject {
         
         depthStencilState = Renderer.buildDepthStencilState()
         //This code is marked as the beginning of the refactoring
-        
-        let gameScene = GameScene(entityManager: EntityManager())
-        self.sceneManager = SceneManager(scene: gameScene)
-        
-        
+       
         super.init()
         metalView.clearColor = MTLClearColor(
             red: 0.0,

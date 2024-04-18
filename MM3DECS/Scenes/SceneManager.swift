@@ -20,7 +20,7 @@ protocol SceneProtocol {
 
 class SceneManager {
     private var scenes: [String: SceneProtocol] = [:]
-    private var currentScene: SceneProtocol?
+    var currentScene: SceneProtocol?
     
     init(scene: SceneProtocol) {
         addScene(scene, name: "Initial Scene")

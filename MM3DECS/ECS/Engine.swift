@@ -20,8 +20,12 @@ class Engine {
         // Initialize SceneManager, Renderer, and any other systems
         self.metalView = metalView
         self.options = options
+        
+        self.renderer = Renderer(metalView: metalView)
         let initialScene = GameScene(entityManager: EntityManager())
-        sceneManager = SceneManager(scene: initialScene)
+        self.sceneManager = SceneManager(scene: initialScene)
+        
+        self.renderer?.sceneManager = sceneManager
     }
 
     func start() {
@@ -32,7 +36,6 @@ class Engine {
 
     private func setupGame() {
         // Perform initial setup before the game starts
-        renderer = Renderer(metalView: metalView)
         sceneManager.transitionToScene(withName: "Initial Scene")
         
         
