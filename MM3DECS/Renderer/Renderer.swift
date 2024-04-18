@@ -46,7 +46,7 @@ class Renderer: NSObject {
     static var device: MTLDevice!
     static var commandQueue: MTLCommandQueue!
     static var library: MTLLibrary!
-    var sceneManager: SceneManager
+    weak var delegate: RendererDelegate?
     
     var options: Options?
     
@@ -67,7 +67,7 @@ class Renderer: NSObject {
         metalView.device = device
         
         //Scene Managment and entity init
-        self.sceneManager = SceneManager(scene: GameScene(entityManager: EntityManager()))//dummy scene
+        
         // create the shader function library
         let library = device.makeDefaultLibrary()
         Self.library = library
@@ -121,7 +121,9 @@ class Renderer: NSObject {
 extension Renderer: MTKViewDelegate {
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         let aspect = Float(view.bounds.width) / Float(view.bounds.height)
-        sceneManager.updateCurrentSceneCamera(with: aspect)
+        
+        delegate?.updateSceneCamera(aspectRatio: aspect)
+        
         
         params.width = UInt32(size.width)
         params.height = UInt32(size.height)
@@ -148,7 +150,7 @@ extension Renderer: MTKViewDelegate {
         renderEncoder.setRenderPipelineState(forwardPassPipelineState)
         
         let deltaTime = 1 / Float(view.preferredFramesPerSecond)
-        sceneManager.updateCurrentSceneSystems(deltaTime: deltaTime, renderEncoder: renderEncoder) // Update all systems
+        delegate?.updateSceneSystems(deltaTime: deltaTime, renderEncoder: renderEncoder)
         
         renderEncoder.endEncoding()
         guard let drawable = view.currentDrawable else {

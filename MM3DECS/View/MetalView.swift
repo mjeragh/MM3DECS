@@ -24,10 +24,13 @@ struct MetalView: View {
         metalView: $metalView,
         options: options)
         .onAppear {
-            engine = Engine(
-              metalView: metalView,
+            let renderer = Renderer(metalView: metalView)
+            let engine = Engine(
+              renderer: renderer,
+              sceneManager: SceneManager(scene: GameScene(entityManager: EntityManager())),
               options: options)
-            engine?.start()
+            renderer.delegate = engine
+            engine.start()
         }
         
     }

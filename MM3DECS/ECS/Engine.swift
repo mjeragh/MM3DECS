@@ -13,25 +13,24 @@ class Engine {
     var renderer: Renderer?
     var isRunning = false
     var options: Options
-    var metalView: MTKView
+//    var metalView: MTKView
 
-    init(metalView: MTKView,
+    init(renderer: Renderer,
+         sceneManager: SceneManager,
          options: Options) {
         // Initialize SceneManager, Renderer, and any other systems
-        self.metalView = metalView
+//        self.metalView = metalView
         self.options = options
         
-        self.renderer = Renderer(metalView: metalView)
-        let initialScene = GameScene(entityManager: EntityManager())
-        self.sceneManager = SceneManager(scene: initialScene)
-        
-        self.renderer?.sceneManager = sceneManager
+        self.renderer = renderer
+        self.sceneManager = sceneManager
+        renderer.delegate = self
     }
 
     func start() {
         // Set up the game and start the game loop
         isRunning = true
-        setupGame()
+        //setupGame()
     }
 
     private func setupGame() {
@@ -52,5 +51,20 @@ class Engine {
     // Additional methods for transitioning scenes, handling input, etc.
     func updateOptions(options: Options) {
         renderer?.updateOptions(options: options)
+    }
+}
+
+protocol RendererDelegate: AnyObject {
+    func updateSceneSystems(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder)
+    func updateSceneCamera(aspectRatio: Float)
+}
+
+extension Engine : RendererDelegate{
+    func updateSceneSystems(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder) {
+        sceneManager.updateCurrentSceneSystems(deltaTime: deltaTime, renderEncoder: renderEncoder)
+    }
+    
+    func updateSceneCamera(aspectRatio: Float) {
+        sceneManager.updateCurrentSceneCamera(with: aspectRatio)
     }
 }
