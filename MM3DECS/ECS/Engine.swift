@@ -8,34 +8,37 @@
 import Foundation
 import MetalKit
 
-class Engine {
-    var sceneManager: SceneManager
+class Engine : ObservableObject{
+    var sceneManager: SceneManager?
     var renderer: Renderer?
-    var isRunning = false
-    var options: Options
+    var started = false
+    var options: Options?
 //    var metalView: MTKView
 
-    init(renderer: Renderer,
-         sceneManager: SceneManager,
-         options: Options) {
+    init() {
         // Initialize SceneManager, Renderer, and any other systems
 //        self.metalView = metalView
-        self.options = options
         
-        self.renderer = renderer
-        self.sceneManager = sceneManager
-        renderer.delegate = self
     }
 
     func start() {
         // Set up the game and start the game loop
-        isRunning = true
+        started = true
         //setupGame()
     }
 
-    private func setupGame() {
+    func setupGame(renderer: Renderer,
+                           sceneManager: SceneManager,
+                           options: Options) {
         // Perform initial setup before the game starts
-        sceneManager.transitionToScene(withName: "Initial Scene")
+        self.options = options
+        
+        self.renderer = renderer
+        self.sceneManager = sceneManager
+        self.renderer?.delegate = self
+        
+        //ensure this is the last call
+        self.renderer?.startRendering()
         
         
         // More setup as needed...
@@ -45,7 +48,7 @@ class Engine {
 
     func stop() {
         // Clean up before the game stops
-        isRunning = false
+        started = false
     }
 
     // Additional methods for transitioning scenes, handling input, etc.
@@ -57,14 +60,21 @@ class Engine {
 protocol RendererDelegate: AnyObject {
     func updateSceneSystems(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder)
     func updateSceneCamera(aspectRatio: Float)
+    func isRunning() -> Bool
 }
 
 extension Engine : RendererDelegate{
+   
+    func isRunning() -> Bool {
+        return started
+    }
+    
     func updateSceneSystems(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder) {
-        sceneManager.updateCurrentSceneSystems(deltaTime: deltaTime, renderEncoder: renderEncoder)
+        sceneManager?.updateCurrentSceneSystems(deltaTime: deltaTime, renderEncoder: renderEncoder)
     }
     
     func updateSceneCamera(aspectRatio: Float) {
-        sceneManager.updateCurrentSceneCamera(with: aspectRatio)
+        sceneManager?.updateCurrentSceneCamera(with: aspectRatio)
     }
+    
 }

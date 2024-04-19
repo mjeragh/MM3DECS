@@ -13,7 +13,7 @@ import MetalKit
 struct MetalView: View {
   let options: Options
   @State private var metalView = MTKView()
-    @State private var engine: Engine?
+    @StateObject private var engine = Engine()
     @State private var previousTranslation = CGSize.zero
   @State private var previousScroll: CGFloat = 1
 
@@ -23,16 +23,6 @@ struct MetalView: View {
         engine: engine,
         metalView: $metalView,
         options: options)
-        .onAppear {
-            let renderer = Renderer(metalView: metalView)
-            let engine = Engine(
-              renderer: renderer,
-              sceneManager: SceneManager(scene: GameScene(entityManager: EntityManager())),
-              options: options)
-            renderer.delegate = engine
-            engine.start()
-        }
-        
     }
   }
 }
@@ -41,22 +31,30 @@ struct MetalView: View {
 typealias ViewRepresentable = UIViewRepresentable
 
 struct MetalViewRepresentable: ViewRepresentable {
-  let engine: Engine?
+    @ObservedObject var engine : Engine
     @Binding var metalView: MTKView
   let options: Options
 
   
   func makeUIView(context: Context) -> MTKView {
-    metalView
+      let renderer = Renderer(metalView: metalView)
+      engine.setupGame(
+        renderer: renderer,
+        sceneManager: SceneManager(scene: GameScene(entityManager: EntityManager())),
+        options: options)
+      engine.start()
+      renderer.startRendering()
+      return metalView
   }
 
   func updateUIView(_ uiView: MTKView, context: Context) {
-    updateMetalView()
+    
+      updateMetalView()
   }
   
 
   func updateMetalView() {
-      engine?.updateOptions(options: options)
+      engine.updateOptions(options: options)
   }
 }
 
