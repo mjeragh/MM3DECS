@@ -124,8 +124,8 @@ class Renderer: NSObject {
 
 extension Renderer: MTKViewDelegate {
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        guard isReadyToRender else {
-                return
+        guard ((delegate?.isRunning()) != nil) else {
+            return
         }
         let aspect = Float(view.bounds.width) / Float(view.bounds.height)
         
@@ -141,9 +141,7 @@ extension Renderer: MTKViewDelegate {
     
     
     func draw(in view: MTKView) {
-        guard isReadyToRender else {
-                return
-        }
+        
         guard
             let commandBuffer = Renderer.commandQueue.makeCommandBuffer(),
             let descriptor = view.currentRenderPassDescriptor,

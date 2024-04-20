@@ -11,19 +11,16 @@ import MetalKit
 class Engine : ObservableObject{
     var sceneManager: SceneManager?
     var renderer: Renderer?
-    var started = false
+    var running = false
     var options: Options?
 //    var metalView: MTKView
 
     init() {
-        // Initialize SceneManager, Renderer, and any other systems
-//        self.metalView = metalView
-        
     }
 
     func start() {
         // Set up the game and start the game loop
-        started = true
+        //running = true
         //setupGame()
     }
 
@@ -48,7 +45,7 @@ class Engine : ObservableObject{
 
     func stop() {
         // Clean up before the game stops
-        started = false
+        running = false
     }
 
     // Additional methods for transitioning scenes, handling input, etc.
@@ -66,7 +63,7 @@ protocol RendererDelegate: AnyObject {
 extension Engine : RendererDelegate{
    
     func isRunning() -> Bool {
-        return started
+        running
     }
     
     func updateSceneSystems(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder) {
