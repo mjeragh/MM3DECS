@@ -27,13 +27,13 @@ class GameScene: SceneProtocol {
     func setUp() {
         
         // Set up entities specific to this scene
-        entityManager.addEntity(entity: entityManager.createCameraEntity(type: .perspective))
+        entityManager.addEntity(entity: entityManager.createCameraEntity(type: .arcball))
         
         setupEntites()
         
-        if let cameraEntity = entityManager.entities(for: PerspectiveCameraComponent.self).first,
+        if let cameraEntity = entityManager.entities(for: ArcballCameraComponent.self).first,
            var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity){
-            cameraTransform.position = [2, 2, -5]
+            cameraTransform.position = [0, -2, 5]
             cameraTransform.rotation = [0,0,0]
             entityManager.addComponent(component: cameraTransform, to: cameraEntity)
             //setup Systems
@@ -59,6 +59,7 @@ class GameScene: SceneProtocol {
                 entityManager.addEntity(entity: trainEntity)
                 entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "train.usd"), to: trainEntity)
         entityManager.addComponent(component: TransformComponent(position: float3(0, -0.6, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), to: trainEntity)
+        entityManager.addComponent(component: InputComponent(), to: trainEntity)
                // Add other entities and components as needed
         
     }
