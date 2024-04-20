@@ -139,7 +139,9 @@ extension Renderer: MTKViewDelegate {
     
     
     func draw(in view: MTKView) {
-        
+        guard delegate?.isRunning() == true else {
+            return
+        }
         guard
             let commandBuffer = Renderer.commandQueue.makeCommandBuffer(),
             let descriptor = view.currentRenderPassDescriptor,
