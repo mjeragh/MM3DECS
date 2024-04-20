@@ -24,6 +24,9 @@
 		B259C2952BAADDF50049BA2C /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2942BAADDF50049BA2C /* System.swift */; };
 		B259C2972BAADE760049BA2C /* EntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2962BAADE760049BA2C /* EntityManager.swift */; };
 		B259C29A2BAADF2A0049BA2C /* RendererSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2992BAADF2A0049BA2C /* RendererSystem.swift */; };
+		B294EDEC2BD3E88B008E6F2E /* InputSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDEB2BD3E88B008E6F2E /* InputSystem.swift */; };
+		B294EDEE2BD3E90F008E6F2E /* InputComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDED2BD3E90F008E6F2E /* InputComponent.swift */; };
+		B294EDF02BD3E983008E6F2E /* MovementSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDEF2BD3E983008E6F2E /* MovementSystem.swift */; };
 		B2E6D6DA2BCAE74D00F7D9B0 /* SceneManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E6D6D92BCAE74D00F7D9B0 /* SceneManager.swift */; };
 		B2E6D6DC2BCAE7C500F7D9B0 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E6D6DB2BCAE7C500F7D9B0 /* GameScene.swift */; };
 		B2E6D6DE2BCFAE1600F7D9B0 /* Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E6D6DD2BCFAE1600F7D9B0 /* Engine.swift */; };
@@ -52,6 +55,9 @@
 		B259C2942BAADDF50049BA2C /* System.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = System.swift; sourceTree = "<group>"; };
 		B259C2962BAADE760049BA2C /* EntityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityManager.swift; sourceTree = "<group>"; };
 		B259C2992BAADF2A0049BA2C /* RendererSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererSystem.swift; sourceTree = "<group>"; };
+		B294EDEB2BD3E88B008E6F2E /* InputSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputSystem.swift; sourceTree = "<group>"; };
+		B294EDED2BD3E90F008E6F2E /* InputComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputComponent.swift; sourceTree = "<group>"; };
+		B294EDEF2BD3E983008E6F2E /* MovementSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovementSystem.swift; sourceTree = "<group>"; };
 		B2E6D6D92BCAE74D00F7D9B0 /* SceneManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneManager.swift; sourceTree = "<group>"; };
 		B2E6D6DB2BCAE7C500F7D9B0 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		B2E6D6DD2BCFAE1600F7D9B0 /* Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engine.swift; sourceTree = "<group>"; };
@@ -87,6 +93,7 @@
 		B259C2642BA2FABE0049BA2C /* MM3DECS */ = {
 			isa = PBXGroup;
 			children = (
+				B294EDEA2BD3E84D008E6F2E /* Navigation */,
 				B2E6D6D82BCAE6D300F7D9B0 /* Scenes */,
 				B259C28F2BAADCE70049BA2C /* ECS */,
 				B259C2652BA2FABE0049BA2C /* MM3DECSApp.swift */,
@@ -168,6 +175,16 @@
 				B259C2992BAADF2A0049BA2C /* RendererSystem.swift */,
 			);
 			path = Renderer;
+			sourceTree = "<group>";
+		};
+		B294EDEA2BD3E84D008E6F2E /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				B294EDEB2BD3E88B008E6F2E /* InputSystem.swift */,
+				B294EDED2BD3E90F008E6F2E /* InputComponent.swift */,
+				B294EDEF2BD3E983008E6F2E /* MovementSystem.swift */,
+			);
+			path = Navigation;
 			sourceTree = "<group>";
 		};
 		B2E6D6D82BCAE6D300F7D9B0 /* Scenes */ = {
@@ -257,12 +274,15 @@
 				B259C2892BA303B90049BA2C /* Fragment.metal in Sources */,
 				B259C2972BAADE760049BA2C /* EntityManager.swift in Sources */,
 				B259C2682BA2FABE0049BA2C /* ContentView.swift in Sources */,
+				B294EDF02BD3E983008E6F2E /* MovementSystem.swift in Sources */,
+				B294EDEC2BD3E88B008E6F2E /* InputSystem.swift in Sources */,
 				B2E6D6DE2BCFAE1600F7D9B0 /* Engine.swift in Sources */,
 				B2E6D6DA2BCAE74D00F7D9B0 /* SceneManager.swift in Sources */,
 				B259C2792BA2FBD60049BA2C /* Options.swift in Sources */,
 				B259C2662BA2FABE0049BA2C /* MM3DECSApp.swift in Sources */,
 				B259C2952BAADDF50049BA2C /* System.swift in Sources */,
 				B259C27E2BA2FF710049BA2C /* MathLibrary.swift in Sources */,
+				B294EDEE2BD3E90F008E6F2E /* InputComponent.swift in Sources */,
 				B259C29A2BAADF2A0049BA2C /* RendererSystem.swift in Sources */,
 				B259C2912BAADD0E0049BA2C /* Entity.swift in Sources */,
 				B259C28A2BA303B90049BA2C /* Vertex.metal in Sources */,
