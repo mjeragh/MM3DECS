@@ -22,9 +22,10 @@ struct MetalView: View {
       MetalViewRepresentable(
         engine: engine,
         metalView: $metalView,
-        options: options).gesture(DragGesture().onChange{ gesture in
-            engine.inputSystem.touchesMoved(gesture: gesture)
-            
+        options: options).gesture(DragGesture().onChanged { gesture in
+            engine.inputSystem.touchMoved(gesture: gesture)
+        }.onEnded { _ in
+            engine.inputSystem.touchEnded()
         })
     }
   }
