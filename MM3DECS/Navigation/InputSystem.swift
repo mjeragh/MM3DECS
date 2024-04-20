@@ -20,13 +20,15 @@ class InputSystem: SystemProtocol {
         for entity in entities {
             if var inputComponent = entityManager.getComponent(type: InputComponent.self, for: entity) {
                 // Process the input component, e.g., update position based on touch
-                if var transform = entityManager.getComponent(type: TransformComponent.self, for: entity) {
-                    transform.position.x += Float(inputComponent.translation.width) * deltaTime
-                    transform.position.y += Float(inputComponent.translation.height) * deltaTime
-                    entityManager.addComponent(component: transform, to: entity)
+                if let transformComponent = entityManager.getComponent(type: TransformComponent.self, for: entity) {
+                    var mutableTransform = transformComponent
+                    mutableTransform.position.x += Float(inputComponent.translation.width) * deltaTime
+                    mutableTransform.position.y += Float(inputComponent.translation.height) * deltaTime
+                    entityManager.addComponent(component: mutableTransform, to: entity)
                 }
             }
         }
+
 
     }
     

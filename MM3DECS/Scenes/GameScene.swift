@@ -38,6 +38,7 @@ class GameScene: SceneProtocol {
             entityManager.addComponent(component: cameraTransform, to: cameraEntity)
             //setup Systems
             systems.append(RenderSystem(cameraEntity: cameraEntity))
+            systems.append(InputSystem())
         } else {
             print("Failed to retrieve transform component of camera entity.")
         }

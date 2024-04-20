@@ -23,9 +23,15 @@ struct MetalView: View {
         engine: engine,
         metalView: $metalView,
         options: options).gesture(DragGesture().onChanged { gesture in
-            engine.inputSystem.touchMoved(gesture: gesture)
+            if let gameScene = engine.sceneManager?.currentScene as? GameScene,
+               let inputSystem = gameScene.systems.compactMap({ $0 as? InputSystem }).first {
+                inputSystem.touchMoved(gesture: gesture)
+            }
         }.onEnded { _ in
-            engine.inputSystem.touchEnded()
+            if let gameScene = engine.sceneManager?.currentScene as? GameScene,
+               let inputSystem = gameScene.systems.compactMap({ $0 as? InputSystem }).first {
+                inputSystem.touchEnded()
+            }
         })
     }
   }
