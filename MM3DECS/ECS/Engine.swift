@@ -20,7 +20,7 @@ class Engine : ObservableObject{
 
     func start() {
         // Set up the game and start the game loop
-        //running = true
+        running = true
         //setupGame()
     }
 
@@ -35,7 +35,7 @@ class Engine : ObservableObject{
         self.renderer?.delegate = self
         
         //ensure this is the last call
-        self.renderer?.startRendering()
+        //self.renderer?.startRendering()
         
         
         // More setup as needed...

@@ -43,7 +43,6 @@ struct MetalViewRepresentable: ViewRepresentable {
         sceneManager: SceneManager(scene: GameScene(entityManager: EntityManager())),
         options: options)
       engine.start()
-      renderer.startRendering()
       return metalView
   }
 

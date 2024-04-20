@@ -56,9 +56,9 @@ class Renderer: NSObject {
     var isReadyToRender = false
     var params = Params()
     
-    func startRendering() {
-        self.isReadyToRender = true
-    }
+//    func startRendering() {
+//        self.isReadyToRender = true
+//    }
     
     init(metalView: MTKView) {
         guard
@@ -124,9 +124,7 @@ class Renderer: NSObject {
 
 extension Renderer: MTKViewDelegate {
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        guard ((delegate?.isRunning()) != nil) else {
-            return
-        }
+        
         let aspect = Float(view.bounds.width) / Float(view.bounds.height)
         
         delegate?.updateSceneCamera(aspectRatio: aspect)
@@ -153,7 +151,7 @@ extension Renderer: MTKViewDelegate {
         renderEncoder.setDepthStencilState(depthStencilState)
         renderEncoder.setFragmentBytes(
             &params,
-            length: MemoryLayout<Uniforms>.stride,
+            length: MemoryLayout<Params>.stride,
             index: 12)
         renderEncoder.setRenderPipelineState(forwardPassPipelineState)
         
