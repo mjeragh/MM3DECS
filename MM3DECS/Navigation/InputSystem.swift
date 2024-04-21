@@ -36,10 +36,21 @@ class InputSystem: SystemProtocol {
 
     func touchMoved(gesture: DragGesture.Value) {
         // Similar logic as touchBegan, update camera position if it's the selected entity
+        if let cameraEntity = entityManager.entities(for: CameraInputComponent.self).first {
+                    var cameraInput = entityManager.getComponent(type: CameraInputComponent.self, for: cameraEntity) ?? CameraInputComponent()
+                    cameraInput.dragCurrentPosition = position
+                    entityManager.addComponent(component: cameraInput, to: cameraEntity)
+                }
     }
 
     func touchEnded(gesture: DragGesture.Value) {
         // Clear selected state or camera input as needed
+        if let cameraEntity = entityManager.entities(for: CameraInputComponent.self).first {
+                    var cameraInput = entityManager.getComponent(type: CameraInputComponent.self, for: cameraEntity) ?? CameraInputComponent()
+                    cameraInput.dragStartPosition = nil
+                    cameraInput.dragCurrentPosition = nil
+                    entityManager.addComponent(component: cameraInput, to: cameraEntity)
+                }
     }
 
     private func performPicking(at location: CGPoint) -> Entity? {
