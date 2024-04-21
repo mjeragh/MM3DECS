@@ -7,16 +7,24 @@
 
 import Metal
 
+import os.log
+import os.signpost
+
+
 class CameraControlSystem: SystemProtocol {
+    let logger = Logger(subsystem: "com.lanterntech.mm3d", category: "CameraControlSystem")
+    
     func update(deltaTime: Float, entityManager: EntityManager, renderEncoder: any MTLRenderCommandEncoder) {
         // Get camera input component and apply movement to camera's transform component
-        let chosenRotationSpeed: Float = 0.01
+        let chosenRotationSpeed: Float = 1.11
         if let cameraEntity = entityManager.entities(for: CameraInputComponent.self).first,
                    let cameraInput = entityManager.getComponent(type: CameraInputComponent.self, for: cameraEntity),
                    let transform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity),
                    let dragStartPosition = cameraInput.dragStartPosition,
                    let dragCurrentPosition = cameraInput.dragCurrentPosition {
-
+            
+            logger.debug("CameraControlSystem: Updating camera transform startPosition(\(dragStartPosition.x), \(dragStartPosition.y))\n currentPosition(\(dragCurrentPosition.x),\(dragCurrentPosition.y))\n")
+                    
                     // Calculate the amount of drag
                     let dragDistance = CGPoint(x: dragCurrentPosition.x - dragStartPosition.x, y: dragCurrentPosition.y - dragStartPosition.y)
                     

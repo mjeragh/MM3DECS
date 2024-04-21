@@ -27,10 +27,10 @@ struct MetalView: View {
                let inputSystem = gameScene.systems.compactMap({ $0 as? InputSystem }).first {
                 inputSystem.touchMoved(gesture: gesture)
             }
-        }.onEnded { _ in
+        }.onEnded { gesture in
             if let gameScene = engine.sceneManager?.currentScene as? GameScene,
                let inputSystem = gameScene.systems.compactMap({ $0 as? InputSystem }).first {
-                inputSystem.touchEnded()
+                inputSystem.touchEnded(gesture: gesture)
             }
         })
     }

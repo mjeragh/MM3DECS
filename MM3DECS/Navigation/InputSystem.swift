@@ -39,6 +39,7 @@ class InputSystem: SystemProtocol {
 
     func touchMoved(gesture: DragGesture.Value) {
         // Similar logic as touchBegan, update camera position if it's the selected entity
+        let position = gesture.location
         if let cameraEntity = entityManager!.entities(for: CameraInputComponent.self).first {
                     var cameraInput = entityManager!.getComponent(type: CameraInputComponent.self, for: cameraEntity) ?? CameraInputComponent()
                     cameraInput.dragCurrentPosition = position
