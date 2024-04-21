@@ -37,15 +37,41 @@ class InputSystem: SystemProtocol {
         }
     }
 
-    func touchMoved(gesture: DragGesture.Value) {
-        // Similar logic as touchBegan, update camera position if it's the selected entity
-        let position = gesture.location
-        if let cameraEntity = entityManager!.entities(for: CameraInputComponent.self).first {
-                    var cameraInput = entityManager!.getComponent(type: CameraInputComponent.self, for: cameraEntity) ?? CameraInputComponent()
-                    cameraInput.dragCurrentPosition = position
+    func touchMovedOrBegan(gesture: DragGesture.Value) {
+        let touchLocation = gesture.location
+        // Get the camera entity
+            if let cameraEntity = entityManager!.entities(for: CameraInputComponent.self).first,
+               var cameraInput = entityManager!.getComponent(type: CameraInputComponent.self, for: cameraEntity) {
+                
+                // Check if this is the first touch
+                if cameraInput.dragStartPosition == nil {//it is began
+                    
+                    if let selectedEntity = performPicking(at: touchLocation) {
+                        // An object was touched, mark it as selected
+                        var selectionComponent = entityManager!.getComponent(type: SelectionComponent.self, for: selectedEntity) ?? SelectionComponent(isSelected: false)
+                        selectionComponent.isSelected = true
+                        entityManager!.addComponent(component: selectionComponent, to: selectedEntity)
+                    } else {
+                        // No object was touched, the camera should be marked as selected
+                        if let cameraEntity = entityManager!.entities(for: CameraInputComponent.self).first {
+                            var cameraInput = entityManager!.getComponent(type: CameraInputComponent.self, for: cameraEntity) ?? CameraInputComponent()
+                            cameraInput.dragStartPosition = touchLocation
+                            entityManager!.addComponent(component: cameraInput, to: cameraEntity)
+                        }
+                    }
+                }//began
+                else {//it is moved
+                    // Similar logic as touchBegan, update camera position if it's the selected entity
+                    cameraInput.dragCurrentPosition = touchLocation
                     entityManager!.addComponent(component: cameraInput, to: cameraEntity)
-                }
-    }
+                    //later I need to check if the camera is selected
+                            
+                }//else moved
+                
+            }
+        
+       
+    }//touchedMovedOrBegan
 
     func touchEnded(gesture: DragGesture.Value) {
         // Clear selected state or camera input as needed
@@ -53,6 +79,7 @@ class InputSystem: SystemProtocol {
                     var cameraInput = entityManager!.getComponent(type: CameraInputComponent.self, for: cameraEntity) ?? CameraInputComponent()
                     cameraInput.dragStartPosition = nil
                     cameraInput.dragCurrentPosition = nil
+                    cameraInput.lastTouchPosition = nil
                     entityManager!.addComponent(component: cameraInput, to: cameraEntity)
                 }
     }
