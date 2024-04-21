@@ -11,34 +11,39 @@ import SwiftUI
 
 
 class InputSystem: SystemProtocol {
-    var currentTouches = [CGPoint]()
+    func update(deltaTime: Float, entityManager: EntityManager, renderEncoder: any MTLRenderCommandEncoder) {
+        //not implemented
+    }
     
-    func update(deltaTime: Float, entityManager: EntityManager, renderEncoder: MTLRenderCommandEncoder) {
-        // Here, you would process the currentTouches or other input states
-        // For each entity that can be moved or interacted with via touch:
-        let entities = entityManager.entitiesWithComponents([InputComponent.self])
-        for entity in entities {
-            if var inputComponent = entityManager.getComponent(type: InputComponent.self, for: entity) {
-                // Process the input component, e.g., update position based on touch
-                if let transformComponent = entityManager.getComponent(type: TransformComponent.self, for: entity) {
-                    var mutableTransform = transformComponent
-                    mutableTransform.position.x += Float(inputComponent.translation.width) * deltaTime
-                    mutableTransform.position.y += Float(inputComponent.translation.height) * deltaTime
-                    entityManager.addComponent(component: mutableTransform, to: entity)
-                }
+    // Other methods...
+
+    func touchBegan(gesture: DragGesture.Value) {
+        let touchLocation = gesture.location
+        if let selectedEntity = performPicking(at: touchLocation) {
+            // An object was touched, mark it as selected
+            var selectionComponent = entityManager.getComponent(type: SelectionComponent.self, for: selectedEntity) ?? SelectionComponent(isSelected: false)
+            selectionComponent.isSelected = true
+            entityManager.addComponent(component: selectionComponent, to: selectedEntity)
+        } else {
+            // No object was touched, the camera should be marked as selected
+            if let cameraEntity = entityManager.entities(for: CameraInputComponent.self).first {
+                var cameraInput = entityManager.getComponent(type: CameraInputComponent.self, for: cameraEntity) ?? CameraInputComponent()
+                cameraInput.lastTouchPosition = touchLocation
+                entityManager.addComponent(component: cameraInput, to: cameraEntity)
             }
         }
-
-
     }
-    
+
     func touchMoved(gesture: DragGesture.Value) {
-        let translation = gesture.translation
-        // Store or update touch location in a more comprehensive manner
-        currentTouches.append(CGPoint(x: translation.width, y: translation.height))
+        // Similar logic as touchBegan, update camera position if it's the selected entity
     }
 
-    func touchEnded() {
-        currentTouches.removeAll()
+    func touchEnded(gesture: DragGesture.Value) {
+        // Clear selected state or camera input as needed
+    }
+
+    private func performPicking(at location: CGPoint) -> Entity? {
+        // Implement picking logic and return the entity if touched
+        return nil // Replace with actual logic
     }
 }

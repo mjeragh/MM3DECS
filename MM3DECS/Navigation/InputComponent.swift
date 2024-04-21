@@ -17,7 +17,7 @@ struct InputComponent: Component {
     var motion: CMAcceleration? // Accelerometer data for motion-based inputs
 
     // Initialize with default values
-    init() {
+    init(translation: CGSize = .zero, velocity: CGSize = .zero, isTouching: Bool = false, tapCount: Int = 0, scale: CGFloat = 1.0, rotation: CGFloat = 0.0, motion: CMAcceleration? = nil) {
         self.translation = .zero
         self.velocity = .zero
         self.isTouching = false

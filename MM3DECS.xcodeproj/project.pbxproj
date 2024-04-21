@@ -26,6 +26,10 @@
 		B259C29A2BAADF2A0049BA2C /* RendererSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2992BAADF2A0049BA2C /* RendererSystem.swift */; };
 		B294EDEC2BD3E88B008E6F2E /* InputSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDEB2BD3E88B008E6F2E /* InputSystem.swift */; };
 		B294EDEE2BD3E90F008E6F2E /* InputComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDED2BD3E90F008E6F2E /* InputComponent.swift */; };
+		B294EDF22BD4F863008E6F2E /* SelectionComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDF12BD4F863008E6F2E /* SelectionComponent.swift */; };
+		B294EDF42BD4FA1A008E6F2E /* SelectionSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDF32BD4FA1A008E6F2E /* SelectionSystem.swift */; };
+		B294EDF62BD4FB41008E6F2E /* CameraInputComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDF52BD4FB41008E6F2E /* CameraInputComponent.swift */; };
+		B294EDF82BD4FBA7008E6F2E /* CameraControlSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDF72BD4FBA7008E6F2E /* CameraControlSystem.swift */; };
 		B2E6D6DA2BCAE74D00F7D9B0 /* SceneManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E6D6D92BCAE74D00F7D9B0 /* SceneManager.swift */; };
 		B2E6D6DC2BCAE7C500F7D9B0 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E6D6DB2BCAE7C500F7D9B0 /* GameScene.swift */; };
 		B2E6D6DE2BCFAE1600F7D9B0 /* Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E6D6DD2BCFAE1600F7D9B0 /* Engine.swift */; };
@@ -56,6 +60,10 @@
 		B259C2992BAADF2A0049BA2C /* RendererSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererSystem.swift; sourceTree = "<group>"; };
 		B294EDEB2BD3E88B008E6F2E /* InputSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputSystem.swift; sourceTree = "<group>"; };
 		B294EDED2BD3E90F008E6F2E /* InputComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputComponent.swift; sourceTree = "<group>"; };
+		B294EDF12BD4F863008E6F2E /* SelectionComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionComponent.swift; sourceTree = "<group>"; };
+		B294EDF32BD4FA1A008E6F2E /* SelectionSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionSystem.swift; sourceTree = "<group>"; };
+		B294EDF52BD4FB41008E6F2E /* CameraInputComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraInputComponent.swift; sourceTree = "<group>"; };
+		B294EDF72BD4FBA7008E6F2E /* CameraControlSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraControlSystem.swift; sourceTree = "<group>"; };
 		B2E6D6D92BCAE74D00F7D9B0 /* SceneManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneManager.swift; sourceTree = "<group>"; };
 		B2E6D6DB2BCAE7C500F7D9B0 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		B2E6D6DD2BCFAE1600F7D9B0 /* Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engine.swift; sourceTree = "<group>"; };
@@ -180,6 +188,10 @@
 			children = (
 				B294EDEB2BD3E88B008E6F2E /* InputSystem.swift */,
 				B294EDED2BD3E90F008E6F2E /* InputComponent.swift */,
+				B294EDF12BD4F863008E6F2E /* SelectionComponent.swift */,
+				B294EDF32BD4FA1A008E6F2E /* SelectionSystem.swift */,
+				B294EDF52BD4FB41008E6F2E /* CameraInputComponent.swift */,
+				B294EDF72BD4FBA7008E6F2E /* CameraControlSystem.swift */,
 			);
 			path = Navigation;
 			sourceTree = "<group>";
@@ -266,8 +278,11 @@
 			files = (
 				B259C2832BA3001D0049BA2C /* VertexDescriptor.swift in Sources */,
 				B259C2932BAADD370049BA2C /* Component.swift in Sources */,
+				B294EDF42BD4FA1A008E6F2E /* SelectionSystem.swift in Sources */,
 				B259C27B2BA2FBDE0049BA2C /* MetalView.swift in Sources */,
 				B259C2842BA3001D0049BA2C /* Renderer.swift in Sources */,
+				B294EDF62BD4FB41008E6F2E /* CameraInputComponent.swift in Sources */,
+				B294EDF82BD4FBA7008E6F2E /* CameraControlSystem.swift in Sources */,
 				B259C2892BA303B90049BA2C /* Fragment.metal in Sources */,
 				B259C2972BAADE760049BA2C /* EntityManager.swift in Sources */,
 				B259C2682BA2FABE0049BA2C /* ContentView.swift in Sources */,
@@ -276,6 +291,7 @@
 				B2E6D6DA2BCAE74D00F7D9B0 /* SceneManager.swift in Sources */,
 				B259C2792BA2FBD60049BA2C /* Options.swift in Sources */,
 				B259C2662BA2FABE0049BA2C /* MM3DECSApp.swift in Sources */,
+				B294EDF22BD4F863008E6F2E /* SelectionComponent.swift in Sources */,
 				B259C2952BAADDF50049BA2C /* System.swift in Sources */,
 				B259C27E2BA2FF710049BA2C /* MathLibrary.swift in Sources */,
 				B294EDEE2BD3E90F008E6F2E /* InputComponent.swift in Sources */,
