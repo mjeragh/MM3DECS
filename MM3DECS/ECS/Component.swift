@@ -28,7 +28,7 @@ struct TransformComponent: Component {
     var forward : float3 {
         // Compute the forward direction of the camera
         let yaw = rotation.y
-        return float3(-sin(yaw), 0, cos(yaw)) // Assuming y is up and z is forward
+        return float3(-sin(yaw), 0, cos(yaw)) // Assuming y is up and z is backward
     }
     
     // Compute the model matrix using your math utilities

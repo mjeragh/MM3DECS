@@ -32,7 +32,8 @@ class CameraControlSystem: SystemProtocol {
             logger.debug("CameraControlSystem: Updating camera transform startPosition(\(dragStartPosition.x), \(dragStartPosition.y))\n currentPosition(\(dragCurrentPosition.x),\(dragCurrentPosition.y))\n")
             // Constants for the distance scale can be adjusted to fit the needs of your application.
             // It could be based on the initial distance of the camera or just a fixed value that feels right.
-            let fixedDistanceScale: Float = 25.0  // This value should be tuned to your liking.
+            let fixedDistanceScale: Float = 125.0  
+            // This value should be tuned to your liking. large numbers for big worlds, while smaller numbers for smaller worlds
 
             
             
@@ -41,22 +42,11 @@ class CameraControlSystem: SystemProtocol {
             logger.debug("CameraControlSystem: transform(\(transform.position.x), \(transform.position.y), \(transform.position.z)\n")
             
                     let rotationDelta = -Float(dragDelta.x) * deltaTime * Settings.rotationSpeed
-            // Clamp rotationDelta to avoid large values
-                    let clampedRotationDelta = clamp(rotationDelta, min: -1, max: 1)
+            
             
             // Apply incremental rotation around the Y axis
                     transform.rotation.y += rotationDelta
-                        
-            
-            // Assuming camera looks at point (0,0,0), you could adjust this to be a real target point
-                  let target = float3(0, 0, 0)
-            
-            // Compute the normalized direction from the camera to the target point.
-               // let cameraToTargetNormalized = normalize(target - transform.position)
-               
-            // Normalize vectors if they're not already normalized
-//                transform.forward = normalize(transform.forward)
-            
+       
             // Calculate the right vector for horizontal movement
             let rightVector = normalize(cross(transform.up, normalize(transform.forward)))
 
@@ -71,7 +61,7 @@ class CameraControlSystem: SystemProtocol {
                     
             // Clamping the rotation and position to avoid erratic behavior.
                 transform.rotation.y = clampAngle(transform.rotation.y)
-                transform.position = clampPosition(transform.position, within: [-100, 100]) // Example bounds
+                transform.position = clampPosition(transform.position, within: [-180, 180]) // Example bounds
                 
             guard isFinite(transform.position.x) && isFinite(transform.position.y) && isFinite(transform.position.z) else {
                             // Reset transform if values become extreme or NaN
