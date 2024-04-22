@@ -11,8 +11,8 @@ import os.log
 import os.signpost
 
 enum Settings {
-    static var rotationSpeed : Float { 0.5 }
-    static var translationSpeed : Float { 30.0 }
+    static var rotationSpeed : Float { 1.5 }
+    static var translationSpeed : Float { 3.0 }
     static var mouseScrollSensitivity : Float { 0.1 }
     static var mousePanSensitivity : Float { 0.008 }
     static var touchZoomSensitivity: Float { 10 }
@@ -25,7 +25,7 @@ class CameraControlSystem: SystemProtocol {
         // Get camera input component and apply movement to camera's transform component
         if let cameraEntity = entityManager.entities(for: CameraInputComponent.self).first,
                    var cameraInput = entityManager.getComponent(type: CameraInputComponent.self, for: cameraEntity),
-                   let transform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity),
+                   var transform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity),
                    let dragStartPosition = cameraInput.dragStartPosition,
                    let dragCurrentPosition = cameraInput.dragCurrentPosition {
             
@@ -36,17 +36,48 @@ class CameraControlSystem: SystemProtocol {
             logger.debug("CameraControlSystem: transform(\(transform.position.x), \(transform.position.y), \(transform.position.z)\n")
             
                     let rotationDelta = -Float(dragDelta.x) * deltaTime * Settings.rotationSpeed
-                    // Convert the drag distance to a rotation or translation value
-                    var newTransform = transform
-                    
-                    newTransform.position.y += rotationDelta
-            // Add any other transformation updates here
-            logger.debug("CameraControlSystem: newT(\(newTransform.position.x), \(newTransform.position.y), \(newTransform.position.z)\n")
-                        // Update the transform component of the camera entity
-                        entityManager.addComponent(component: newTransform, to: cameraEntity)
+            // Clamp rotationDelta to avoid large values
+                    let clampedRotationDelta = clamp(value: rotationDelta, min: -1, max: 1)
             
-                        cameraInput.dragStartPosition = dragCurrentPosition
-                        entityManager.addComponent(component: cameraInput, to: cameraEntity)
+            // Apply incremental rotation around the Y axis
+                    transform.rotation.y += clampedRotationDelta
+                        
+            
+            // Assuming camera looks at point (0,0,0), you could adjust this to be a real target point
+                  let target = float3(0, 0, 0)
+                  let distanceScale = length(transform.position - target)
+                    
+            // Calculate the right vector for horizontal movement
+                    let rightVector = normalize(cross(transform.up, transform.position - target))
+            
+            // Apply rotation around the Y axis
+                    transform.rotation.y += rotationDelta
+                    
+                    // Apply horizontal and vertical movement
+                    transform.position += rightVector * Float(dragDelta.x) * deltaTime * Settings.translationSpeed * distanceScale
+                    transform.position += transform.up * Float(-dragDelta.y) * deltaTime * Settings.translationSpeed * distanceScale
+                    
+            
+            guard isFinite(transform.position.x) && isFinite(transform.position.y) && isFinite(transform.position.z) else {
+                            // Reset transform if values become extreme or NaN
+                            transform.position = float3(0, 0, 5) // Example default position
+                            transform.rotation = float3(0, 0, 0) // Example default rotation
+                            cameraInput.dragStartPosition = nil
+                            logger.warning("CameraControlSystem: Resetting camera transform due to extreme values")
+                            return
+                        }
+            // Update components
+                    entityManager.addComponent(component: transform, to: cameraEntity)
+                    cameraInput.dragStartPosition = dragCurrentPosition
+                    entityManager.addComponent(component: cameraInput, to: cameraEntity)
                     }
     }
+    
+    private func clamp<T: Comparable>(value: T, min: T, max: T) -> T {
+            return Swift.max(min, Swift.min(max, value))
+        }
+        
+        private func isFinite(_ value: Float) -> Bool {
+            return !value.isInfinite && !value.isNaN
+        }
 }

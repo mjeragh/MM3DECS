@@ -16,8 +16,9 @@ struct TransformComponent: Component {
     var position: float3
     var rotation: float3 // Use Euler angles for simplicity here; consider quaternions for complex rotations
     var scale: float3
+    var up: float3 = [0, 1, 0] // Up vector for the camera
 
-    init(position: float3 = [0, 0, 0], rotation: float3 = [0, 0, 0], scale: float3 = [1, 1, 1]) {
+    init(position: float3 = [0, 0, 0], rotation: float3 = [0, 0, 0], scale: float3 = [1, 1, 1], up: float3 = [0,1,0]) {
         self.position = position
         self.rotation = rotation
         self.scale = scale
