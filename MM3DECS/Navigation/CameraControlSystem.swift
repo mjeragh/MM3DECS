@@ -50,12 +50,12 @@ class CameraControlSystem: SystemProtocol {
             // Calculate the right vector for horizontal movement
                     let rightVector = normalize(cross(transform.up, transform.position - target))
             
-            // Apply rotation around the Y axis
-                    transform.rotation.y += rotationDelta
-                    
-                    // Apply horizontal and vertical movement
-                    transform.position += rightVector * Float(dragDelta.x) * deltaTime * Settings.translationSpeed * distanceScale
-                    transform.position += transform.up * Float(-dragDelta.y) * deltaTime * Settings.translationSpeed * distanceScale
+            // Apply incremental horizontal and vertical movement
+                        let horizontalMove = rightVector * Float(dragDelta.x) * deltaTime * Settings.translationSpeed * distanceScale
+                        let verticalMove = transform.up * Float(-dragDelta.y) * deltaTime * Settings.translationSpeed * distanceScale
+                        
+                        // Apply movement and check for extreme values
+                        transform.position = transform.position + horizontalMove + verticalMove
                     
             
             guard isFinite(transform.position.x) && isFinite(transform.position.y) && isFinite(transform.position.z) else {
@@ -64,6 +64,9 @@ class CameraControlSystem: SystemProtocol {
                             transform.rotation = float3(0, 0, 0) // Example default rotation
                             cameraInput.dragStartPosition = nil
                             logger.warning("CameraControlSystem: Resetting camera transform due to extreme values")
+                            entityManager.addComponent(component: transform, to: cameraEntity)
+                            cameraInput.dragCurrentPosition = nil
+                            entityManager.addComponent(component: cameraInput, to: cameraEntity)
                             return
                         }
             // Update components
