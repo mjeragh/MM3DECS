@@ -45,17 +45,31 @@ class CameraControlSystem: SystemProtocol {
             
             // Assuming camera looks at point (0,0,0), you could adjust this to be a real target point
                   let target = float3(0, 0, 0)
-                  let distanceScale = length(transform.position - target)
-                    
+            
+            // Compute the normalized direction from the camera to the target point.
+                let cameraToTargetNormalized = normalize(target - transform.position)
+                  
             // Calculate the right vector for horizontal movement
-                    let rightVector = normalize(cross(transform.up, transform.position - target))
+                let rightVector = normalize(cross(transform.up, cameraToTargetNormalized))
+
+            
+            // The distance scale should not be the length from the camera to the target but rather a fixed scaling factor.
+                // You could use a fixed value or compute a scaling factor based on the initial distance from the camera to the target.
+                // For example:
+                let initialDistance = length(float3(0, 0, 5) - target) // Replace with your initial camera distance
+                let distanceScale = min(length(transform.position - target) / initialDistance, 1.0)
+
+                    
+            
             
             // Apply incremental horizontal and vertical movement
-                        let horizontalMove = rightVector * Float(dragDelta.x) * deltaTime * Settings.translationSpeed * distanceScale
-                        let verticalMove = transform.up * Float(-dragDelta.y) * deltaTime * Settings.translationSpeed * distanceScale
+                let horizontalMove = rightVector * Float(dragDelta.x) * deltaTime * Settings.translationSpeed
+                let verticalMove = transform.up * Float(-dragDelta.y) * deltaTime * Settings.translationSpeed
+                
                         
-                        // Apply movement and check for extreme values
-                        transform.position = transform.position + horizontalMove + verticalMove
+            // Incrementally update the position, clamped by a factor of the initial distance
+                transform.position += horizontalMove * distanceScale
+                transform.position += verticalMove * distanceScale
                     
             
             guard isFinite(transform.position.x) && isFinite(transform.position.y) && isFinite(transform.position.z) else {
