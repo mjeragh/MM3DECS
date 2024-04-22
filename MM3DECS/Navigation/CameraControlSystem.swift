@@ -30,7 +30,12 @@ class CameraControlSystem: SystemProtocol {
                    let dragCurrentPosition = cameraInput.dragCurrentPosition {
             
             logger.debug("CameraControlSystem: Updating camera transform startPosition(\(dragStartPosition.x), \(dragStartPosition.y))\n currentPosition(\(dragCurrentPosition.x),\(dragCurrentPosition.y))\n")
-                    
+            // Constants for the distance scale can be adjusted to fit the needs of your application.
+            // It could be based on the initial distance of the camera or just a fixed value that feels right.
+            let fixedDistanceScale: Float = 25.0  // This value should be tuned to your liking.
+
+            
+            
                     // Calculate the amount of drag
                     let dragDelta = CGPoint(x: dragCurrentPosition.x - dragStartPosition.x, y: dragCurrentPosition.y - dragStartPosition.y)
             logger.debug("CameraControlSystem: transform(\(transform.position.x), \(transform.position.y), \(transform.position.z)\n")
@@ -40,36 +45,26 @@ class CameraControlSystem: SystemProtocol {
                     let clampedRotationDelta = clamp(value: rotationDelta, min: -1, max: 1)
             
             // Apply incremental rotation around the Y axis
-                    transform.rotation.y += clampedRotationDelta
+                    transform.rotation.y += rotationDelta
                         
             
             // Assuming camera looks at point (0,0,0), you could adjust this to be a real target point
                   let target = float3(0, 0, 0)
             
             // Compute the normalized direction from the camera to the target point.
-                let cameraToTargetNormalized = normalize(target - transform.position)
+               // let cameraToTargetNormalized = normalize(target - transform.position)
                   
             // Calculate the right vector for horizontal movement
-                let rightVector = normalize(cross(transform.up, cameraToTargetNormalized))
+            let rightVector = normalize(cross(transform.up, transform.forward))
 
+                 
             
-            // The distance scale should not be the length from the camera to the target but rather a fixed scaling factor.
-                // You could use a fixed value or compute a scaling factor based on the initial distance from the camera to the target.
-                // For example:
-                let initialDistance = length(float3(0, 0, 5) - target) // Replace with your initial camera distance
-                let distanceScale = min(length(transform.position - target) / initialDistance, 1.0)
+            // Apply horizontal and vertical movement
+            let horizontalMove = rightVector * Float(dragDelta.x) * deltaTime * Settings.translationSpeed * fixedDistanceScale
+            let verticalMove = transform.up * Float(-dragDelta.y) * deltaTime * Settings.translationSpeed * fixedDistanceScale
 
-                    
-            
-            
-            // Apply incremental horizontal and vertical movement
-                let horizontalMove = rightVector * Float(dragDelta.x) * deltaTime * Settings.translationSpeed
-                let verticalMove = transform.up * Float(-dragDelta.y) * deltaTime * Settings.translationSpeed
-                
-                        
-            // Incrementally update the position, clamped by a factor of the initial distance
-                transform.position += horizontalMove * distanceScale
-                transform.position += verticalMove * distanceScale
+            // Update the transform position
+            transform.position += horizontalMove + verticalMove
                     
             
             guard isFinite(transform.position.x) && isFinite(transform.position.y) && isFinite(transform.position.z) else {

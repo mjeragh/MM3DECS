@@ -17,6 +17,7 @@ struct TransformComponent: Component {
     var rotation: float3 // Use Euler angles for simplicity here; consider quaternions for complex rotations
     var scale: float3
     var up: float3 = [0, 1, 0] // Up vector for the camera
+    
 
     init(position: float3 = [0, 0, 0], rotation: float3 = [0, 0, 0], scale: float3 = [1, 1, 1], up: float3 = [0,1,0]) {
         self.position = position
@@ -24,6 +25,12 @@ struct TransformComponent: Component {
         self.scale = scale
     }
 
+    var forward : float3 {
+        // Compute the forward direction of the camera
+        let yaw = rotation.y
+        return float3(-sin(yaw), 0, cos(yaw)) // Assuming y is up and z is forward
+    }
+    
     // Compute the model matrix using your math utilities
     var modelMatrix: float4x4 {
         // Translation matrix from your math utilities
