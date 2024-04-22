@@ -42,7 +42,7 @@ class CameraControlSystem: SystemProtocol {
             
                     let rotationDelta = -Float(dragDelta.x) * deltaTime * Settings.rotationSpeed
             // Clamp rotationDelta to avoid large values
-                    let clampedRotationDelta = clamp(value: rotationDelta, min: -1, max: 1)
+                    let clampedRotationDelta = clamp(rotationDelta, min: -1, max: 1)
             
             // Apply incremental rotation around the Y axis
                     transform.rotation.y += rotationDelta
@@ -53,9 +53,12 @@ class CameraControlSystem: SystemProtocol {
             
             // Compute the normalized direction from the camera to the target point.
                // let cameraToTargetNormalized = normalize(target - transform.position)
-                  
+               
+            // Normalize vectors if they're not already normalized
+//                transform.forward = normalize(transform.forward)
+            
             // Calculate the right vector for horizontal movement
-            let rightVector = normalize(cross(transform.up, transform.forward))
+            let rightVector = normalize(cross(transform.up, normalize(transform.forward)))
 
                  
             
@@ -66,7 +69,10 @@ class CameraControlSystem: SystemProtocol {
             // Update the transform position
             transform.position += horizontalMove + verticalMove
                     
-            
+            // Clamping the rotation and position to avoid erratic behavior.
+                transform.rotation.y = clampAngle(transform.rotation.y)
+                transform.position = clampPosition(transform.position, within: [-100, 100]) // Example bounds
+                
             guard isFinite(transform.position.x) && isFinite(transform.position.y) && isFinite(transform.position.z) else {
                             // Reset transform if values become extreme or NaN
                             transform.position = float3(0, 0, 5) // Example default position
@@ -85,11 +91,37 @@ class CameraControlSystem: SystemProtocol {
                     }
     }
     
-    private func clamp<T: Comparable>(value: T, min: T, max: T) -> T {
-            return Swift.max(min, Swift.min(max, value))
-        }
-        
+//    private func clamp<T: Comparable>(value: T, min: T, max: T) -> T {
+//            return Swift.max(min, Swift.min(max, value))
+//        }
+//        
         private func isFinite(_ value: Float) -> Bool {
             return !value.isInfinite && !value.isNaN
         }
+    
+    private func clampAngle(_ angle: Float) -> Float {
+        // Assuming angle is in radians and we want to keep it between -PI and PI
+        return fmod(angle + .pi, 2 * .pi) - .pi
+    }
+
+    private func clampPosition(_ position: float3, within bounds: [Float]) -> float3 {
+        return float3(
+            clamp(position.x, min: bounds[0], max: bounds[1]),
+            clamp(position.y, min: bounds[0], max: bounds[1]),
+            clamp(position.z, min: bounds[0], max: bounds[1])
+        )
+    }
+
+    private func clamp(_ value: Float, min: Float, max: Float) -> Float {
+        return Swift.max(min, Swift.min(max, value))
+    }
+
+    private func normalize(_ vector: float3) -> float3 {
+        let lengthSquared = dot(vector, vector)
+        if lengthSquared > 0 {
+            let invLength = rsqrt(lengthSquared)
+            return vector * invLength
+        }
+        return vector // If length is zero, return the original vector
+    }
 }
