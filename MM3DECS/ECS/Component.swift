@@ -27,12 +27,15 @@ struct TransformComponent: Component {
 
     var forward : float3 {
         // Compute the forward direction of the camera
+        //Any change to calculating forward, update right and up
         let yaw = rotation.y
         return float3(-sin(yaw), 0, cos(yaw)) // Assuming y is up and z is backward
     }
     
     var right : float3 {
-        cross(up, forward.normalized)
+        [forward.z, forward.y, -forward.x] //since there is no pitch, and roll. otherwise we need a perpedicular vector, which we do the expensive
+        //cross product below.
+        //cross(up, forward) //since forward is already normalized, we don't need to normalize the result
     }
     
     // Compute the model matrix using your math utilities

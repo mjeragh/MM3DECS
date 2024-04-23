@@ -56,6 +56,7 @@ class CameraControlSystem: SystemProtocol {
                     
             // Clamping the rotation and position to avoid erratic behavior.
                 transform.rotation.y = clampAngle(transform.rotation.y)
+            logger.debug("CameraControlSystem: transform Y rotation(\(transform.rotation.y)\n")
                 transform.position = clampPosition(transform.position, within: [-180, 180]) // Example bounds
                 //The clamp position bounderis effect the smoothness of the camera movement, the bigger the smoother the movement
                 
