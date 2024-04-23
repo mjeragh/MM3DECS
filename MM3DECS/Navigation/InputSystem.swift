@@ -20,22 +20,6 @@ class InputSystem: SystemProtocol {
     
     // Other methods...
 
-    func touchBegan(gesture: DragGesture.Value) {
-        let touchLocation = gesture.location
-        if let selectedEntity = performPicking(at: touchLocation) {
-            // An object was touched, mark it as selected
-            var selectionComponent = entityManager!.getComponent(type: SelectionComponent.self, for: selectedEntity) ?? SelectionComponent(isSelected: false)
-            selectionComponent.isSelected = true
-            entityManager!.addComponent(component: selectionComponent, to: selectedEntity)
-        } else {
-            // No object was touched, the camera should be marked as selected
-            if let cameraEntity = entityManager!.entities(for: CameraInputComponent.self).first {
-                var cameraInput = entityManager!.getComponent(type: CameraInputComponent.self, for: cameraEntity) ?? CameraInputComponent()
-                cameraInput.lastTouchPosition = touchLocation
-                entityManager!.addComponent(component: cameraInput, to: cameraEntity)
-            }
-        }
-    }
 
     func touchMovedOrBegan(gesture: DragGesture.Value) {
         let touchLocation = gesture.location

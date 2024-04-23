@@ -32,7 +32,7 @@ class CameraControlSystem: SystemProtocol {
             logger.debug("CameraControlSystem: Updating camera transform startPosition(\(dragStartPosition.x), \(dragStartPosition.y))\n currentPosition(\(dragCurrentPosition.x),\(dragCurrentPosition.y))\n")
             // Constants for the distance scale can be adjusted to fit the needs of your application.
             // It could be based on the initial distance of the camera or just a fixed value that feels right.
-            let fixedDistanceScale: Float = 125.0  
+            let fixedDistanceScale: Float = 125.0
             // This value should be tuned to your liking. large numbers for big worlds, while smaller numbers for smaller worlds
 
             
@@ -62,6 +62,7 @@ class CameraControlSystem: SystemProtocol {
             // Clamping the rotation and position to avoid erratic behavior.
                 transform.rotation.y = clampAngle(transform.rotation.y)
                 transform.position = clampPosition(transform.position, within: [-180, 180]) // Example bounds
+                //The clamp position bounderis effect the smoothness of the camera movement, the bigger the smoother the movement
                 
             guard isFinite(transform.position.x) && isFinite(transform.position.y) && isFinite(transform.position.z) else {
                             // Reset transform if values become extreme or NaN
