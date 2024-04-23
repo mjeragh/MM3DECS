@@ -31,6 +31,10 @@ struct TransformComponent: Component {
         return float3(-sin(yaw), 0, cos(yaw)) // Assuming y is up and z is backward
     }
     
+    var right : float3 {
+        cross(up, forward.normalized)
+    }
+    
     // Compute the model matrix using your math utilities
     var modelMatrix: float4x4 {
         // Translation matrix from your math utilities

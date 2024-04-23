@@ -46,14 +46,9 @@ class CameraControlSystem: SystemProtocol {
             
             // Apply incremental rotation around the Y axis
                     transform.rotation.y += rotationDelta
-       
-            // Calculate the right vector for horizontal movement
-            let rightVector = normalize(cross(transform.up, normalize(transform.forward)))
-
-                 
-            
+           
             // Apply horizontal and vertical movement
-            let horizontalMove = rightVector * Float(dragDelta.x) * deltaTime * Settings.translationSpeed * fixedDistanceScale
+            let horizontalMove = transform.right * Float(dragDelta.x) * deltaTime * Settings.translationSpeed * fixedDistanceScale
             let verticalMove = transform.up * Float(-dragDelta.y) * deltaTime * Settings.translationSpeed * fixedDistanceScale
 
             // Update the transform position
@@ -107,12 +102,12 @@ class CameraControlSystem: SystemProtocol {
         return Swift.max(min, Swift.min(max, value))
     }
 
-    private func normalize(_ vector: float3) -> float3 {
-        let lengthSquared = dot(vector, vector)
-        if lengthSquared > 0 {
-            let invLength = rsqrt(lengthSquared)
-            return vector * invLength
-        }
-        return vector // If length is zero, return the original vector
-    }
+//    private func normalize(_ vector: float3) -> float3 {
+//        let lengthSquared = dot(vector, vector)
+//        if lengthSquared > 0 {
+//            let invLength = rsqrt(lengthSquared)
+//            return vector * invLength
+//        }
+//        return vector // If length is zero, return the original vector
+//    }
 }
