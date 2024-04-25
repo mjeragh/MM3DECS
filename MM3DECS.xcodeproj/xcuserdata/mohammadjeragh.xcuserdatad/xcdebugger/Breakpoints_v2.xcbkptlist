@@ -3,4 +3,68 @@
    uuid = "8C9D52D2-72D9-4E14-ADDB-1D321F67DBD8"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D773003D-27C6-4F4B-A010-6E280499B0F1"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MM3DECS/Renderer/RendererSystem.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "52"
+            endingLineNumber = "52"
+            landmarkName = "update(deltaTime:entityManager:renderEncoder:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "D773003D-27C6-4F4B-A010-6E280499B0F1 - a928183e03106a70"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MM3DECS.RenderSystem.update(deltaTime: Swift.Float, entityManager: MM3DECS.EntityManager, renderEncoder: __C.MTLRenderCommandEncoder) -&gt; ()"
+                  moduleName = "MM3DECS"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mohammadjeragh/Library/CloudStorage/Dropbox/Source/Xcode/XCodeProjects/MM3DECS/MM3DECS/Renderer/RendererSystem.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "52"
+                  endingLineNumber = "52">
+               </Location>
+               <Location
+                  uuid = "D773003D-27C6-4F4B-A010-6E280499B0F1 - a928183e03106a70"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MM3DECS.RenderSystem.update(deltaTime: Swift.Float, entityManager: MM3DECS.EntityManager, renderEncoder: __C.MTLRenderCommandEncoder) -&gt; ()"
+                  moduleName = "MM3DECS"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mohammadjeragh/Library/CloudStorage/Dropbox/Source/Xcode/XCodeProjects/MM3DECS/MM3DECS/Renderer/RendererSystem.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "52"
+                  endingLineNumber = "52">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EF0869EB-2244-4215-B574-BA73CA902ADA"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MM3DECS/Navigation/CameraControlSystem.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "87"
+            endingLineNumber = "87"
+            landmarkName = "applyArcballControl(_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

@@ -1,0 +1,35 @@
+#usda 1.0
+(
+    upAxis = "Y"
+    defaultPrim = "Plane"
+)
+
+def Mesh "Plane"
+{
+    int[] faceVertexCounts = [4]
+    int[] faceVertexIndices = [0, 1, 2, 3]
+    point3f[] points = [(-500, 0, -500), (500, 0, -500), (500, 0, 500), (-500, 0, 500)]
+    normal3f[] normals = [(0, 1, 0), (0, 1, 0), (0, 1, 0), (0, 1, 0)]
+    float2[] primvars:st = [(0, 0), (1, 0), (1, 1), (0, 1)]
+    rel material:binding = </Materials/green>  # Greenish color
+}
+def Scope "Materials"
+{
+    def Material "green"
+    {
+        token outputs:surface.connect = </Materials/green/surfaceShader.outputs:surface>
+
+        def Shader "surfaceShader"
+        {
+            uniform token info:id = "UsdPreviewSurface"
+            color3f inputs:diffuseColor = (0.036551, 0.8, 0.24143499)
+            color3f inputs:emissiveColor = (0.036551, 0.8, 0.24143499)
+            float inputs:metallic = 0
+            normal3f inputs:normal = (1, 1, 1)
+            float inputs:occlusion = 1
+            float inputs:opacity = 1
+            float inputs:roughness = 0.9
+            token outputs:surface
+        }
+    }
+}

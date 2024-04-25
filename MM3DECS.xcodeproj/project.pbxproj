@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B249134F2BDAB7DB00A31CCA /* peg.usda in Resources */ = {isa = PBXBuildFile; fileRef = B249134E2BDAB7DB00A31CCA /* peg.usda */; };
+		B24913512BDAB7E700A31CCA /* plane1000.usda in Resources */ = {isa = PBXBuildFile; fileRef = B24913502BDAB7E700A31CCA /* plane1000.usda */; };
 		B259C2662BA2FABE0049BA2C /* MM3DECSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2652BA2FABE0049BA2C /* MM3DECSApp.swift */; };
 		B259C2682BA2FABE0049BA2C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2672BA2FABE0049BA2C /* ContentView.swift */; };
 		B259C26A2BA2FABF0049BA2C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B259C2692BA2FABF0049BA2C /* Assets.xcassets */; };
@@ -36,6 +38,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B249134E2BDAB7DB00A31CCA /* peg.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = peg.usda; sourceTree = "<group>"; };
+		B24913502BDAB7E700A31CCA /* plane1000.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = plane1000.usda; sourceTree = "<group>"; };
 		B259C2622BA2FABE0049BA2C /* MM3DECS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MM3DECS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B259C2652BA2FABE0049BA2C /* MM3DECSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MM3DECSApp.swift; sourceTree = "<group>"; };
 		B259C2672BA2FABE0049BA2C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -148,6 +152,8 @@
 			isa = PBXGroup;
 			children = (
 				B259C28B2BA304690049BA2C /* train.usd */,
+				B24913502BDAB7E700A31CCA /* plane1000.usda */,
+				B249134E2BDAB7DB00A31CCA /* peg.usda */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -263,9 +269,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B24913512BDAB7E700A31CCA /* plane1000.usda in Resources */,
 				B259C26D2BA2FABF0049BA2C /* Preview Assets.xcassets in Resources */,
 				B259C26A2BA2FABF0049BA2C /* Assets.xcassets in Resources */,
 				B259C28D2BA304690049BA2C /* train.usd in Resources */,
+				B249134F2BDAB7DB00A31CCA /* peg.usda in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

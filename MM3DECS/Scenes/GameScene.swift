@@ -30,16 +30,16 @@ class GameScene: SceneProtocol {
     func setUp() {
         
         // Set up entities specific to this scene
-        entityManager.addEntity(entity: entityManager.createCameraEntity(type: .orthographic))
+        entityManager.addEntity(entity: entityManager.createCameraEntity(type: .arcball))
         
         setupEntites()
         
-        if let cameraEntity = entityManager.entities(for: OrthographicCameraComponent.self).first,
+        if let cameraEntity = entityManager.entities(for: ArcballCameraComponent.self).first,
            var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity){
-            cameraTransform.position = [0, -2, 0]
-            cameraTransform.rotation = [-Float.pi/2,0,0]
+            cameraTransform.position = [0, 0, 150]
+            cameraTransform.rotation = [0,0,0]
             entityManager.addComponent(component: cameraTransform, to: cameraEntity)
-            entityManager.addComponent(component: CameraInputComponent(cameraType: .orthographic), to: cameraEntity)
+            entityManager.addComponent(component: CameraInputComponent(cameraType: .arcball), to: cameraEntity)
             //setup Systems
             systems.append(RenderSystem(cameraEntity: cameraEntity))
             systems.append(InputSystem())
@@ -61,12 +61,23 @@ class GameScene: SceneProtocol {
 
     func setupEntites() {
         let trainEntity = Entity()
-                entityManager.addEntity(entity: trainEntity)
-                entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "train.usd"), to: trainEntity)
-        entityManager.addComponent(component: TransformComponent(position: float3(0, -0.6, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), to: trainEntity)
+        entityManager.addEntity(entity: trainEntity)
+        entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "train.usd"), to: trainEntity)
+        entityManager.addComponent(component: TransformComponent(position: float3(1, 0.6, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), to: trainEntity)
         entityManager.addComponent(component: InputComponent(), to: trainEntity)
-               // Add other entities and components as needed
-        
+//               // Add other entities and components as needed
+//        let landEntity = Entity()
+//        entityManager.addEntity(entity: landEntity)
+//        entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "plane1000.usda"), to: landEntity)
+//        entityManager.addComponent(component: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(1,1,1)), to: landEntity)
+//        entityManager.addComponent(component: InputComponent(), to: landEntity)
+//        
+//        let sunEntity = Entity()
+//        let scale = Float(0.1)
+//        entityManager.addEntity(entity: sunEntity)
+//        entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "peg.usda"), to: sunEntity)
+//        entityManager.addComponent(component: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), to: sunEntity)
+//        entityManager.addComponent(component: InputComponent(), to: sunEntity)
     }
 }
 
