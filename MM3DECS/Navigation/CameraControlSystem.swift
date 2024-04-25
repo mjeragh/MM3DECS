@@ -121,9 +121,21 @@ class CameraControlSystem: SystemProtocol {
         transform.position = clampPosition(transform.position, within: [-180, 180])
     }
 
-    private func applyOrthographicControl(_ input: inout CameraInputComponent, _ transform: inout TransformComponent, _ deltaTime: Float) {
-        // Placeholder for orthographic control logic
-        // Typically involves pan and zoom, with no rotation
+    func applyOrthographicControl(_ input: inout CameraInputComponent, _ transform: inout TransformComponent, _ deltaTime: Float) {
+        // Calculate panning based on drag
+        let panChange = CGPoint(x: input.dragCurrentPosition!.x - input.dragStartPosition!.x,
+                                y: input.dragCurrentPosition!.y - input.dragStartPosition!.y)
+        let panDelta = float2(Float(panChange.x), Float(panChange.y)) * deltaTime * Settings.translationSpeed
+
+        transform.position.x += panDelta.x
+        transform.position.y -= panDelta.y
+
+        // Calculate zoom based on vertical mouse drag or scroll wheel
+        let zoomDelta = Float(input.dragCurrentPosition!.y - input.dragStartPosition!.y) * deltaTime * Settings.mouseScrollSensitivity
+        transform.position.z += zoomDelta // Zoom in orthographic camera typically affects the scale of the orthographic projection
+
+        // Clamp the position to avoid moving too far
+        transform.position = clampPosition(transform.position, within: [-180,180])
     }
     
     

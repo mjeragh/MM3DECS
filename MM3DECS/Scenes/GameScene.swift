@@ -30,16 +30,16 @@ class GameScene: SceneProtocol {
     func setUp() {
         
         // Set up entities specific to this scene
-        entityManager.addEntity(entity: entityManager.createCameraEntity(type: .perspective))
+        entityManager.addEntity(entity: entityManager.createCameraEntity(type: .orthographic))
         
         setupEntites()
         
-        if let cameraEntity = entityManager.entities(for: PerspectiveCameraComponent.self).first,
+        if let cameraEntity = entityManager.entities(for: OrthographicCameraComponent.self).first,
            var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity){
-            cameraTransform.position = [0, 0, -5]
-            cameraTransform.rotation = [0,0,0]
+            cameraTransform.position = [5, 0, -3]
+            cameraTransform.rotation = [0,-Float.pi/2,0]
             entityManager.addComponent(component: cameraTransform, to: cameraEntity)
-            entityManager.addComponent(component: CameraInputComponent(cameraType: .perspective), to: cameraEntity)
+            entityManager.addComponent(component: CameraInputComponent(cameraType: .orthographic), to: cameraEntity)
             //setup Systems
             systems.append(RenderSystem(cameraEntity: cameraEntity))
             systems.append(InputSystem())
