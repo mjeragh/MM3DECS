@@ -122,26 +122,31 @@ class CameraControlSystem: SystemProtocol {
     }
 
     func applyOrthographicControl(_ input: inout CameraInputComponent, _ transform: inout TransformComponent, _ deltaTime: Float) {
+        var captainLog = ""
+        
         // Calculate panning based on drag
         let panChange = CGPoint(x: input.dragCurrentPosition!.x - input.dragStartPosition!.x,
                                 y: input.dragCurrentPosition!.y - input.dragStartPosition!.y)
         let panDelta = float2(Float(panChange.x), Float(panChange.y)) * deltaTime * Settings.translationSpeed
+        
+        captainLog = "CameraControlSystem(Orthographic): Touch pan Change: \(panChange.x) \(panChange.y)\t panDelta\(panDelta.x), \(panDelta.y)\n"
+        logger.debug("\(captainLog)")
 
         // Assuming that the camera's rotation is stored in Euler angles in 'transform.rotation'
           let rotationMatrix = float4x4(rotationYXZ: transform.rotation) // Using the rotation YXZ constructor from your MathLibrary
           let inverseRotationMatrix = rotationMatrix.inverse // Invert the matrix to convert movement from camera space to world space
+            captainLog = "CameraControlSystem(Orthographic): Rotation Matrix: \(rotationMatrix)\n"
+            logger.debug("\(captainLog)")
+        
+          var worldPanDelta = inverseRotationMatrix * float4(panDelta.x, 0, 0, 0)
+            captainLog = "CameraControlSystem(Orthographic): World Pan Delta: \(worldPanDelta)\n"
+            logger.debug("\(captainLog)")
 
-          let worldPanDelta = inverseRotationMatrix * float4(panDelta.x, panDelta.y, 0, 0)
-
-          // Apply the transformed pan deltas
-          transform.position.x += worldPanDelta.x
-          transform.position.y += worldPanDelta.y
-          // transform.position.z remains unchanged
-
-        // Calculate zoom based on vertical mouse drag or scroll wheel
-        let zoomDelta = Float(input.dragCurrentPosition!.y - input.dragStartPosition!.y) * deltaTime * Settings.mouseScrollSensitivity
-        transform.position.z += zoomDelta // Zoom in orthographic camera typically affects the scale of the orthographic projection
-
+        // Since the camera is rotated around Y by -pi/2, swap the panning direction
+            worldPanDelta = float4(worldPanDelta.z, worldPanDelta.y, -worldPanDelta.x, 0)
+            
+            // Apply the transformed pan deltas to the position
+            transform.position += float3(worldPanDelta.x, panDelta.y, worldPanDelta.z) // y remains unchanged since it's screen space up/down
         // Clamp the position to avoid moving too far
         transform.position = clampPosition(transform.position, within: [-180,180])
     }
