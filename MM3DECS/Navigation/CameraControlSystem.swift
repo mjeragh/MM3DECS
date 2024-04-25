@@ -29,59 +29,89 @@ class CameraControlSystem: SystemProtocol {
                    let dragStartPosition = cameraInput.dragStartPosition,
                    let dragCurrentPosition = cameraInput.dragCurrentPosition {
             
-            logger.debug("CameraControlSystem: Updating camera transform startPosition(\(dragStartPosition.x), \(dragStartPosition.y))\n currentPosition(\(dragCurrentPosition.x),\(dragCurrentPosition.y))\n")
-            // Constants for the distance scale can be adjusted to fit the needs of your application.
-            // It could be based on the initial distance of the camera or just a fixed value that feels right.
-            let fixedDistanceScale: Float = 125.0
-            // This value should be tuned to your liking. large numbers for big worlds, while smaller numbers for smaller worlds
-
-            
-            
-                    // Calculate the amount of drag
-                    let dragDelta = CGPoint(x: dragCurrentPosition.x - dragStartPosition.x, y: dragCurrentPosition.y - dragStartPosition.y)
-            logger.debug("CameraControlSystem: transform(\(transform.position.x), \(transform.position.y), \(transform.position.z)\n")
-            
-                    let rotationDelta = -Float(dragDelta.x) * deltaTime * Settings.rotationSpeed
-            
-            
-            // Apply incremental rotation around the Y axis
-                    transform.rotation.y += rotationDelta
-           
-            // Apply horizontal and vertical movement
-            let horizontalMove = transform.right * Float(dragDelta.x) * deltaTime * Settings.translationSpeed * fixedDistanceScale
-            let verticalMove = transform.up * Float(-dragDelta.y) * deltaTime * Settings.translationSpeed * fixedDistanceScale
-
-            // Update the transform position
-            transform.position += horizontalMove + verticalMove
-                    
-            // Clamping the rotation and position to avoid erratic behavior.
-                transform.rotation.y = clampAngle(transform.rotation.y)
-            logger.debug("CameraControlSystem: transform Y rotation(\(transform.rotation.y)\n")
-                transform.position = clampPosition(transform.position, within: [-180, 180]) // Example bounds
-                //The clamp position bounderis effect the smoothness of the camera movement, the bigger the smoother the movement
-                
-            guard isFinite(transform.position.x) && isFinite(transform.position.y) && isFinite(transform.position.z) else {
-                            // Reset transform if values become extreme or NaN
-                            transform.position = float3(0, 0, 5) // Example default position
-                            transform.rotation = float3(0, 0, 0) // Example default rotation
-                            cameraInput.dragStartPosition = nil
-                            logger.warning("CameraControlSystem: Resetting camera transform due to extreme values")
-                            entityManager.addComponent(component: transform, to: cameraEntity)
-                            cameraInput.dragCurrentPosition = nil
-                            entityManager.addComponent(component: cameraInput, to: cameraEntity)
-                            return
-                        }
+                    // Apply camera control based on camera type
+                    switch cameraInput.cameraType {
+                    case .arcball:
+                        applyArcballControl(&cameraInput, &transform, deltaTime)
+                    case .perspective:
+                        applyPerspectiveControl(&cameraInput, &transform, deltaTime)
+                    case .orthographic:
+                        applyOrthographicControl(&cameraInput, &transform, deltaTime)
+                    }
             // Update components
                     entityManager.addComponent(component: transform, to: cameraEntity)
                     cameraInput.dragStartPosition = dragCurrentPosition
                     entityManager.addComponent(component: cameraInput, to: cameraEntity)
                     }
     }
+ 
+    //MARK: - Camera Control Methods
+    private func applyArcballControl(_ input: inout CameraInputComponent, _ transform: inout TransformComponent, _ deltaTime: Float) {
+        // Existing arcball control logic here
+        var captainLog = "CameraControlSystem: Updating camera transform startPosition:\(input.dragStartPosition!.x),\(input.dragStartPosition!.y)\ncurrentPosition:\(input.dragCurrentPosition!.x),\(input.dragCurrentPosition!.y))\n"
+        logger.debug("\(captainLog)")
+        // Constants for the distance scale can be adjusted to fit the needs of your application.
+        // It could be based on the initial distance of the camera or just a fixed value that feels right.
+        let fixedDistanceScale: Float = 125.0
+        // This value should be tuned to your liking. large numbers for big worlds, while smaller numbers for smaller worlds
+
+        
+        
+                // Calculate the amount of drag
+        let dragDelta = CGPoint(x: input.dragCurrentPosition!.x - input.dragStartPosition!.x, y: input.dragCurrentPosition!.y - input.dragStartPosition!.y)
+        captainLog = "CameraControlSystem: transform(\(transform.position.x), \(transform.position.y), \(transform.position.z)\n"
+        logger.debug("\(captainLog)")
+        
+                let rotationDelta = -Float(dragDelta.x) * deltaTime * Settings.rotationSpeed
+        
+        
+        // Apply incremental rotation around the Y axis
+                transform.rotation.y += rotationDelta
+       
+        // Apply horizontal and vertical movement
+        let horizontalMove = transform.right * Float(dragDelta.x) * deltaTime * Settings.translationSpeed * fixedDistanceScale
+        let verticalMove = transform.up * Float(-dragDelta.y) * deltaTime * Settings.translationSpeed * fixedDistanceScale
+
+        // Update the transform position
+        transform.position += horizontalMove + verticalMove
+                
+        // Clamping the rotation and position to avoid erratic behavior.
+            transform.rotation.y = clampAngle(transform.rotation.y)
+        captainLog = "CameraControlSystem: transform Y rotation(\(transform.rotation.y)\n"
+        logger.debug("\(captainLog)")
+            transform.position = clampPosition(transform.position, within: [-180, 180]) // Example boundsOS
+            //The clamp position bounderis effect the smoothness of the camera movement, the bigger the smoother the movement
+            
+        guard isFinite(transform.position.x) && isFinite(transform.position.y) && isFinite(transform.position.z) else {
+                        // Reset transform if values become extreme or NaN
+                        transform.position = float3(0, 0, 5) // Example default position
+                        transform.rotation = float3(0, 0, 0) // Example default rotation
+                        input.dragStartPosition = nil
+                        logger.warning("CameraControlSystem: Resetting camera transform due to extreme values")
+//                        entityManager.addComponent(component: transform, to: cameraEntity)
+                        input.dragCurrentPosition = nil
+//                        entityManager.addComponent(component: cameraInput, to: cameraEntity)
+                        return
+                    }
+    }
+
+    private func applyPerspectiveControl(_ input: inout CameraInputComponent, _ transform: inout TransformComponent, _ deltaTime: Float) {
+        // Placeholder for perspective control logic
+        // You can add pan, zoom, and rotate functionalities here
+    }
+
+    private func applyOrthographicControl(_ input: inout CameraInputComponent, _ transform: inout TransformComponent, _ deltaTime: Float) {
+        // Placeholder for orthographic control logic
+        // Typically involves pan and zoom, with no rotation
+    }
     
+    
+    
+    // MARK: - Private Methods
 //    private func clamp<T: Comparable>(value: T, min: T, max: T) -> T {
 //            return Swift.max(min, Swift.min(max, value))
 //        }
-//        
+//
         private func isFinite(_ value: Float) -> Bool {
             return !value.isInfinite && !value.isNaN
         }

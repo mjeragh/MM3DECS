@@ -6,9 +6,12 @@
 //
 
 import MetalKit
+import os.log
 
 class GameScene: SceneProtocol {
     var systems: [SystemProtocol] = []
+    
+    let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "GameScene")
     
     let entityManager: EntityManager
     
@@ -42,7 +45,7 @@ class GameScene: SceneProtocol {
             systems.append(InputSystem())
             systems.append(CameraControlSystem())
         } else {
-            print("Failed to retrieve transform component of camera entity.")
+            logger.info("Failed to retrieve transform component of camera entity.")
         }
     }
 
