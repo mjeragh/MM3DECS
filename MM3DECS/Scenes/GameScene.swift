@@ -36,8 +36,8 @@ class GameScene: SceneProtocol {
         
         if let cameraEntity = entityManager.entities(for: OrthographicCameraComponent.self).first,
            var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity){
-            cameraTransform.position = [5, 0, -3]
-            cameraTransform.rotation = [0,-Float.pi/2,0]
+            cameraTransform.position = [0, -2, 0]
+            cameraTransform.rotation = [-Float.pi/2,0,0]
             entityManager.addComponent(component: cameraTransform, to: cameraEntity)
             entityManager.addComponent(component: CameraInputComponent(cameraType: .orthographic), to: cameraEntity)
             //setup Systems
