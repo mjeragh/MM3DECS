@@ -127,8 +127,16 @@ class CameraControlSystem: SystemProtocol {
                                 y: input.dragCurrentPosition!.y - input.dragStartPosition!.y)
         let panDelta = float2(Float(panChange.x), Float(panChange.y)) * deltaTime * Settings.translationSpeed
 
-        transform.position.x += panDelta.x
-        transform.position.y -= panDelta.y
+        // Assuming that the camera's rotation is stored in Euler angles in 'transform.rotation'
+          let rotationMatrix = float4x4(rotationYXZ: transform.rotation) // Using the rotation YXZ constructor from your MathLibrary
+          let inverseRotationMatrix = rotationMatrix.inverse // Invert the matrix to convert movement from camera space to world space
+
+          let worldPanDelta = inverseRotationMatrix * float4(panDelta.x, panDelta.y, 0, 0)
+
+          // Apply the transformed pan deltas
+          transform.position.x += worldPanDelta.x
+          transform.position.y += worldPanDelta.y
+          // transform.position.z remains unchanged
 
         // Calculate zoom based on vertical mouse drag or scroll wheel
         let zoomDelta = Float(input.dragCurrentPosition!.y - input.dragStartPosition!.y) * deltaTime * Settings.mouseScrollSensitivity
