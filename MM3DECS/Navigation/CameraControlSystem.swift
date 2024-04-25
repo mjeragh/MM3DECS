@@ -95,9 +95,30 @@ class CameraControlSystem: SystemProtocol {
                     }
     }
 
-    private func applyPerspectiveControl(_ input: inout CameraInputComponent, _ transform: inout TransformComponent, _ deltaTime: Float) {
-        // Placeholder for perspective control logic
-        // You can add pan, zoom, and rotate functionalities here
+    func applyPerspectiveControl(_ input: inout CameraInputComponent, _ transform: inout TransformComponent, _ deltaTime: Float) {
+        // Calculate rotation
+        let rotationChange = CGPoint(x: input.dragCurrentPosition!.x - input.dragStartPosition!.x,
+                                     y: input.dragCurrentPosition!.y - input.dragStartPosition!.y)
+        let rotationDelta = float2(Float(rotationChange.x), Float(rotationChange.y)) * deltaTime * Settings.rotationSpeed
+
+        // Apply rotation around Y axis and a free rotation around X axis
+        transform.rotation.y += rotationDelta.x
+        transform.rotation.x += rotationDelta.y
+
+        // Calculate zoom based on vertical mouse drag or scroll wheel
+        let zoomDelta = Float(input.dragCurrentPosition!.y - input.dragStartPosition!.y) * deltaTime * Settings.mouseScrollSensitivity
+        transform.position.z += zoomDelta // assuming the forward vector is along the z-axis
+
+        // Calculate panning (left-right, up-down movement)
+        let panDelta = float2(Float(rotationChange.x), Float(rotationChange.y)) * deltaTime * Settings.translationSpeed
+        transform.position.x += panDelta.x
+        transform.position.y -= panDelta.y
+
+        // Ensure rotation angles and position are within acceptable limits
+        transform.rotation.x = clampAngle(transform.rotation.x)
+        transform.rotation.y = clampAngle(transform.rotation.y)
+        transform.rotation.z = clampAngle(transform.rotation.z)
+        transform.position = clampPosition(transform.position, within: [-180, 180])
     }
 
     private func applyOrthographicControl(_ input: inout CameraInputComponent, _ transform: inout TransformComponent, _ deltaTime: Float) {

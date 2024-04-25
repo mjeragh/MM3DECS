@@ -16,5 +16,6 @@ struct CameraInputComponent: Component {
         self.dragStartPosition = dragStartPosition
         self.dragCurrentPosition = dragCurrentPosition
         self.lastTouchPosition = lastTouchPosition
+        self.cameraType = cameraType
     }
 }

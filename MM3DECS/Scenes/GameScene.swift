@@ -30,16 +30,16 @@ class GameScene: SceneProtocol {
     func setUp() {
         
         // Set up entities specific to this scene
-        entityManager.addEntity(entity: entityManager.createCameraEntity(type: .arcball))
+        entityManager.addEntity(entity: entityManager.createCameraEntity(type: .perspective))
         
         setupEntites()
         
-        if let cameraEntity = entityManager.entities(for: ArcballCameraComponent.self).first,
+        if let cameraEntity = entityManager.entities(for: PerspectiveCameraComponent.self).first,
            var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity){
-            cameraTransform.position = [0, -2, 5]
+            cameraTransform.position = [0, 0, -5]
             cameraTransform.rotation = [0,0,0]
             entityManager.addComponent(component: cameraTransform, to: cameraEntity)
-            entityManager.addComponent(component: CameraInputComponent(), to: cameraEntity)
+            entityManager.addComponent(component: CameraInputComponent(cameraType: .perspective), to: cameraEntity)
             //setup Systems
             systems.append(RenderSystem(cameraEntity: cameraEntity))
             systems.append(InputSystem())
