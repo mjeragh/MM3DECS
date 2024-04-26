@@ -73,7 +73,9 @@ class CameraControlSystem: SystemProtocol {
         let verticalMove = transform.up * Float(-dragDelta.y) * deltaTime * Settings.translationSpeed * fixedDistanceScale
 
         // Update the transform position
-        transform.position += horizontalMove + verticalMove
+        transform.position.x += horizontalMove.x + verticalMove.x
+        transform.position.z += horizontalMove.z + verticalMove.z
+        transform.position.y += horizontalMove.y + verticalMove.y //disable this to lock on the xz plane
                 
         // Clamping the rotation and position to avoid erratic behavior.
             transform.rotation.y = clampAngle(transform.rotation.y)

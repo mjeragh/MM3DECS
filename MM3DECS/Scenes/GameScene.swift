@@ -66,11 +66,11 @@ class GameScene: SceneProtocol {
         entityManager.addComponent(component: TransformComponent(position: float3(1, 0.6, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), to: trainEntity)
         entityManager.addComponent(component: InputComponent(), to: trainEntity)
                // Add other entities and components as needed
-        let landEntity = Entity()
-        entityManager.addEntity(entity: landEntity)
-        entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "plane1000.usda"), to: landEntity)
-        entityManager.addComponent(component: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(1,1,1)), to: landEntity)
-        entityManager.addComponent(component: InputComponent(), to: landEntity)
+//        let landEntity = Entity()
+//        entityManager.addEntity(entity: landEntity)
+//        entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "plane1000.usda"), to: landEntity)
+//        entityManager.addComponent(component: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(1,1,1)), to: landEntity)
+//        entityManager.addComponent(component: InputComponent(), to: landEntity)
         
         let sunEntity = Entity()
         let scale = Float(0.1)
