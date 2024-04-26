@@ -36,14 +36,14 @@ class GameScene: SceneProtocol {
         
         if let cameraEntity = entityManager.entities(for: ArcballCameraComponent.self).first,
            var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity){
-            cameraTransform.position = [0, 0, 150]
+            cameraTransform.position = [0, -2, -40]
             cameraTransform.rotation = [0,0,0]
             entityManager.addComponent(component: cameraTransform, to: cameraEntity)
-            entityManager.addComponent(component: CameraInputComponent(cameraType: .arcball), to: cameraEntity)
+//            entityManager.addComponent(component: CameraInputComponent(cameraType: .arcball), to: cameraEntity)
             //setup Systems
             systems.append(RenderSystem(cameraEntity: cameraEntity))
-            systems.append(InputSystem())
-            systems.append(CameraControlSystem())
+//            systems.append(InputSystem())
+//              systems.append(CameraControlSystem())
         } else {
             logger.info("Failed to retrieve transform component of camera entity.")
         }
@@ -65,19 +65,19 @@ class GameScene: SceneProtocol {
         entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "train.usd"), to: trainEntity)
         entityManager.addComponent(component: TransformComponent(position: float3(1, 0.6, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), to: trainEntity)
         entityManager.addComponent(component: InputComponent(), to: trainEntity)
-//               // Add other entities and components as needed
-//        let landEntity = Entity()
-//        entityManager.addEntity(entity: landEntity)
-//        entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "plane1000.usda"), to: landEntity)
-//        entityManager.addComponent(component: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(1,1,1)), to: landEntity)
-//        entityManager.addComponent(component: InputComponent(), to: landEntity)
-//        
-//        let sunEntity = Entity()
-//        let scale = Float(0.1)
-//        entityManager.addEntity(entity: sunEntity)
-//        entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "peg.usda"), to: sunEntity)
-//        entityManager.addComponent(component: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), to: sunEntity)
-//        entityManager.addComponent(component: InputComponent(), to: sunEntity)
+               // Add other entities and components as needed
+        let landEntity = Entity()
+        entityManager.addEntity(entity: landEntity)
+        entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "plane1000.usda"), to: landEntity)
+        entityManager.addComponent(component: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(1,1,1)), to: landEntity)
+        entityManager.addComponent(component: InputComponent(), to: landEntity)
+        
+        let sunEntity = Entity()
+        let scale = Float(0.1)
+        entityManager.addEntity(entity: sunEntity)
+        entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "peg.usda"), to: sunEntity)
+        entityManager.addComponent(component: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), to: sunEntity)
+        entityManager.addComponent(component: InputComponent(), to: sunEntity)
     }
 }
 

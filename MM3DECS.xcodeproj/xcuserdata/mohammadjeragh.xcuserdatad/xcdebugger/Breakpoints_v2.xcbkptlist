@@ -8,7 +8,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "D773003D-27C6-4F4B-A010-6E280499B0F1"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MM3DECS/Renderer/RendererSystem.swift"
@@ -18,36 +18,6 @@
             endingLineNumber = "52"
             landmarkName = "update(deltaTime:entityManager:renderEncoder:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "D773003D-27C6-4F4B-A010-6E280499B0F1 - a928183e03106a70"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "MM3DECS.RenderSystem.update(deltaTime: Swift.Float, entityManager: MM3DECS.EntityManager, renderEncoder: __C.MTLRenderCommandEncoder) -&gt; ()"
-                  moduleName = "MM3DECS"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/mohammadjeragh/Library/CloudStorage/Dropbox/Source/Xcode/XCodeProjects/MM3DECS/MM3DECS/Renderer/RendererSystem.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "52"
-                  endingLineNumber = "52">
-               </Location>
-               <Location
-                  uuid = "D773003D-27C6-4F4B-A010-6E280499B0F1 - a928183e03106a70"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "MM3DECS.RenderSystem.update(deltaTime: Swift.Float, entityManager: MM3DECS.EntityManager, renderEncoder: __C.MTLRenderCommandEncoder) -&gt; ()"
-                  moduleName = "MM3DECS"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/mohammadjeragh/Library/CloudStorage/Dropbox/Source/Xcode/XCodeProjects/MM3DECS/MM3DECS/Renderer/RendererSystem.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "52"
-                  endingLineNumber = "52">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -63,6 +33,38 @@
             startingLineNumber = "87"
             endingLineNumber = "87"
             landmarkName = "applyArcballControl(_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "86678008-309C-420D-BE18-E61351995631"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MM3DECS/Navigation/CameraControlSystem.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "26"
+            endingLineNumber = "26"
+            landmarkName = "update(deltaTime:entityManager:renderEncoder:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6C1C37C3-CA2F-415F-A24C-C491FEB1701A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MM3DECS/Renderer/RendererSystem.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "update(deltaTime:entityManager:renderEncoder:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

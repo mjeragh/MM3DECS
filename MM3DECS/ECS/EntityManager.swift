@@ -87,11 +87,11 @@ extension EntityManager {
         
         switch type {
         case .perspective:
-            let perspectiveCameraComponent = PerspectiveCameraComponent(fieldOfView: Float(70).degreesToRadians, nearClippingPlane: 0.1, farClippingPlane: 100, aspectRatio: aspect)
+            let perspectiveCameraComponent = PerspectiveCameraComponent(fieldOfView: Float(70).degreesToRadians, nearClippingPlane: 0.1, farClippingPlane: 10000, aspectRatio: aspect)
             self.addComponent(component: perspectiveCameraComponent, to: cameraEntity)
             
         case .arcball:
-            let arcballCameraComponent = ArcballCameraComponent(aspect: aspect, fov: Float(70).degreesToRadians, near: 0.1, far: 1000, target: [0, 0, 0], distance: 5, minDistance: 1, maxDistance: 2000)
+            let arcballCameraComponent = ArcballCameraComponent(aspect: aspect, fov: Float(70).degreesToRadians, near: 0.1, far: 12000, target: [0, 0, 0], distance: 5, minDistance: 1, maxDistance: 12000)
             self.addComponent(component: arcballCameraComponent, to: cameraEntity)
             
         case .orthographic:
