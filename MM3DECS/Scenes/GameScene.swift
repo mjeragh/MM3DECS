@@ -36,14 +36,14 @@ class GameScene: SceneProtocol {
         
         if let cameraEntity = entityManager.entities(for: ArcballCameraComponent.self).first,
            var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity){
-            cameraTransform.position = [0, -2, -40]
+            cameraTransform.position = [0, -2, 15]
             cameraTransform.rotation = [0,0,0]
             entityManager.addComponent(component: cameraTransform, to: cameraEntity)
-//            entityManager.addComponent(component: CameraInputComponent(cameraType: .arcball), to: cameraEntity)
+            entityManager.addComponent(component: CameraInputComponent(cameraType: .arcball), to: cameraEntity)
             //setup Systems
             systems.append(RenderSystem(cameraEntity: cameraEntity))
-//            systems.append(InputSystem())
-//              systems.append(CameraControlSystem())
+            systems.append(InputSystem())
+              systems.append(CameraControlSystem())
         } else {
             logger.info("Failed to retrieve transform component of camera entity.")
         }
