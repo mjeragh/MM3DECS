@@ -62,6 +62,7 @@ struct RenderableComponent: Component {
     var mesh: MTKMesh
     var texture: MTLTexture?
     let name: String
+    let boundingBox: MDLAxisAlignedBoundingBox
     // Other rendering-related properties such as materials, shaders, etc.
     // Initialize the RenderableComponent with a mesh loaded from the given asset name.
         init(device: MTLDevice, name: String) {
@@ -81,6 +82,7 @@ struct RenderableComponent: Component {
                 fatalError("Failed to load mesh: \(error)")
             }
             self.name = name
+            self.boundingBox = asset.boundingBox
         }
 }
 

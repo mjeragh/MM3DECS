@@ -12,7 +12,7 @@ import os.signpost
 
 enum Settings {
     static var rotationSpeed : Float { 1.5 }
-    static var translationSpeed : Float { 1.0 }//was 3.0
+    static var translationSpeed : Float { 3.0 }
     static var mouseScrollSensitivity : Float { 0.1 }
     static var mousePanSensitivity : Float { 0.008 }
     static var touchZoomSensitivity: Float { 10 }
@@ -52,7 +52,7 @@ class CameraControlSystem: SystemProtocol {
         logger.debug("\(captainLog)")
         // Constants for the distance scale can be adjusted to fit the needs of your application.
         // It could be based on the initial distance of the camera or just a fixed value that feels right.
-        let fixedDistanceScale: Float = 14.0
+        let fixedDistanceScale: Float = 125.0
         // This value should be tuned to your liking. large numbers for big worlds, while smaller numbers for smaller worlds
 
         
