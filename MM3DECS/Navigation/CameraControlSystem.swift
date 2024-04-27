@@ -49,7 +49,7 @@ class CameraControlSystem: SystemProtocol {
     private func applyArcballControl(_ input: inout CameraInputComponent, _ transform: inout TransformComponent, _ deltaTime: Float) {
         // Existing arcball control logic here
         var captainLog = "CameraControlSystem: Updating camera transform startPosition:\(input.dragStartPosition!.x),\(input.dragStartPosition!.y)\ncurrentPosition:\(input.dragCurrentPosition!.x),\(input.dragCurrentPosition!.y))\n"
-        logger.debug("\(captainLog)")
+     //   logger.debug("\(captainLog)")
         // Constants for the distance scale can be adjusted to fit the needs of your application.
         // It could be based on the initial distance of the camera or just a fixed value that feels right.
         let fixedDistanceScale: Float = 125.0
@@ -60,7 +60,7 @@ class CameraControlSystem: SystemProtocol {
                 // Calculate the amount of drag
         let dragDelta = CGPoint(x: input.dragCurrentPosition!.x - input.dragStartPosition!.x, y: input.dragCurrentPosition!.y - input.dragStartPosition!.y)
         captainLog = "CameraControlSystem: transform(\(transform.position.x), \(transform.position.y), \(transform.position.z)\n"
-        logger.debug("\(captainLog)")
+     //   logger.debug("\(captainLog)")
         
                 let rotationDelta = -Float(dragDelta.x) * deltaTime * Settings.rotationSpeed
         
@@ -80,7 +80,7 @@ class CameraControlSystem: SystemProtocol {
         // Clamping the rotation and position to avoid erratic behavior.
             transform.rotation.y = clampAngle(transform.rotation.y)
         captainLog = "CameraControlSystem: transform Y rotation(\(transform.rotation.y)\n"
-        logger.debug("\(captainLog)")
+       // logger.debug("\(captainLog)")
             transform.position = clampPosition(transform.position, within: [-180, 180]) // Example boundsOS
             //The clamp position bounderis effect the smoothness of the camera movement, the bigger the smoother the movement
             

@@ -13,6 +13,7 @@ import os.log
 class InputSystem: SystemProtocol {
     var entityManager: EntityManager
     let cameraComponent:CameraComponent
+    var selectedEntity: Entity? = nil
     
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "InputSystem")
     
@@ -37,15 +38,15 @@ class InputSystem: SystemProtocol {
                 
                 // Check if this is the first touch
                 if cameraInput.dragStartPosition == nil {//it is began
-                    
-                    if let selectedEntity = performPicking(at: touchLocation, using: cameraEntity) {
+                    selectedEntity = performPicking(at: touchLocation, using: cameraEntity)
+                    if let selected = selectedEntity {
                         // An object was touched, mark it as selected
-                        var selectionComponent = entityManager.getComponent(type: SelectionComponent.self, for: selectedEntity) ?? SelectionComponent(isSelected: false)
+                        var selectionComponent = entityManager.getComponent(type: SelectionComponent.self, for: selected) ?? SelectionComponent(isSelected: false)
                         selectionComponent.isSelected = true
-                        entityManager.addComponent(component: selectionComponent, to: selectedEntity)
+                        entityManager.addComponent(component: selectionComponent, to: selected)
                     } else {
                         // No object was touched, the camera should be marked as selected
-                        cameraInput.dragStartPosition = touchLocation
+                        cameraInput.dragStartPosition = nil//touchLocation
                         entityManager.addComponent(component: cameraInput, to: cameraEntity)
                     }
                 }//began
@@ -70,6 +71,7 @@ class InputSystem: SystemProtocol {
                     cameraInput.dragCurrentPosition = nil
                     cameraInput.lastTouchPosition = nil
                     entityManager.addComponent(component: cameraInput, to: cameraEntity)
+                    selectedEntity = nil
                 }
     }
 
@@ -80,7 +82,11 @@ class InputSystem: SystemProtocol {
             return nil
         }
 
+        logger.debug("Picking at \(location.x), \(location.y)")
+        logger.debug("Camera position: \(cameraTransform.position)")
         let ray = calculateRay(from: cameraTransform, at: location)
+        logger.debug("Ray direction: \(ray.direction)")
+        
         let entities = entityManager.entitiesWithComponents([RenderableComponent.self])
         for entity in entities {
             if let renderable = entityManager.getComponent(type: RenderableComponent.self, for: entity),
@@ -95,13 +101,13 @@ class InputSystem: SystemProtocol {
         // Convert CGPoint to NDC
         let ndcX = (2.0 * point.x / UIScreen.main.bounds.width) - 1.0
         let ndcY = 1.0 - (2.0 * point.y / UIScreen.main.bounds.height)
-        let clipCoords = SIMD4<Float>(Float(ndcX), Float(ndcY), -1.0, 1.0)
+        let clipCoords = SIMD4<Float>(Float(ndcX), Float(ndcY), 1.0, 1.0)
 
         // Unproject NDC to world coordinates
-        let inverseProjection = camera.projectionMatrix.inverse
+        let inverseProjection = cameraComponent.projectionMatrix.inverse
         let eyeCoords = inverseProjection * clipCoords
-        let rayDir = SIMD3<Float>(eyeCoords.x, eyeCoords.y, -1)
-        let worldRayDir = (camera.viewMatrix.inverse * SIMD4<Float>(rayDir, 0)).xyz.normalized
+        let rayDir = float3(eyeCoords.x, eyeCoords.y, -1)
+        let worldRayDir = (cameraComponent.calculateViewMatrix(transform: camera).inverse * float4(rayDir, 0)).xyz.normalized
 
         return Ray(origin: camera.position, direction: worldRayDir)
     }
