@@ -42,7 +42,7 @@ class GameScene: SceneProtocol {
             entityManager.addComponent(component: CameraInputComponent(cameraType: .arcball), to: cameraEntity)
             //setup Systems
             systems.append(RenderSystem(cameraEntity: cameraEntity))
-            systems.append(InputSystem())
+            systems.append(InputSystem(entityManager: entityManager, cameraComponent: entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)!))
               systems.append(CameraControlSystem())
         } else {
             logger.info("Failed to retrieve transform component of camera entity.")
