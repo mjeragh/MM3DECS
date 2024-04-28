@@ -54,7 +54,7 @@ class Renderer: NSObject {
     let depthStencilState: MTLDepthStencilState?
     
     var isReadyToRender = false
-    var params = Params()
+    static var params = Params()
     
 //    func startRendering() {
 //        self.isReadyToRender = true
@@ -130,8 +130,8 @@ extension Renderer: MTKViewDelegate {
         delegate?.updateSceneCamera(aspectRatio: aspect)
         
         
-        params.width = UInt32(size.width)
-        params.height = UInt32(size.height)
+        Renderer.params.width = Float(view.bounds.width) //UInt32(size.width)
+        Renderer.params.height = Float(view.bounds.width)//UInt32(size.height)
     }
     
     
@@ -152,7 +152,7 @@ extension Renderer: MTKViewDelegate {
         }
         renderEncoder.setDepthStencilState(depthStencilState)
         renderEncoder.setFragmentBytes(
-            &params,
+            &Renderer.params,
             length: MemoryLayout<Params>.stride,
             index: 12)
         renderEncoder.setRenderPipelineState(forwardPassPipelineState)

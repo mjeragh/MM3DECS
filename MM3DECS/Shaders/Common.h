@@ -52,8 +52,8 @@ typedef struct{
 } LocalRay;
 
 typedef struct {
-  uint width;
-  uint height;
+  float width;
+  float height;
   uint tiling;
   uint lightCount;
   vector_float3 cameraPosition;

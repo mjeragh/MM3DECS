@@ -7,4 +7,5 @@
 
 struct SelectionComponent: Component {
     var isSelected: Bool
+    var distance : float4 // I dont know why it was float4 from the previous project
 }

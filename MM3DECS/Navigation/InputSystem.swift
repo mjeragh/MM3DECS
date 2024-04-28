@@ -41,8 +41,8 @@ class InputSystem: SystemProtocol {
                     selectedEntity = performPicking(at: touchLocation, using: cameraEntity)
                     if let selected = selectedEntity {
                         // An object was touched, mark it as selected
-                        var selectionComponent = entityManager.getComponent(type: SelectionComponent.self, for: selected) ?? SelectionComponent(isSelected: false)
-                        selectionComponent.isSelected = true
+                        var selectionComponent = entityManager.getComponent(type: SelectionComponent.self, for: selected) ?? SelectionComponent(isSelected: false, distance: float3(10000,10000,10000))
+                            selectionComponent.isSelected = true
                         entityManager.addComponent(component: selectionComponent, to: selected)
                     } else {
                         // No object was touched, the camera should be marked as selected
@@ -78,37 +78,65 @@ class InputSystem: SystemProtocol {
     private func performPicking(at location: CGPoint, using camera: Entity) -> Entity? {
         guard let cameraEntity = entityManager.entities(for: CameraInputComponent.self).first,
               let cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity) else {
-            logger.debug("Camera component not found")
+            logger.warning("Camera component not found")
             return nil
         }
-
+        
         logger.debug("Picking at \(location.x), \(location.y)")
         logger.debug("Camera position: \(cameraTransform.position)")
-        let ray = calculateRay(from: cameraTransform, at: location)
-        logger.debug("Ray direction: \(ray.direction)")
+        
+        //logger.debug("Ray direction: \(ray.direction)")
         
         let entities = entityManager.entitiesWithComponents([RenderableComponent.self])
         for entity in entities {
-            if let renderable = entityManager.getComponent(type: RenderableComponent.self, for: entity),
-               ray.intersects(with: renderable.boundingBox) {
-                return entity
+            if let renderable = entityManager.getComponent(type: RenderableComponent.self, for: entity)
+                {
+                calculateRayIntersction(from: entity, to: cameraTransform, at: location)
             }
         }
         return nil
     }
 
-    private func calculateRay(from camera: TransformComponent, at point: CGPoint) -> Ray {
-        // Convert CGPoint to NDC
-        let ndcX = (2.0 * point.x / UIScreen.main.bounds.width) - 1.0
-        let ndcY = 1.0 - (2.0 * point.y / UIScreen.main.bounds.height)
-        let clipCoords = SIMD4<Float>(Float(ndcX), Float(ndcY), 1.0, 1.0)
-
-        // Unproject NDC to world coordinates
-        let inverseProjection = cameraComponent.projectionMatrix.inverse
-        let eyeCoords = inverseProjection * clipCoords
-        let rayDir = float3(eyeCoords.x, eyeCoords.y, -1)
-        let worldRayDir = (cameraComponent.calculateViewMatrix(transform: camera).inverse * float4(rayDir, 0)).xyz.normalized
-
-        return Ray(origin: camera.position, direction: worldRayDir)
+    private func calculateRayIntersction(from entity: Entity, to camera: TransformComponent, at point: CGPoint) {
+        if let selection = entityManager.getComponent(type: SelectionComponent.self, for: entity)
+        {
+            // Convert CGPoint to NDC
+            let clipX = Float(2 * point.x) / Renderer.params.width - 1;
+            let clipY = Float(1 - (2 * point.y)) / Renderer.params.height;
+            let clipCoords = float4(clipX, clipY, 0, 1) // Assume clip space is hemicube, -Z is into the screen
+            
+            var eyeRayDir = cameraComponent.projectionMatrix * clipCoords
+            eyeRayDir.z = 1
+            eyeRayDir.w = 0
+            
+            
+            let currentViewMatrix = cameraComponent.calculateViewMatrix(transform: camera)
+            let worldRayDir = float4(currentViewMatrix * eyeRayDir).xyz
+            let direction = worldRayDir.normalized
+            
+            
+            let eyeRayOrigin = float4(0, 0, 0, 1);
+            let origin = (currentViewMatrix * eyeRayOrigin).xyz;
+            
+            let entityTransformComponent = entityManager.getComponent(type: TransformComponent.self, for: entity)
+            
+            let ray = Ray(origin: ((entityTransformComponent?.modelMatrix.inverse)! * float4(origin.x,origin.y,origin.z,1)).xyz,
+                          direction: direction)
+            
+            if let boundingBox = entityManager.getComponent(type: RenderableComponent.self, for: entity)!.boundingBox
+            {
+                
+                ray.intersects(with: boundingBox, with: selection)
+            }
+            
+            
+            // Unproject NDC to world coordinates
+            //            let inverseProjection = cameraComponent.projectionMatrix.inverse
+            //            let eyeCoords = inverseProjection * clipCoords
+            //            let rayDir = float3(eyeCoords.x, eyeCoords.y, -1)
+            //            let worldRayDir = (cameraComponent.calculateViewMatrix(transform: camera).inverse * float4(rayDir, 0)).xyz.normalized
+            
+            //            return Ray(origin: camera.position, direction: worldRayDir)
+        }//if let
     }
 }
