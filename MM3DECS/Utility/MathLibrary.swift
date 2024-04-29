@@ -220,6 +220,9 @@ extension float3 {
     var length: Float {
     length_squared.squareRoot()
   }
+    static var infinity : float3 {
+        float3(Float.infinity, Float.infinity, Float.infinity)
+    }
 
   var normalized: float3 {
     self / length
@@ -234,6 +237,17 @@ extension float3 {
     self.init()
     self = [Float(d.x), Float(d.y), Float(d.z)]
   }
+    
+    // Calculate the squared length of the vector
+    var lengthSquared: Float {
+        return self.x * self.x + self.y * self.y + self.z * self.z
+    }
+}
+
+
+// Define the < operator to compare the length of two float3 vectors
+func < (lhs: float3, rhs: float3) -> Bool {
+    return lhs.lengthSquared < rhs.lengthSquared
 }
 
 // MARK: - float4

@@ -23,15 +23,13 @@ import ModelIO
 
 extension Ray {
     /// Check if the ray intersects with an axis-aligned bounding box.
-    func intersects(with boundingBox: MDLAxisAlignedBoundingBox, with selection: inout SelectionComponent) {
-        var tmin = boundingBox.minBounds;
-        var tmax = boundingBox.maxBounds;
-        let inverseDirection = 1 / direction
-        
-        selection.isSelected = false
+    func intersects(with bounds: [float3], with selection: inout SelectionComponent) {
+        assert(bounds.count == 2, "Bounds array must have two elements.")
+                
+       let inverseDirection = 1/direction
+        var tmin = bounds[0]
+        var tmax = bounds[1]
         let sign = [(inverseDirection.x < 0) ? 1 : 0, (inverseDirection.y < 0) ? 1 : 0, (inverseDirection.z < 0) ? 1 : 0]
-        let bounds = [tmin, tmax]
-        
         tmin.x = (bounds[sign[0]].x - origin.x) * inverseDirection.x
         tmax.x = (bounds[1 - sign[0]].x - origin.x) * inverseDirection.x
         
@@ -73,7 +71,7 @@ extension Ray {
             t0 = tmax.x
         }
         selection.isSelected = true;
-        selection.distance = float4(origin + direction * t0, 1)
+        selection.distance = float3(origin + direction * t0)
         return
     }
 }

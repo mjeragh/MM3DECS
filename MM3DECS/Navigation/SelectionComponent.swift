@@ -6,6 +6,6 @@
 //
 
 struct SelectionComponent: Component {
-    var isSelected: Bool
-    var distance : float4 // I dont know why it was float4 from the previous project
+    var isSelected: Bool = false
+    var distance : float3 = float3.infinity// I dont know why it was float4 from the previous project
 }

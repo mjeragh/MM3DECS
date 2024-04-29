@@ -41,12 +41,12 @@ class InputSystem: SystemProtocol {
                     selectedEntity = performPicking(at: touchLocation, using: cameraEntity)
                     if let selected = selectedEntity {
                         // An object was touched, mark it as selected
-                        var selectionComponent = entityManager.getComponent(type: SelectionComponent.self, for: selected) ?? SelectionComponent(isSelected: false, distance: float3(10000,10000,10000))
-                            selectionComponent.isSelected = true
+                        var selectionComponent = entityManager.getComponent(type: SelectionComponent.self, for: selected)! 
                         entityManager.addComponent(component: selectionComponent, to: selected)
+                        logger.debug("Object has been selected")
                     } else {
                         // No object was touched, the camera should be marked as selected
-                        cameraInput.dragStartPosition = nil//touchLocation
+                        cameraInput.dragStartPosition = touchLocation
                         entityManager.addComponent(component: cameraInput, to: cameraEntity)
                     }
                 }//began
@@ -89,16 +89,26 @@ class InputSystem: SystemProtocol {
         
         let entities = entityManager.entitiesWithComponents([RenderableComponent.self])
         for entity in entities {
-            if let renderable = entityManager.getComponent(type: RenderableComponent.self, for: entity)
-                {
                 calculateRayIntersction(from: entity, to: cameraTransform, at: location)
+            if let select = entityManager.getComponent(type: SelectionComponent.self, for: entity){
+                if select.isSelected {
+                    //check it is the shortest
+                    logger.warning("Something is slected")
+                    if selectedEntity == nil {
+                        selectedEntity = entity
+                    } else{
+                        if (select.distance < entityManager.getComponent(type: SelectionComponent.self, for: selectedEntity!)!.distance){
+                            
+                        }
+                    }
+                }
             }
         }
         return nil
     }
 
     private func calculateRayIntersction(from entity: Entity, to camera: TransformComponent, at point: CGPoint) {
-        if let selection = entityManager.getComponent(type: SelectionComponent.self, for: entity)
+        if var selection = entityManager.getComponent(type: SelectionComponent.self, for: entity)
         {
             // Convert CGPoint to NDC
             let clipX = Float(2 * point.x) / Renderer.params.width - 1;
@@ -123,20 +133,17 @@ class InputSystem: SystemProtocol {
             let ray = Ray(origin: ((entityTransformComponent?.modelMatrix.inverse)! * float4(origin.x,origin.y,origin.z,1)).xyz,
                           direction: direction)
             
-            if let boundingBox = entityManager.getComponent(type: RenderableComponent.self, for: entity)!.boundingBox
+            if let boundingBox = entityManager.getComponent(type: RenderableComponent.self, for: entity)?.boundingBox
             {
+                var tmin = boundingBox.minBounds;
+                var tmax = boundingBox.maxBounds
+                selection.isSelected = false
                 
-                ray.intersects(with: boundingBox, with: selection)
+                let bounds = [tmin, tmax]
+                
+                ray.intersects(with: bounds, with: &selection)
             }
             
-            
-            // Unproject NDC to world coordinates
-            //            let inverseProjection = cameraComponent.projectionMatrix.inverse
-            //            let eyeCoords = inverseProjection * clipCoords
-            //            let rayDir = float3(eyeCoords.x, eyeCoords.y, -1)
-            //            let worldRayDir = (cameraComponent.calculateViewMatrix(transform: camera).inverse * float4(rayDir, 0)).xyz.normalized
-            
-            //            return Ray(origin: camera.position, direction: worldRayDir)
         }//if let
     }
 }

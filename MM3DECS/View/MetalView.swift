@@ -22,7 +22,7 @@ struct MetalView: View {
       MetalViewRepresentable(
         engine: engine,
         metalView: $metalView,
-        options: options).gesture(DragGesture().onChanged { gesture in
+        options: options).gesture(DragGesture(minimumDistance: 0).onChanged { gesture in
             if let gameScene = engine.sceneManager?.currentScene as? GameScene,
                let inputSystem = gameScene.systems.compactMap({ $0 as? InputSystem }).first {
                 inputSystem.touchMovedOrBegan(gesture: gesture)

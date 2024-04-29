@@ -65,6 +65,7 @@ class GameScene: SceneProtocol {
         entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "train.usd"), to: trainEntity)
         entityManager.addComponent(component: TransformComponent(position: float3(5, 0.6, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), to: trainEntity)
         entityManager.addComponent(component: InputComponent(), to: trainEntity)
+        entityManager.addComponent(component: SelectionComponent(), to: trainEntity)
                // Add other entities and components as needed
 //        let landEntity = Entity()
 //        entityManager.addEntity(entity: landEntity)
@@ -78,6 +79,7 @@ class GameScene: SceneProtocol {
         entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "peg.usda"), to: sunEntity)
         entityManager.addComponent(component: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), to: sunEntity)
         entityManager.addComponent(component: InputComponent(), to: sunEntity)
+        entityManager.addComponent(component: SelectionComponent(), to: sunEntity)
     }
 }
 
