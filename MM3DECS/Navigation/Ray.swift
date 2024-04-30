@@ -7,11 +7,13 @@
 
 import Foundation
 import simd
+import OSLog
 
 struct Ray {
     var origin: float3
     var direction: float3
     var maxDistance = Float.infinity
+    let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "Ray")
     
     init(origin: float3, direction: float3) {
         self.origin = origin
@@ -25,11 +27,20 @@ extension Ray {
     /// Check if the ray intersects with an axis-aligned bounding box.
     func intersects(with bounds: [float3], with selection: inout SelectionComponent) {
         assert(bounds.count == 2, "Bounds array must have two elements.")
-                
-       let inverseDirection = 1/direction
+        logger.debug("\nray: origin\(origin), direction:\(direction)")
+       // Compute inverse direction safely
+        let inverseDirection = float3(
+            x: direction.x == 0 ? Float.greatestFiniteMagnitude : 1 / direction.x,
+            y: direction.y == 0 ? Float.greatestFiniteMagnitude : 1 / direction.y,
+            z: direction.z == 0 ? Float.greatestFiniteMagnitude : 1 / direction.z
+        )
+        logger.debug("inveseDirection: \(inverseDirection)")
+        
         var tmin = bounds[0]
         var tmax = bounds[1]
+        logger.debug("tmin:\(tmin), tmax:\(tmax)\n")
         let sign = [(inverseDirection.x < 0) ? 1 : 0, (inverseDirection.y < 0) ? 1 : 0, (inverseDirection.z < 0) ? 1 : 0]
+        logger.debug("sign: \(sign)")
         tmin.x = (bounds[sign[0]].x - origin.x) * inverseDirection.x
         tmax.x = (bounds[1 - sign[0]].x - origin.x) * inverseDirection.x
         

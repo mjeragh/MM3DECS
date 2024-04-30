@@ -131,7 +131,7 @@ extension Renderer: MTKViewDelegate {
         
         
         Renderer.params.width = Float(view.bounds.width) //UInt32(size.width)
-        Renderer.params.height = Float(view.bounds.width)//UInt32(size.height)
+        Renderer.params.height = Float(view.bounds.height)//UInt32(size.height)
     }
     
     

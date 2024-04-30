@@ -111,8 +111,8 @@ class InputSystem: SystemProtocol {
         if var selection = entityManager.getComponent(type: SelectionComponent.self, for: entity)
         {
             // Convert CGPoint to NDC
-            let clipX = Float(2 * point.x) / Renderer.params.width - 1;
-            let clipY = Float(1 - (2 * point.y)) / Renderer.params.height;
+            let clipX = Float(2 * Float(point.x)) / Renderer.params.width - 1;
+            let clipY = Float(1 - Float((2 * point.y))) / Renderer.params.height
             let clipCoords = float4(clipX, clipY, 0, 1) // Assume clip space is hemicube, -Z is into the screen
             
             var eyeRayDir = cameraComponent.projectionMatrix * clipCoords
@@ -132,11 +132,12 @@ class InputSystem: SystemProtocol {
             
             let ray = Ray(origin: ((entityTransformComponent?.modelMatrix.inverse)! * float4(origin.x,origin.y,origin.z,1)).xyz,
                           direction: direction)
+            logger.debug("\nray: origin\(origin), direction:\(direction)")
             
             if let boundingBox = entityManager.getComponent(type: RenderableComponent.self, for: entity)?.boundingBox
             {
-                var tmin = boundingBox.minBounds;
-                var tmax = boundingBox.maxBounds
+                let tmin = boundingBox.minBounds;
+                let tmax = boundingBox.maxBounds
                 selection.isSelected = false
                 
                 let bounds = [tmin, tmax]
