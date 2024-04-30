@@ -75,9 +75,8 @@ class InputSystem: SystemProtocol {
                 }
     }
 
-    private func performPicking(at location: CGPoint, using camera: Entity) -> Entity? {
-        guard let cameraEntity = entityManager.entities(for: CameraInputComponent.self).first,
-              let cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity) else {
+    private func performPicking(at location: CGPoint, using cameraEntity: Entity) -> Entity? {
+        guard let cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity) else {
             logger.warning("Camera component not found")
             return nil
         }
@@ -108,66 +107,47 @@ class InputSystem: SystemProtocol {
     }
 
     private func calculateRayIntersection(from entity: Entity, to camera: TransformComponent, at point: CGPoint) {
-        // Ensure necessary components are available
-        guard let cameraEntity = entityManager.entities(for: CameraInputComponent.self).first,
-              let cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity),
-              let cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity) else {
-            logger.warning("Necessary camera components not found")
-            return
-        }
-
-        // Assuming cameraTransform.rotation represents spherical coordinates
-        let theta = cameraTransform.rotation.y // Horizontal angle in radians
-        let phi = cameraTransform.rotation.x   // Vertical angle in radians
-
-        // Calculate camera's position using spherical coordinates
-        let x = cameraComponent.distance * sin(phi) * cos(theta)
-        let y = cameraComponent.distance * sin(phi) * sin(theta)
-        let z = cameraComponent.distance * cos(phi)
-        let cameraPosition = float3(x, y, z) + cameraTransform.position
-
-        // Direction from camera to the target (assuming target is at origin)
-        let viewDirection = normalize(float3(0, 0, 0) - cameraPosition)  // Adjust target if different
-
-        // Convert CGPoint to NDC (Normalized Device Coordinates)
-        let clipX = Float(2 * Float(point.x)) / Renderer.params.width - 1
-        let clipY = Float(1 - Float((2 * point.y))) / Renderer.params.height
-        let clipCoords = float4(clipX, clipY, 0, 1) // Assuming clip space is hemicube, -Z is into the screen
-
-        logger.debug("Clip coordinates: \(clipCoords)")
-        
-        
-        // Calculate ray direction in world coordinates
-        var eyeRayDir = cameraComponent.projectionMatrix * clipCoords
-        eyeRayDir.z = 1
-        eyeRayDir.w = 0
-        let worldRayDir = float4(cameraTransform.modelMatrix * eyeRayDir).xyz
-        let direction = worldRayDir.normalized
-        logger.debug("World direction: \(direction)")
-
-        // Compute origin using the camera's position and world direction
-        let ray = Ray(origin: cameraPosition, direction: direction)
-
-        // Fetch the entity's renderable component to get bounding box
-        if let entityTransformComponent = entityManager.getComponent(type: TransformComponent.self, for: entity),
-           let boundingBox = entityManager.getComponent(type: RenderableComponent.self, for: entity)?.boundingBox {
-            var selection = entityManager.getComponent(type: SelectionComponent.self, for: entity) ?? SelectionComponent()
-
-            logger.debug("Checking entity Transform: \(entityTransformComponent.position) and Renderable: \(boundingBox.minBounds), \(boundingBox.maxBounds) components")
-            // Calculate intersection
-            let bounds = [boundingBox.minBounds, boundingBox.maxBounds]
-            ray.intersects(with: bounds, with: &selection)
-
-            // Log results and handle selection
-            if selection.isSelected {
-                logger.debug("Intersection successful at distance: \(selection.distance)")
-                entityManager.addComponent(component: selection, to: entity)
-            } else {
-                logger.debug("No intersection detected.")
+        if var selection = entityManager.getComponent(type: SelectionComponent.self, for: entity)
+        {
+            // Convert CGPoint to NDC
+            let clipX = Float(2 * Float(point.x)) / Renderer.params.width - 1 //ndcX
+            let clipY = Float(1 - Float((2 * point.y))) / Renderer.params.height //ndcY
+            let clipCoords = float4(clipX, clipY, -1, 0) // Assume clip space is hemicube, -Z is into the screen the depth range is from [0,1] could be [-1,1]
+            
+            var eyeRayDir = cameraComponent.projectionMatrix * clipCoords
+            eyeRayDir.z = 1 //Assuming the camera looks along the Z in NDC
+            eyeRayDir.w = 0
+            
+            
+            let currentViewMatrix = cameraComponent.calculateViewMatrix(transform: camera)
+            let worldRayDir = float4(currentViewMatrix * eyeRayDir).xyz
+            let direction = worldRayDir.normalized
+            
+            
+            let eyeRayOrigin = float4(0, 0, 0, 1);
+            let origin = (currentViewMatrix * eyeRayOrigin).xyz;
+            
+            let entityTransformComponent = entityManager.getComponent(type: TransformComponent.self, for: entity)
+            let inverseDirection = (camera.position - entityTransformComponent!.position).normalized
+            logger.debug("inverseDirection computation: \(inverseDirection)\n")
+            //testRayIntersectsBoundingBox()
+            //testRayIntersectsObjectBoundingBoxThetaPhi()
+            let ray = Ray(origin: ((entityTransformComponent?.modelMatrix.inverse)! * float4(origin.x,origin.y,origin.z,1)).xyz,
+                          direction: direction)
+            logger.debug("\nray: origin\(ray.origin), direction:\(ray.direction)")
+            
+            if let boundingBox = entityManager.getComponent(type: RenderableComponent.self, for: entity)?.boundingBox
+            {
+                let tmin = boundingBox.minBounds;
+                let tmax = boundingBox.maxBounds
+                selection.isSelected = false
+                
+                let bounds = [tmin, tmax]
+                
+                ray.intersects(with: bounds, with: &selection)
             }
-        } else {
-            logger.warning("Entity missing transform or renderable component")
-        }
+            
+        }//if let
     }
     
     func testRayIntersectsBoundingBox() {
