@@ -41,7 +41,7 @@ extension Ray {
         
         var tmin = bounds[0]
         var tmax = bounds[1]
-        logger.debug("tmin:\(tmin), tmax:\(tmax)\n")
+        logger.debug("tmin(min Bound):\(tmin), tmax(maxBound):\(tmax)\n")
         let sign = [(inverseDirection.x < 0) ? 1 : 0, (inverseDirection.y < 0) ? 1 : 0, (inverseDirection.z < 0) ? 1 : 0]
         logger.debug("sign: \(sign)")
         tmin.x = (bounds[sign[0]].x - origin.x) * inverseDirection.x
