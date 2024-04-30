@@ -41,7 +41,7 @@ class InputSystem: SystemProtocol {
                     selectedEntity = performPicking(at: touchLocation, using: cameraEntity)
                     if let selected = selectedEntity {
                         // An object was touched, mark it as selected
-                        var selectionComponent = entityManager.getComponent(type: SelectionComponent.self, for: selected)! 
+                        var selectionComponent = entityManager.getComponent(type: SelectionComponent.self, for: selected)!
                         entityManager.addComponent(component: selectionComponent, to: selected)
                         logger.debug("Object has been selected")
                     } else {
@@ -129,10 +129,13 @@ class InputSystem: SystemProtocol {
             let origin = (currentViewMatrix * eyeRayOrigin).xyz;
             
             let entityTransformComponent = entityManager.getComponent(type: TransformComponent.self, for: entity)
-            
+            let inverseDirection = (camera.position - entityTransformComponent!.position).normalized
+            logger.debug("inverseDirection computation: \(inverseDirection)\n")
+            //testRayIntersectsBoundingBox()
+            testRayIntersectsObjectBoundingBoxThetaPhi()
             let ray = Ray(origin: ((entityTransformComponent?.modelMatrix.inverse)! * float4(origin.x,origin.y,origin.z,1)).xyz,
                           direction: direction)
-            logger.debug("\nray: origin\(origin), direction:\(direction)")
+            logger.debug("\nray: origin\(ray.origin), direction:\(ray.direction)")
             
             if let boundingBox = entityManager.getComponent(type: RenderableComponent.self, for: entity)?.boundingBox
             {
@@ -147,4 +150,83 @@ class InputSystem: SystemProtocol {
             
         }//if let
     }
+    
+    func testRayIntersectsBoundingBox() {
+        let ray = Ray(origin: float3(0, 0, 0), direction: float3(1, 0, 0).normalized)
+        var selection = SelectionComponent()
+        let bounds = [float3(-1, -1, -1), float3(1, 1, 1)]
+        
+        ray.intersects(with: bounds, with: &selection)
+        
+        assert(selection.isSelected, "Ray should intersect with the bounding box.")
+    }
+    
+    func testRayIntersectsObjectBoundingBox() {
+        // Setup camera
+        let aspect = Float(16) / Float(9)  // Adjust aspect ratio as necessary
+        let cameraComponent = ArcballCameraComponent(aspect: aspect, fov: Float(70).degreesToRadians, near: 0.1, far: 1000, target: [0, 0, 0], distance: 15, minDistance: 1, maxDistance: 120)
+        
+        // Calculate camera world position and view direction
+        let cameraPosition = float3(0, 0, cameraComponent.distance)  // Position in front of the target
+        let viewDirection = float3(0, 0, -1)  // Looking towards the target
+        
+        // Setup object transform and bounding box
+        let objectTransform = TransformComponent(position: float3(5, 0.6, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1))
+        let bounds = [float3(-5.058, -4.922, -5.0), float3(4.942, 4.589, 5.0)]
+        
+        // Create ray
+        let rayDirection = normalize(objectTransform.position - cameraPosition)
+        let ray = Ray(origin: cameraPosition, direction: rayDirection)
+        
+        // Perform intersection test
+        var selection = SelectionComponent()
+        ray.intersects(with: bounds, with: &selection)
+        
+        // Assert if ray intersects
+        assert(selection.isSelected, "Ray should intersect with the bounding box.")
+        logger.debug("Intersection Distance: \(selection.distance)")
+    }
+    
+    func testRayIntersectsObjectBoundingBoxThetaPhi() {
+        // Setup camera
+        let aspect = Float(16) / Float(9)  // Adjust aspect ratio as necessary
+        let cameraComponent = ArcballCameraComponent(aspect: aspect, fov: Float(70).degreesToRadians, near: 0.1, far: 1000, target: [0, 0, 0], distance: 15, minDistance: 1, maxDistance: 120)
+
+        // Assuming the camera is looking directly at the target and rotating around it
+        let target = float3(0, 0, 0)  // The point the camera is looking at
+        let theta = 0.0  // Horizontal angle in radians
+        let phi = 0.0  // Vertical angle in radians
+
+        // Calculate camera's position relative to the target
+        let sinPhi = Float(sin(phi))
+        let cosPhi =    Float(cos(phi))
+        let sinTheta =  Float(sin(theta))
+        let cosTheta =  Float(cos(theta))
+
+        let x = target.x + cameraComponent.distance * sinPhi * cosTheta
+        let y = target.y + cameraComponent.distance * sinPhi * sinTheta
+        let z = target.z + cameraComponent.distance * cosPhi
+
+        let cameraPosition = float3(x, y, z)
+
+        // Compute view direction
+        let viewDirection = normalize(target - cameraPosition)  // Direction from camera to the target
+
+        // Setup object transform and bounding box
+        let objectTransform = TransformComponent(position: float3(5, 0.6, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1))
+        let bounds = [float3(-5.058, -4.922, -5.0), float3(4.942, 4.589, 5.0)]
+
+        // Create ray
+        let rayDirection = normalize(objectTransform.position - cameraPosition)
+        let ray = Ray(origin: cameraPosition, direction: rayDirection)
+
+        // Perform intersection test
+        var selection = SelectionComponent()
+        ray.intersects(with: bounds, with: &selection)
+
+        // Assert if ray intersects
+        assert(selection.isSelected, "Ray should intersect with the bounding box.")
+        logger.debug("Intersection Distance: \(selection.distance)")
+    }
+    
 }

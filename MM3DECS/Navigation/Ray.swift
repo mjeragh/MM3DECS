@@ -13,11 +13,13 @@ struct Ray {
     var origin: float3
     var direction: float3
     var maxDistance = Float.infinity
+    var INVdirection: float3 = float3(0,0,0)
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "Ray")
     
     init(origin: float3, direction: float3) {
         self.origin = origin
         self.direction = direction.normalized //Ensure the direction is normalized
+        
     }
 }
 
@@ -34,6 +36,7 @@ extension Ray {
             y: direction.y == 0 ? Float.greatestFiniteMagnitude : 1 / direction.y,
             z: direction.z == 0 ? Float.greatestFiniteMagnitude : 1 / direction.z
         )
+        
         logger.debug("inveseDirection: \(inverseDirection)")
         
         var tmin = bounds[0]
@@ -46,13 +49,16 @@ extension Ray {
         
         tmin.y = (bounds[sign[1]].y - origin.y) * inverseDirection.y;
         tmax.y = (bounds[1 - sign[1]].y - origin.y) * inverseDirection.y;
-            
+        
+        logger.debug("tmin:\(tmin), tmax:\(tmax) after updating with sign and inverseDirection\n")
+        
         var t0 = Float(tmax.z);
+        logger.debug("t0: \(t0)")
             
         if ((tmin.x > tmax.y) || (tmin.y > tmax.x)){
              return;
         }
-        
+        logger.debug("tmin.x: \(tmin.x), tmax.y: \(tmax.y), after passing the first failure test\n")
         
         if (tmin.y > tmin.x){
             tmin.x = tmin.y;
@@ -66,12 +72,12 @@ extension Ray {
         tmin.z = (bounds[sign[2]].z - origin.z) * inverseDirection.z;
         tmax.z = (bounds[1-sign[2]].z - origin.z) * inverseDirection.z;
         
-        
+        logger.debug("tmin:\(tmin), tmax:\(tmax) before checking for the second failur test and after updating the z-axis of tmin and tmax sign and inverseDirection\n")
         if ((tmin.x > tmax.z) || (tmin.z > tmax.x)){
             
             return
         }
-        
+        logger.debug("tmin.x: \(tmin.x), tmax.z: \(tmax.z), after passing the second failure test, this means success!\n")
         if (tmin.z > tmin.x){
             tmin.x = tmin.z;
             t0 = tmin.x
