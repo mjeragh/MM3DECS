@@ -53,6 +53,8 @@ class Renderer: NSObject {
     var forwardPassPipelineState: MTLRenderPipelineState!
     let depthStencilState: MTLDepthStencilState?
     
+    
+    
     var isReadyToRender = false
     static var params = Params()
     
@@ -110,6 +112,7 @@ class Renderer: NSObject {
     }//Init
     
     
+    
     static func buildDepthStencilState() -> MTLDepthStencilState? {
         // 1
         let descriptor = MTLDepthStencilDescriptor()
@@ -160,6 +163,7 @@ extension Renderer: MTKViewDelegate {
         let deltaTime = 1 / Float(view.preferredFramesPerSecond)
         delegate?.updateSceneSystems(deltaTime: deltaTime, renderEncoder: renderEncoder)
         
+       
         renderEncoder.endEncoding()
         guard let drawable = view.currentDrawable else {
             return

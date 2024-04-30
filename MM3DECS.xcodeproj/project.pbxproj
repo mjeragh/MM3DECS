@@ -27,6 +27,8 @@
 		B259C2952BAADDF50049BA2C /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2942BAADDF50049BA2C /* System.swift */; };
 		B259C2972BAADE760049BA2C /* EntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2962BAADE760049BA2C /* EntityManager.swift */; };
 		B259C29A2BAADF2A0049BA2C /* RendererSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2992BAADF2A0049BA2C /* RendererSystem.swift */; };
+		B28FD96C2BE160A00057B63E /* RayDebug.metal in Sources */ = {isa = PBXBuildFile; fileRef = B28FD96B2BE160A00057B63E /* RayDebug.metal */; };
+		B28FD96E2BE165290057B63E /* RayDebugSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28FD96D2BE165290057B63E /* RayDebugSystem.swift */; };
 		B294EDEC2BD3E88B008E6F2E /* InputSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDEB2BD3E88B008E6F2E /* InputSystem.swift */; };
 		B294EDEE2BD3E90F008E6F2E /* InputComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDED2BD3E90F008E6F2E /* InputComponent.swift */; };
 		B294EDF22BD4F863008E6F2E /* SelectionComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDF12BD4F863008E6F2E /* SelectionComponent.swift */; };
@@ -64,6 +66,8 @@
 		B259C2942BAADDF50049BA2C /* System.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = System.swift; sourceTree = "<group>"; };
 		B259C2962BAADE760049BA2C /* EntityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityManager.swift; sourceTree = "<group>"; };
 		B259C2992BAADF2A0049BA2C /* RendererSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererSystem.swift; sourceTree = "<group>"; };
+		B28FD96B2BE160A00057B63E /* RayDebug.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = RayDebug.metal; sourceTree = "<group>"; };
+		B28FD96D2BE165290057B63E /* RayDebugSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RayDebugSystem.swift; sourceTree = "<group>"; };
 		B294EDEB2BD3E88B008E6F2E /* InputSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputSystem.swift; sourceTree = "<group>"; };
 		B294EDED2BD3E90F008E6F2E /* InputComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputComponent.swift; sourceTree = "<group>"; };
 		B294EDF12BD4F863008E6F2E /* SelectionComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionComponent.swift; sourceTree = "<group>"; };
@@ -138,6 +142,7 @@
 				B259C2742BA2FB860049BA2C /* Lighting.h */,
 				B259C2732BA2FB860049BA2C /* stdbool.h */,
 				B259C2762BA2FB860049BA2C /* Vertex.h */,
+				B28FD96B2BE160A00057B63E /* RayDebug.metal */,
 			);
 			path = Shaders;
 			sourceTree = "<group>";
@@ -201,6 +206,7 @@
 				B294EDF52BD4FB41008E6F2E /* CameraInputComponent.swift */,
 				B294EDF72BD4FBA7008E6F2E /* CameraControlSystem.swift */,
 				B24913542BDD6E0E00A31CCA /* Ray.swift */,
+				B28FD96D2BE165290057B63E /* RayDebugSystem.swift */,
 			);
 			path = Navigation;
 			sourceTree = "<group>";
@@ -292,11 +298,13 @@
 				B294EDF42BD4FA1A008E6F2E /* SelectionSystem.swift in Sources */,
 				B259C27B2BA2FBDE0049BA2C /* MetalView.swift in Sources */,
 				B259C2842BA3001D0049BA2C /* Renderer.swift in Sources */,
+				B28FD96E2BE165290057B63E /* RayDebugSystem.swift in Sources */,
 				B294EDF62BD4FB41008E6F2E /* CameraInputComponent.swift in Sources */,
 				B294EDF82BD4FBA7008E6F2E /* CameraControlSystem.swift in Sources */,
 				B259C2892BA303B90049BA2C /* Fragment.metal in Sources */,
 				B24913552BDD6E0E00A31CCA /* Ray.swift in Sources */,
 				B259C2972BAADE760049BA2C /* EntityManager.swift in Sources */,
+				B28FD96C2BE160A00057B63E /* RayDebug.metal in Sources */,
 				B259C2682BA2FABE0049BA2C /* ContentView.swift in Sources */,
 				B294EDEC2BD3E88B008E6F2E /* InputSystem.swift in Sources */,
 				B2E6D6DE2BCFAE1600F7D9B0 /* Engine.swift in Sources */,

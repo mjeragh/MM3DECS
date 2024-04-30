@@ -8,18 +8,20 @@ import Foundation
 import MetalKit
 import SwiftUI
 import os.log
-
+import simd
 
 class InputSystem: SystemProtocol {
     var entityManager: EntityManager
     let cameraComponent:CameraComponent
     var selectedEntity: Entity? = nil
+    let rayDebugSystem : RayDebugSystem
     
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "InputSystem")
     
-    init(entityManager: EntityManager, cameraComponent:CameraComponent) {
+    init(entityManager: EntityManager, cameraComponent:CameraComponent, rayDebugSystem: RayDebugSystem) {
         self.entityManager = entityManager
         self.cameraComponent = cameraComponent
+        self.rayDebugSystem = rayDebugSystem
     }
     
     func update(deltaTime: Float, entityManager: EntityManager, renderEncoder: any MTLRenderCommandEncoder) {
@@ -81,8 +83,8 @@ class InputSystem: SystemProtocol {
             return nil
         }
         
-        logger.debug("Picking at \(location.x), \(location.y)")
-        logger.debug("Camera position: \(cameraTransform.position)")
+        logger.debug("in function performPicking Picking at \(location.x), \(location.y)")
+        logger.debug("in function performPicking Camera position: \(cameraTransform.position)")
         
         //logger.debug("Ray direction: \(ray.direction)")
         
@@ -112,8 +114,8 @@ class InputSystem: SystemProtocol {
             // Convert CGPoint to NDC
             let clipX = Float(2 * Float(point.x)) / Renderer.params.width - 1 //ndcX
             let clipY = Float(1 - Float((2 * point.y))) / Renderer.params.height //ndcY
-            let clipCoords = float4(clipX, clipY, -1, 0) // Assume clip space is hemicube, -Z is into the screen the depth range is from [0,1] could be [-1,1]
-            
+            let clipCoords = float4(clipX, clipY, 0, 1) // Assume clip space is hemicube, -Z is into the screen the depth range is from [0,1] could be [-1,1]
+            //[0,1] and z is 1 from previous projects
             var eyeRayDir = cameraComponent.projectionMatrix * clipCoords
             eyeRayDir.z = 1 //Assuming the camera looks along the Z in NDC
             eyeRayDir.w = 0
@@ -132,9 +134,17 @@ class InputSystem: SystemProtocol {
             logger.debug("inverseDirection computation: \(inverseDirection)\n")
             //testRayIntersectsBoundingBox()
             //testRayIntersectsObjectBoundingBoxThetaPhi()
-            let ray = Ray(origin: ((entityTransformComponent?.modelMatrix.inverse)! * float4(origin.x,origin.y,origin.z,1)).xyz,
+            var ray = Ray(origin: ((entityTransformComponent?.modelMatrix.inverse)! * float4(origin.x,origin.y,origin.z,1)).xyz,
                           direction: direction)
+            ray.INVdirection = inverseDirection
             logger.debug("\nray: origin\(ray.origin), direction:\(ray.direction)")
+            
+            // Prepare ray for rendering (for debugging purposes)
+            let debugModeEnabled = true
+            if debugModeEnabled {
+                rayDebugSystem.updateCameraProjectionMatrix(projectionMatrix: cameraComponent.projectionMatrix)
+                rayDebugSystem.updateLineVertices(vertices: ray.vertexData())
+            }
             
             if let boundingBox = entityManager.getComponent(type: RenderableComponent.self, for: entity)?.boundingBox
             {

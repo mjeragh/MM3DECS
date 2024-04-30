@@ -41,8 +41,12 @@ class GameScene: SceneProtocol {
             entityManager.addComponent(component: cameraTransform, to: cameraEntity)
             entityManager.addComponent(component: CameraInputComponent(cameraType: .arcball), to: cameraEntity)
             //setup Systems
+            let cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)!
+            let rayDebugSystem = RayDebugSystem(projectionMatrix: cameraComponent.projectionMatrix)
+            rayDebugSystem.updateLineVertices(vertices: [float3(0,0,0)])
+            systems.append(rayDebugSystem)
             systems.append(RenderSystem(cameraEntity: cameraEntity))
-            systems.append(InputSystem(entityManager: entityManager, cameraComponent: entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)!))
+            systems.append(InputSystem(entityManager: entityManager, cameraComponent: cameraComponent, rayDebugSystem: rayDebugSystem))
               systems.append(CameraControlSystem())
         } else {
             logger.info("Failed to retrieve transform component of camera entity.")
