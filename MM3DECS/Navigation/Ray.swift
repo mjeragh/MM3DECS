@@ -15,10 +15,10 @@ struct Ray {
     var maxDistance = Float.infinity
     var INVdirection: float3 = float3(0,0,0)
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "Ray")
-    var length: Float = 10.0  // Default length for rendering
+    var length: Float = 20.0  // Default length for rendering
 
     func vertexData() -> [float3] {
-        let endPoint = origin + direction * length
+        let endPoint = origin + 1/direction * length
         return [origin, endPoint]
     }
     
@@ -62,6 +62,7 @@ extension Ray {
         logger.debug("t0: \(t0)")
             
         if ((tmin.x > tmax.y) || (tmin.y > tmax.x)){
+            logger.debug("first fail")
              return;
         }
         logger.debug("tmin.x: \(tmin.x), tmax.y: \(tmax.y), after passing the first failure test\n")
@@ -80,7 +81,7 @@ extension Ray {
         
         logger.debug("tmin:\(tmin), tmax:\(tmax) before checking for the second failur test and after updating the z-axis of tmin and tmax sign and inverseDirection\n")
         if ((tmin.x > tmax.z) || (tmin.z > tmax.x)){
-            
+            logger.debug("Second fail")
             return
         }
         logger.debug("tmin.x: \(tmin.x), tmax.z: \(tmax.z), after passing the second failure test, this means success!\n")

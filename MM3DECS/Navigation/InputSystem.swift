@@ -116,6 +116,7 @@ class InputSystem: SystemProtocol {
             let clipY = Float(1 - Float((2 * point.y))) / Renderer.params.height //ndcY
             let clipCoords = float4(clipX, clipY, 0, 1) // Assume clip space is hemicube, -Z is into the screen the depth range is from [0,1] could be [-1,1]
             //[0,1] and z is 1 from previous projects
+            logger.debug("ndcX: \(clipX), ndcY: \(clipY), hemiCube:\(clipCoords)")
             var eyeRayDir = cameraComponent.projectionMatrix * clipCoords
             eyeRayDir.z = 1 //Assuming the camera looks along the Z in NDC
             eyeRayDir.w = 0
@@ -123,28 +124,28 @@ class InputSystem: SystemProtocol {
             
             let currentViewMatrix = cameraComponent.calculateViewMatrix(transform: camera)
             let worldRayDir = float4(currentViewMatrix * eyeRayDir).xyz
-            let direction = worldRayDir.normalized
+            let eyeRayOrigin = float4(x: 0, y: 0, z: 0, w: 1)
+            let worldRayOrigin = (currentViewMatrix.inverse * eyeRayOrigin).xyz
+            //let direction = worldRayDir.normalized
+            logger.debug("eyeRaiDir:\(eyeRayDir), wrayDir: \(worldRayDir)")
             
             
-            let eyeRayOrigin = float4(0, 0, 0, 1);
-            let origin = (currentViewMatrix * eyeRayOrigin).xyz;
             
             let entityTransformComponent = entityManager.getComponent(type: TransformComponent.self, for: entity)
             let inverseDirection = (camera.position - entityTransformComponent!.position).normalized
             logger.debug("inverseDirection computation: \(inverseDirection)\n")
             //testRayIntersectsBoundingBox()
             //testRayIntersectsObjectBoundingBoxThetaPhi()
-            var ray = Ray(origin: ((entityTransformComponent?.modelMatrix.inverse)! * float4(origin.x,origin.y,origin.z,1)).xyz,
-                          direction: direction)
+            var ray = Ray(origin: ((entityTransformComponent?.modelMatrix.inverse)! * float4(worldRayOrigin.x,worldRayOrigin.y,worldRayOrigin.z,1)).xyz,
+                          direction: ((entityTransformComponent?.modelMatrix.inverse)! * float4(worldRayDir.x, worldRayDir.y, worldRayDir.z,0)).xyz)
             ray.INVdirection = inverseDirection
             logger.debug("\nray: origin\(ray.origin), direction:\(ray.direction)")
             
             // Prepare ray for rendering (for debugging purposes)
-            let debugModeEnabled = true
-            if debugModeEnabled {
+            
                 rayDebugSystem.updateCameraProjectionMatrix(projectionMatrix: cameraComponent.projectionMatrix)
                 rayDebugSystem.updateLineVertices(vertices: ray.vertexData())
-            }
+            
             
             if let boundingBox = entityManager.getComponent(type: RenderableComponent.self, for: entity)?.boundingBox
             {

@@ -31,6 +31,7 @@
 /// THE SOFTWARE.
 
 import MetalKit
+import OSLog
 
 // swiftlint:disable implicitly_unwrapped_optional
 
@@ -52,8 +53,8 @@ class Renderer: NSObject {
     
     var forwardPassPipelineState: MTLRenderPipelineState!
     let depthStencilState: MTLDepthStencilState?
-    
-    
+    static var defaultPipelinestate: MTLRenderPipelineState!
+    var logger = Logger(subsystem: "MM3DECS", category: "Renderer")
     
     var isReadyToRender = false
     static var params = Params()
@@ -91,6 +92,7 @@ class Renderer: NSObject {
         
         do {
             forwardPassPipelineState = try device.makeRenderPipelineState(descriptor: forwardPassPipelineDescriptor)
+            Renderer.defaultPipelinestate = forwardPassPipelineState
         } catch let error {
             fatalError("Failed to create model pipeline state, error: \(error)")
         }
@@ -135,6 +137,7 @@ extension Renderer: MTKViewDelegate {
         
         Renderer.params.width = Float(view.bounds.width) //UInt32(size.width)
         Renderer.params.height = Float(view.bounds.height)//UInt32(size.height)
+        logger.debug("width: \(Renderer.params.width), height: \(Renderer.params.height)")
     }
     
     

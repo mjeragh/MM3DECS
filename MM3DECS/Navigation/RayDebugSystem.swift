@@ -11,7 +11,7 @@ import simd
 
 class RayDebugSystem : SystemProtocol {
     
-    
+    var debugEnabledMode = false
     var projectionMatrix: matrix_float4x4
     let device: MTLDevice
     var linePipelineState: MTLRenderPipelineState!
@@ -41,6 +41,16 @@ class RayDebugSystem : SystemProtocol {
         vertexDescriptor.layouts[0].stepRate = 1
 
         pipelineDescriptor.vertexDescriptor = vertexDescriptor
+        
+//        renderPassDescriptor.colorAttachments[0].texture = colorTexture
+//        renderPassDescriptor.colorAttachments[0].loadAction = .clear
+//        renderPassDescriptor.colorAttachments[0].storeAction = .store
+//        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 1)
+//
+//        renderPassDescriptor.depthAttachment.texture = depthTexture
+//        renderPassDescriptor.depthAttachment.loadAction = .clear
+//        renderPassDescriptor.depthAttachment.storeAction = .dontCare
+//        renderPassDescriptor.depthAttachment.clearDepth = 1.0
 
         do {
             linePipelineState = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
@@ -56,15 +66,18 @@ class RayDebugSystem : SystemProtocol {
     }
     
     func drawDebugLines(renderEncoder: MTLRenderCommandEncoder) {
-       
+            guard let lineVertexBuffer = lineVertexBuffer else { return }
             var pm = self.projectionMatrix
             renderEncoder.setRenderPipelineState(linePipelineState)
             renderEncoder.setVertexBuffer(lineVertexBuffer, offset: 0, index: 0)
             renderEncoder.setVertexBytes(&pm, length: MemoryLayout<matrix_float4x4>.size, index: 1)
-            renderEncoder.drawPrimitives(type: .line, vertexStart: 0, vertexCount: lineVertexBuffer!.length / MemoryLayout<float3>.stride)
+        renderEncoder.drawPrimitives(type: .line, vertexStart: 0, vertexCount: lineVertexBuffer.length / MemoryLayout<float3>.stride)
+        updateLineVertices(vertices: [])
+        renderEncoder.setRenderPipelineState(Renderer.defaultPipelinestate)
         }
     
     func updateLineVertices(vertices: [float3]) {
+        if vertices.isEmpty { return }
             let dataSize = vertices.count * MemoryLayout<float3>.stride
             lineVertexBuffer = Renderer.device.makeBuffer(bytes: vertices, length: dataSize, options: [])
         }

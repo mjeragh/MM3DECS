@@ -18,7 +18,6 @@ class GameScene: SceneProtocol {
     func updateSystems(deltaTime: Float, renderEncoder: any MTLRenderCommandEncoder) {
         systems.forEach { system in
             system.update(deltaTime: deltaTime, entityManager: entityManager, renderEncoder: renderEncoder)
-            
         }
     }
 
@@ -36,14 +35,14 @@ class GameScene: SceneProtocol {
         
         if let cameraEntity = entityManager.entities(for: ArcballCameraComponent.self).first,
            var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity){
-            cameraTransform.position = [0, -2, -15]
+            cameraTransform.position = [0, -2, 15]
             cameraTransform.rotation = [0,0,0]
             entityManager.addComponent(component: cameraTransform, to: cameraEntity)
             entityManager.addComponent(component: CameraInputComponent(cameraType: .arcball), to: cameraEntity)
             //setup Systems
             let cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)!
             let rayDebugSystem = RayDebugSystem(projectionMatrix: cameraComponent.projectionMatrix)
-            rayDebugSystem.updateLineVertices(vertices: [float3(0,0,0)])
+            rayDebugSystem.updateLineVertices(vertices: [])
             systems.append(rayDebugSystem)
             systems.append(RenderSystem(cameraEntity: cameraEntity))
             systems.append(InputSystem(entityManager: entityManager, cameraComponent: cameraComponent, rayDebugSystem: rayDebugSystem))

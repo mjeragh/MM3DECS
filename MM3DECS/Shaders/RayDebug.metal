@@ -24,5 +24,5 @@ vertex VertexOut line_vertex(VertexIn in [[stage_in]],
 }
 
 fragment float4 line_fragment() {
-    return float4(1.0, 0.0, 0.0, 1.0);  // Red color for visibility
+    return float4(1.0, 0.0, 0.0, 0.3);  // Red color for visibility
 }
