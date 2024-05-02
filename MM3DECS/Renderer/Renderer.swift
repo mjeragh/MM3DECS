@@ -53,7 +53,7 @@ class Renderer: NSObject {
     
     var forwardPassPipelineState: MTLRenderPipelineState!
     let depthStencilState: MTLDepthStencilState?
-    static var defaultPipelinestate: MTLRenderPipelineState!
+    //static var defaultPipelinestate: MTLRenderPipelineState!
     var logger = Logger(subsystem: "MM3DECS", category: "Renderer")
     
     var isReadyToRender = false
@@ -92,7 +92,7 @@ class Renderer: NSObject {
         
         do {
             forwardPassPipelineState = try device.makeRenderPipelineState(descriptor: forwardPassPipelineDescriptor)
-            Renderer.defaultPipelinestate = forwardPassPipelineState
+            //Renderer.defaultPipelinestate = forwardPassPipelineState//Was there for RayDebug
         } catch let error {
             fatalError("Failed to create model pipeline state, error: \(error)")
         }

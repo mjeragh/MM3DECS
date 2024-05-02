@@ -17,6 +17,7 @@ struct Ray {
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "Ray")
     var length: Float = 20.0  // Default length for rendering
 
+    //RayDebug
     func vertexData() -> [float3] {
         let endPoint = origin + 1/direction * length
         return [origin, endPoint]
@@ -37,12 +38,12 @@ extension Ray {
         assert(bounds.count == 2, "Bounds array must have two elements.")
         logger.debug("\nray: origin\(origin), direction:\(direction)")
        // Compute inverse direction safely
-//        let inverseDirection = float3(
-//            x: direction.x == 0 ? Float.greatestFiniteMagnitude : 1 / direction.x,
-//            y: direction.y == 0 ? Float.greatestFiniteMagnitude : 1 / direction.y,
-//            z: direction.z == 0 ? Float.greatestFiniteMagnitude : 1 / direction.z
-//        )
-        let inverseDirection = INVdirection
+        let inverseDirection = float3(
+            x: direction.x == 0 ? Float.greatestFiniteMagnitude : 1 / direction.x,
+            y: direction.y == 0 ? Float.greatestFiniteMagnitude : 1 / direction.y,
+            z: direction.z == 0 ? Float.greatestFiniteMagnitude : 1 / direction.z
+        )
+//        let inverseDirection = INVdirection
         logger.debug("inveseDirection: \(inverseDirection)")
         
         var tmin = bounds[0]

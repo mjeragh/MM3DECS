@@ -73,7 +73,8 @@ class RayDebugSystem : SystemProtocol {
             renderEncoder.setVertexBytes(&pm, length: MemoryLayout<matrix_float4x4>.size, index: 1)
         renderEncoder.drawPrimitives(type: .line, vertexStart: 0, vertexCount: lineVertexBuffer.length / MemoryLayout<float3>.stride)
         updateLineVertices(vertices: [])
-        renderEncoder.setRenderPipelineState(Renderer.defaultPipelinestate)
+        //Must set this otherwise I will get a redscreen
+        //renderEncoder.setRenderPipelineState(Renderer.defaultPipelinestate)
         }
     
     func updateLineVertices(vertices: [float3]) {

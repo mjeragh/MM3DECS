@@ -32,9 +32,9 @@ class CameraControlSystem: SystemProtocol {
                     // Apply camera control based on camera type
                     switch cameraInput.cameraType {
                     case .arcball:
-                        return//applyArcballControl(&cameraInput, &transform, deltaTime)
+                        applyArcballControl(&cameraInput, &transform, deltaTime)
                     case .perspective:
-                        applyPerspectiveControl(&cameraInput, &transform, deltaTime)
+                        return//applyPerspectiveControl(&cameraInput, &transform, deltaTime)
                     case .orthographic:
                         applyOrthographicControl(&cameraInput, &transform, deltaTime)
                     }

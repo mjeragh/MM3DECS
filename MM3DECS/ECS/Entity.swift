@@ -9,4 +9,4 @@ import Foundation
 struct Entity {
     let id: UUID = UUID()
 }
-
+ 
