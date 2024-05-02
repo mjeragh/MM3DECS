@@ -85,12 +85,13 @@ class InputSystem: SystemProtocol {
             return nil
         }
         
-        logger.debug("in function performPicking Picking at \(point.x), \(point.y)")
-        logger.debug("in function performPicking Camera position: \(cameraTransform.position)")
+        logger.debug("in function handleTouchOnXZPlane Picking at \(point.x), \(point.y)")
+        logger.debug("in function handleTouchOnXZPlane Camera position: \(cameraTransform.position)")
         
         let ndc = touchToNDC(touchPoint: point)
         let inverseVPMatrix = (cameraComponent.calculateViewMatrix(transform: cameraTransform)*cameraComponent.projectionMatrix).inverse
-        let worldRayOrigin = unprojectToXZPlane(ndc: ndc, inverseVPMatrix: inverseVPMatrix)
+        let worldRayOrigin = unprojectToXZPlane(ndc: ndc, inverseVPMatrix: inverseVPMatrix, cameraPosition: cameraTransform.position)
+        logger.debug("ndc: \(ndc), worldRayOrigin: \(worldRayOrigin)")
 
         // Assuming worldRay gives us a point on the XZ plane
         var closestEntity: Entity? = nil
@@ -117,6 +118,7 @@ class InputSystem: SystemProtocol {
     }
     
     func hitResult(boundingBox: MDLAxisAlignedBoundingBox, contains point: float3) -> Bool {
+        logger.debug("min Bound: \(boundingBox.minBounds), maxBound: \(boundingBox.maxBounds)\npoint \(point)")
         return point.x >= boundingBox.minBounds.x && point.x <= boundingBox.maxBounds.x &&
                /*point.y >= boundingBox.minBounds.y && point.y <= boundingBox.maxBounds.y &&*/
                point.z >= boundingBox.minBounds.z && point.z <= boundingBox.maxBounds.z
@@ -128,12 +130,32 @@ class InputSystem: SystemProtocol {
         return float3(x: x, y: y, z: 1.0)  // z = 1 for the purposes of ray casting
     }
     
-    func unprojectToXZPlane(ndc: float3, inverseVPMatrix: matrix_float4x4) -> float3 {
-        let clipSpace = float4(ndc.x, ndc.y, 1.0, 1.0)
-        let viewSpace = inverseVPMatrix * clipSpace
-        return float3(x: viewSpace.x, y: viewSpace.y, z: viewSpace.z) / viewSpace.w
-    }
+    func unprojectToXZPlane(ndc: float3, inverseVPMatrix: matrix_float4x4, cameraPosition: float3) -> float3 {
+        let nearClipSpace = float4(ndc.x, ndc.y, -1.0, 1.0)  // Near plane
+        let farClipSpace = float4(ndc.x, ndc.y, 1.0, 1.0)  // Far plane
 
+        let nearWorldSpace = (inverseVPMatrix * nearClipSpace).xyz / (inverseVPMatrix * nearClipSpace).w
+        let farWorldSpace = (inverseVPMatrix * farClipSpace).xyz / (inverseVPMatrix * farClipSpace).w
+        
+        logger.debug("nearWorldSpace:\(nearWorldSpace), farWorldSpace:\(farWorldSpace)")
+
+        let rayDirection = normalize(farWorldSpace - nearWorldSpace)
+        let rayOrigin = cameraPosition
+        let planeNormal = float3(0, 1, 0)  // Y-up
+        let planeY = Float(0.0)  // XZ plane at y=0
+
+        logger.debug("ray Origin: \(rayOrigin), direction: \(rayDirection)")
+        
+        // Calculate intersection with XZ plane
+        if rayDirection.y == 0 { return rayOrigin }  // Parallel to the plane
+
+        let t = (planeY - rayOrigin.y) / rayDirection.y  // Intersection time
+        logger.debug("t= \(t)")
+        if t < 0 { return rayOrigin }  // Intersection behind the camera
+        logger.debug("Intersection point: \(rayOrigin + t * rayDirection)")
+        return rayOrigin + t * rayDirection  // Intersection point
+    }
+    
     func intersectionWithXZPlane(ray: Ray, planeY: Float = 0.0) -> float3? {
         if ray.direction.y == 0 {
             logger.debug("Ray is parallel to the XZ plane.")
