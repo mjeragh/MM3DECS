@@ -138,6 +138,7 @@ class InputSystem: SystemProtocol {
             logger.debug("inverseDirection computation: \(inverseDirection)\n")
             //testRayIntersectsBoundingBox()
             //testRayIntersectsObjectBoundingBoxThetaPhi()
+            testRayIntersectsXZPlane(ray: Ray(origin: float3(x: 1, y: 2, z: 1), direction: float3(x: 0, y: -1, z: -1)))
             var ray = Ray(origin: ((entityTransformComponent?.modelMatrix.inverse)! * float4(worldRayorigin.x,worldRayorigin.y,worldRayorigin.z,1)).xyz,
                           direction: ((entityTransformComponent?.modelMatrix.inverse)! * float4(worldRayDir.x,worldRayDir.y,worldRayDir.z,0)).xyz)
             ray.INVdirection = inverseDirection
@@ -147,7 +148,7 @@ class InputSystem: SystemProtocol {
             
 //                rayDebugSystem.updateCameraProjectionMatrix(projectionMatrix: cameraComponent.projectionMatrix)
 //                rayDebugSystem.updateLineVertices(vertices: ray.vertexData())
-//            
+//
             
             if let boundingBox = entityManager.getComponent(type: RenderableComponent.self, for: entity)?.boundingBox
             {
@@ -241,4 +242,79 @@ class InputSystem: SystemProtocol {
         logger.debug("Intersection Distance: \(selection.distance)")
     }
     
+    func testRayIntersectsXZPlane(ray: Ray, planeY: Float = 0) {
+        let intersection = intersectionWithXZPlane(ray: ray, planeY: planeY)
+        if let intersection = intersection {
+            logger.debug("Intersection: \(intersection)")
+        } else {
+            logger.debug("No intersection found.")
+        }
+    }
+    
+    
+    func handleTouchOnXZPlane(at point: CGPoint) -> Entity? {
+        let ndc = touchToNDC(touchPoint: point)
+        let worldRay = unprojectToXZPlane(ndc: ndc, camera: camera)
+
+        // Assuming worldRay gives us a point on the XZ plane
+        var closestEntity: Entity?
+        var minDistance: Float = Float.greatestFiniteMagnitude
+
+        for entity in entities {
+            if let boundingBox = entity.boundingBox {
+                if boundingBox.contains(pointXZ: worldRay.origin) {
+                    let distance = (entity.transform.position - worldRay.origin).length() // Calculate the distance to the entity's origin for depth sorting
+                    if distance < minDistance {
+                        minDistance = distance
+                        closestEntity = entity
+                    }
+                }
+            }
+        }
+
+        return closestEntity
+    }
+    
+    
+    func handleTouch(at point: CGPoint, inverseVPMatrix: matrix_float4x4) {
+        let ndc = touchToNDC(touchPoint: point)
+        let worldRayOrigin = float3(x: 0, y: 0, z: 0) // Camera's position in the world
+        let worldRayEnd = unproject(ndc: ndc, inverseVPMatrix: inverseVPMatrix)
+
+        let direction = float3(x: worldRayEnd.x - worldRayOrigin.x, y: worldRayEnd.y - worldRayOrigin.y, z: worldRayEnd.z - worldRayOrigin.z)
+        let rayDirection = (direction).normalized // Assuming you have a method to normalize vectors
+
+        if let intersectionPoint = intersectionWithXZPlane(ray: Ray(origin: worldRayOrigin, direction: rayDirection)) {
+            logger.debug("Intersection with XZ plane at: \(intersectionPoint)")
+        } else {
+            logger.debug("No valid intersection found.")
+        }
+    }
+    
+    func touchToNDC(touchPoint: CGPoint) -> float3 {
+        let x = (2.0 * Float(touchPoint.x) / Float(Renderer.params.width)) - 1.0
+        let y = 1.0 - (2.0 * Float(touchPoint.y) / Float(Renderer.params.height))
+        return float3(x: x, y: y, z: 1.0)  // z = 1 for the purposes of ray casting
+    }
+    
+    func unproject(ndc: float3, inverseVPMatrix: matrix_float4x4) -> float3 {
+        let clipSpace = float4(ndc.x, ndc.y, 1.0, 1.0)
+        let viewSpace = inverseVPMatrix * clipSpace
+        return float3(x: viewSpace.x, y: viewSpace.y, z: viewSpace.z) / viewSpace.w
+    }
+
+    func intersectionWithXZPlane(ray: Ray, planeY: Float = 0.0) -> float3? {
+        if ray.direction.y == 0 {
+            logger.debug("Ray is parallel to the XZ plane.")
+            return nil
+        }
+
+        let t = (planeY - ray.origin.y) / ray.direction.y
+        if t < 0 {
+            logger.debug("Intersection is behind the ray's origin.")
+            return nil
+        }
+
+        return rayOrigin + rayDirection * t
+    }
 }
