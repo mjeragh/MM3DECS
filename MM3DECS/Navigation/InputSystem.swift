@@ -89,8 +89,9 @@ class InputSystem: SystemProtocol {
         logger.debug("in function handleTouchOnXZPlane Camera position: \(cameraTransform.position)")
         
         let ndc = touchToNDC(touchPoint: point)
-        let inverseVPMatrix = (cameraComponent.calculateViewMatrix(transform: cameraTransform)*cameraComponent.projectionMatrix).inverse
-        let worldRayOrigin = unprojectToXZPlane(ndc: ndc, inverseVPMatrix: inverseVPMatrix, cameraPosition: cameraTransform.position)
+        let inverseVPMatrix = (cameraComponent.projectionMatrix * cameraComponent.calculateViewMatrix(transform: cameraTransform)).inverse
+
+        let worldRayOrigin = unprojectToXZPlane(ndc: ndc, inverseVPMatrix: inverseVPMatrix)
         logger.debug("ndc: \(ndc), worldRayOrigin: \(worldRayOrigin)")
 
         // Assuming worldRay gives us a point on the XZ plane
@@ -102,7 +103,8 @@ class InputSystem: SystemProtocol {
         for entity in entities {
             if let boundingBox = entityManager.getComponent(type: RenderableComponent.self, for: entity)?.boundingBox,
                let transform = entityManager.getComponent(type: TransformComponent.self, for: entity){
-                if hitResult(boundingBox: boundingBox, contains: worldRayOrigin) {
+                let worldBoundBox = transformBoundingBox(boundingBox: boundingBox, with: transform.modelMatrix)
+                if hitResult(boundingBox: worldBoundBox, contains: worldRayOrigin) {
                     let distance = (float3(transform.position.x - worldRayOrigin.x,
                                            transform.position.y - worldRayOrigin.y,
                                            transform.position.z - worldRayOrigin.z)).length // Calculate the distance to the entity's origin for depth sorting
@@ -130,30 +132,56 @@ class InputSystem: SystemProtocol {
         return float3(x: x, y: y, z: 1.0)  // z = 1 for the purposes of ray casting
     }
     
-    func unprojectToXZPlane(ndc: float3, inverseVPMatrix: matrix_float4x4, cameraPosition: float3) -> float3 {
-        let nearClipSpace = float4(ndc.x, ndc.y, -1.0, 1.0)  // Near plane
-        let farClipSpace = float4(ndc.x, ndc.y, 1.0, 1.0)  // Far plane
+    func unprojectToXZPlane(ndc: float3, inverseVPMatrix: matrix_float4x4) -> float3 {
+        let nearClip = float4(ndc.x, ndc.y, 0, 1)  // Using -1 for near plane
+        let farClip = float4(ndc.x, ndc.y, 1, 1)    // Using 1 for far plane
 
-        let nearWorldSpace = (inverseVPMatrix * nearClipSpace).xyz / (inverseVPMatrix * nearClipSpace).w
-        let farWorldSpace = (inverseVPMatrix * farClipSpace).xyz / (inverseVPMatrix * farClipSpace).w
+        let nearWorld = (inverseVPMatrix * nearClip).xyz
+        let farWorld = (inverseVPMatrix * farClip).xyz
+
+        logger.debug("nearWorld:\(nearWorld), farWorld:\(farWorld)")
+        let rayOrigin = nearWorld
+        var rayDirection = float3(x: farWorld.x - nearWorld.x,
+                                  y: farWorld.y - nearWorld.y,
+                                  z: farWorld.z - nearWorld.z)
+        logger.debug("Clip Space Near: \(nearClip), Clip Space Far: \(farClip)")
+        logger.debug("World Space Near: \(nearWorld), World Space Far: \(farWorld)")
+        logger.debug("Ray Direction Before Normalization: \(farWorld - nearWorld)")
         
-        logger.debug("nearWorldSpace:\(nearWorldSpace), farWorldSpace:\(farWorldSpace)")
+        rayDirection = rayDirection.normalized
+        logger.debug("ray origin:\(rayOrigin), direction:\(rayDirection)")
 
-        let rayDirection = normalize(farWorldSpace - nearWorldSpace)
-        let rayOrigin = cameraPosition
-        let planeNormal = float3(0, 1, 0)  // Y-up
-        let planeY = Float(0.0)  // XZ plane at y=0
-
-        logger.debug("ray Origin: \(rayOrigin), direction: \(rayDirection)")
-        
-        // Calculate intersection with XZ plane
-        if rayDirection.y == 0 { return rayOrigin }  // Parallel to the plane
-
-        let t = (planeY - rayOrigin.y) / rayDirection.y  // Intersection time
+        let planeY = Float(0.0)  // XZ plane
+        let t = (planeY - rayOrigin.y) / rayDirection.y
         logger.debug("t= \(t)")
-        if t < 0 { return rayOrigin }  // Intersection behind the camera
-        logger.debug("Intersection point: \(rayOrigin + t * rayDirection)")
-        return rayOrigin + t * rayDirection  // Intersection point
+
+        if t >= 0 {
+            return rayOrigin + t * rayDirection  // Intersection point on XZ plane
+        } else {
+            logger.debug("Intersection behind the camera or ray parallel to plane")
+            return rayOrigin  // This would indicate an error or no intersection
+        }
+    }
+
+    
+    func transformBoundingBox(boundingBox: MDLAxisAlignedBoundingBox, with transform: matrix_float4x4) -> MDLAxisAlignedBoundingBox {
+        // Transform the minimum and maximum points
+        let minPoint = float4(boundingBox.minBounds, 1)
+        let maxPoint = float4(boundingBox.maxBounds, 1)
+
+        let transformedMin = (transform * minPoint).xyz
+        let transformedMax = (transform * maxPoint).xyz
+
+        // Recalculate the new bounds in case rotation has occurred
+        let newMin = min(transformedMin, transformedMax)
+        let newMax = max(transformedMin, transformedMax)
+
+        return MDLAxisAlignedBoundingBox(maxBounds: newMax, minBounds: newMin)
+    }
+
+    func checkIntersectionWithWorldRay(worldRayOrigin: float3, boundingBox: MDLAxisAlignedBoundingBox, objectTransform: TransformComponent) -> Bool {
+        let worldBoundingBox = transformBoundingBox(boundingBox: boundingBox, with: objectTransform.modelMatrix)
+        return hitResult(boundingBox: worldBoundingBox, contains: worldRayOrigin)
     }
     
     func intersectionWithXZPlane(ray: Ray, planeY: Float = 0.0) -> float3? {
