@@ -80,8 +80,9 @@ class InputSystem: SystemProtocol {
     
     
     func handleTouchOnXZPlane(at point: CGPoint, using cameraEntity: Entity) -> Entity? {
-        guard let cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity) else {
-            logger.warning("Camera component not found")
+        guard let cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity),
+              let cameraComponent = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity) else {
+            logger.warning("Camera components not found")
             return nil
         }
         
@@ -89,40 +90,44 @@ class InputSystem: SystemProtocol {
         logger.debug("in function handleTouchOnXZPlane Camera position: \(cameraTransform.position)")
         
         let ndc = touchToNDC(touchPoint: point)
-        let inverseVPMatrix = (cameraComponent.projectionMatrix * cameraComponent.calculateViewMatrix(transform: cameraTransform)).inverse
-
-        let worldRayOrigin = unprojectToXZPlane(ndc: ndc, inverseVPMatrix: inverseVPMatrix)
-        logger.debug("ndc: \(ndc), worldRayOrigin: \(worldRayOrigin)")
-
-        // Assuming worldRay gives us a point on the XZ plane
+        let viewMatrix = cameraComponent.calculateViewMatrix(transform: cameraTransform)
+        let projectionMatrix = cameraComponent.projectionMatrix
+        
+        let rayDirection = unprojectToWorldSpace(ndc: ndc, viewMatrix: viewMatrix, projectionMatrix: projectionMatrix)
+        let rayOrigin = cameraTransform.position
+        
+        logger.debug("ndc: \(ndc), rayOrigin: \(rayOrigin), rayDirection: \(rayDirection)")
+        
         var closestEntity: Entity? = nil
         var minDistance: Float = Float.greatestFiniteMagnitude
-
+        
         let entities = entityManager.entitiesWithComponents([RenderableComponent.self])
         
         for entity in entities {
             if let boundingBox = entityManager.getComponent(type: RenderableComponent.self, for: entity)?.boundingBox,
-               let transform = entityManager.getComponent(type: TransformComponent.self, for: entity){
-                let worldBoundBox = transformBoundingBox(boundingBox: boundingBox, with: transform.modelMatrix)
-              //  let modelMatrix : float4x4 = transform.modelMatrix
-               // logger.debug("transform model matrix: \(modelMatrix)\n")
-                logger.debug("Checking for entity Hit:\(entity.name)\n")
-                if hitResult(boundingBox: worldBoundBox, ray: Ray(origin: cameraTransform.position, direction: (worldRayOrigin - cameraTransform.position).normalized)) {
-                    let distance = (float3(transform.position.x - worldRayOrigin.x,
-                                           transform.position.y - worldRayOrigin.y,
-                                           transform.position.z - worldRayOrigin.z)).length // Calculate the distance to the entity's origin for depth sorting
+               let transform = entityManager.getComponent(type: TransformComponent.self, for: entity) {
+                let modelMatrix = transform.modelMatrix
+                let modelMatrixInverse = modelMatrix.inverse
+                
+                let localRayOrigin = (modelMatrixInverse * float4(rayOrigin, 1.0)).xyz
+                let localRayDirection = (modelMatrixInverse * float4(rayDirection, 0.0)).xyz
+                
+                let ray = Ray(origin: localRayOrigin, direction: localRayDirection)
+                
+                logger.debug("Checking for entity: \(entity.name)")
+                if hitResult(boundingBox: boundingBox, ray: ray) {
+                    let distance = length(transform.position - rayOrigin)
                     if distance < minDistance {
                         minDistance = distance
                         closestEntity = entity
                         logger.debug("Hit: \(entity.name)")
                     }
-                } //if hitResult
-                else {
-                    logger.debug("\(entity.name) miss\n")
+                } else {
+                    logger.debug("\(entity.name) miss")
                 }
             }
         }
-
+        
         return closestEntity
     }
     
@@ -144,9 +149,22 @@ class InputSystem: SystemProtocol {
     }
     
     func touchToNDC(touchPoint: CGPoint) -> float3 {
-        let x = (2.0 * Float(touchPoint.x) / Float(Renderer.params.width)) - 1.0
-        let y = 1.0 - (2.0 * Float(touchPoint.y) / Float(Renderer.params.height))
-        return float3(x: x, y: y, z: 0.0)  // z = 1 for the purposes of ray casting
+        let clipX = (2.0 * Float(touchPoint.x) / Float(Renderer.params.width)) - 1.0
+        let clipY = 1.0 - (2.0 * Float(touchPoint.y) / Float(Renderer.params.height))
+        return float3(x: clipX, y: clipY, z: 0.0)  // Assume clip space is hemicube, -Z is into the screen
+    }
+    
+    func unprojectToWorldSpace(ndc: float3, viewMatrix: float4x4, projectionMatrix: float4x4) -> float3 {
+        let clipCoords = float4(ndc.x, ndc.y, 0.0, 1.0)
+        
+        var eyeRayDir = projectionMatrix.inverse * clipCoords
+        eyeRayDir.z = 1.0
+        eyeRayDir.w = 0.0
+        
+        let worldRayDir = (viewMatrix.inverse * eyeRayDir).xyz
+        let direction = normalize(worldRayDir)
+        
+        return direction
     }
     
     
