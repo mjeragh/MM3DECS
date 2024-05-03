@@ -80,8 +80,7 @@ class InputSystem: SystemProtocol {
     
     
     func handleTouchOnXZPlane(at point: CGPoint, using cameraEntity: Entity) -> Entity? {
-        guard let cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity),
-              let cameraComponent = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity) else {
+        guard let cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity) else {
             logger.warning("Camera components not found")
             return nil
         }
@@ -115,7 +114,7 @@ class InputSystem: SystemProtocol {
                 let ray = Ray(origin: localRayOrigin, direction: localRayDirection)
                 
                 logger.debug("Checking for entity: \(entity.name)")
-                if hitResult(boundingBox: boundingBox, ray: ray) {
+                if ray.intersects(with: boundingBox) {
                     let distance = length(transform.position - rayOrigin)
                     if distance < minDistance {
                         minDistance = distance
@@ -135,7 +134,7 @@ class InputSystem: SystemProtocol {
         let tMin = (boundingBox.minBounds - ray.origin) / ray.direction
         let tMax = (boundingBox.maxBounds - ray.origin) / ray.direction
         logger.debug("tmin: \(tMin),\tmax:\(tMax)")
-        
+        logger.debug("BoundingBox: min:\(boundingBox.minBounds)\tmax:\(boundingBox.maxBounds)")
         let t1 = min(tMin, tMax)
         let t2 = max(tMin, tMax)
         logger.debug("t1: \(t1),\tt2: \(t2)\n")

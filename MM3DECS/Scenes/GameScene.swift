@@ -66,7 +66,7 @@ class GameScene: SceneProtocol {
         let trainEntity = Entity(name: "train")
         entityManager.addEntity(entity: trainEntity)
         entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "train.usd"), to: trainEntity)
-        entityManager.addComponent(component: TransformComponent(position: float3(5, 0, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), to: trainEntity)
+        entityManager.addComponent(component: TransformComponent(position: float3(10, 0, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), to: trainEntity)
         entityManager.addComponent(component: InputComponent(), to: trainEntity)
         entityManager.addComponent(component: SelectionComponent(), to: trainEntity)
                // Add other entities and components as needed
