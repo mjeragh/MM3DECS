@@ -76,13 +76,13 @@ class GameScene: SceneProtocol {
 //        entityManager.addComponent(component: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(1,1,1)), to: landEntity)
 //        entityManager.addComponent(component: InputComponent(), to: landEntity)
         
-//        let sunEntity = Entity(name: "Sun")
-//        let scale = Float(0.1)
-//        entityManager.addEntity(entity: sunEntity)
-//        entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "peg.usda"), to: sunEntity)
-//        entityManager.addComponent(component: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), to: sunEntity)
-//        entityManager.addComponent(component: InputComponent(), to: sunEntity)
-//        entityManager.addComponent(component: SelectionComponent(), to: sunEntity)
+        let sunEntity = Entity(name: "Sun")
+        let scale = Float(0.1)
+        entityManager.addEntity(entity: sunEntity)
+        entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "peg.usda"), to: sunEntity)
+        entityManager.addComponent(component: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), to: sunEntity)
+        entityManager.addComponent(component: InputComponent(), to: sunEntity)
+        entityManager.addComponent(component: SelectionComponent(), to: sunEntity)
     }
 }
 
