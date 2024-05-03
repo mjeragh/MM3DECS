@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B22D8DDF2BE54A15005EE7D9 /* DebugBoundingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = B22D8DDD2BE54A15005EE7D9 /* DebugBoundingBox.swift */; };
+		B22D8DE02BE54A15005EE7D9 /* DebugBoundingBox.metal in Sources */ = {isa = PBXBuildFile; fileRef = B22D8DDE2BE54A15005EE7D9 /* DebugBoundingBox.metal */; };
 		B249134F2BDAB7DB00A31CCA /* peg.usda in Resources */ = {isa = PBXBuildFile; fileRef = B249134E2BDAB7DB00A31CCA /* peg.usda */; };
 		B24913512BDAB7E700A31CCA /* plane1000.usda in Resources */ = {isa = PBXBuildFile; fileRef = B24913502BDAB7E700A31CCA /* plane1000.usda */; };
 		B24913552BDD6E0E00A31CCA /* Ray.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24913542BDD6E0E00A31CCA /* Ray.swift */; };
@@ -41,6 +43,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B22D8DDD2BE54A15005EE7D9 /* DebugBoundingBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugBoundingBox.swift; sourceTree = "<group>"; };
+		B22D8DDE2BE54A15005EE7D9 /* DebugBoundingBox.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = DebugBoundingBox.metal; sourceTree = "<group>"; };
 		B249134E2BDAB7DB00A31CCA /* peg.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = peg.usda; sourceTree = "<group>"; };
 		B24913502BDAB7E700A31CCA /* plane1000.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = plane1000.usda; sourceTree = "<group>"; };
 		B24913542BDD6E0E00A31CCA /* Ray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ray.swift; sourceTree = "<group>"; };
@@ -136,6 +140,7 @@
 		B259C2772BA2FB930049BA2C /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
+				B22D8DDE2BE54A15005EE7D9 /* DebugBoundingBox.metal */,
 				B259C2872BA303B80049BA2C /* Fragment.metal */,
 				B259C2882BA303B90049BA2C /* Vertex.metal */,
 				B259C2752BA2FB860049BA2C /* Common.h */,
@@ -150,6 +155,7 @@
 		B259C27D2BA2FF710049BA2C /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				B22D8DDD2BE54A15005EE7D9 /* DebugBoundingBox.swift */,
 				B259C27C2BA2FF710049BA2C /* MathLibrary.swift */,
 			);
 			path = Utility;
@@ -294,9 +300,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				B259C2832BA3001D0049BA2C /* VertexDescriptor.swift in Sources */,
+				B22D8DE02BE54A15005EE7D9 /* DebugBoundingBox.metal in Sources */,
 				B259C2932BAADD370049BA2C /* Component.swift in Sources */,
 				B294EDF42BD4FA1A008E6F2E /* SelectionSystem.swift in Sources */,
 				B259C27B2BA2FBDE0049BA2C /* MetalView.swift in Sources */,
+				B22D8DDF2BE54A15005EE7D9 /* DebugBoundingBox.swift in Sources */,
 				B259C2842BA3001D0049BA2C /* Renderer.swift in Sources */,
 				B28FD96E2BE165290057B63E /* RayDebugSystem.swift in Sources */,
 				B294EDF62BD4FB41008E6F2E /* CameraInputComponent.swift in Sources */,

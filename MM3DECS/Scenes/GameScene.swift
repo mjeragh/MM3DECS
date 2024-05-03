@@ -29,23 +29,23 @@ class GameScene: SceneProtocol {
     func setUp() {
         
         // Set up entities specific to this scene
-        entityManager.addEntity(entity: entityManager.createCameraEntity(type: .perspective))
+        entityManager.addEntity(entity: entityManager.createCameraEntity(type: .arcball))
         
         setupEntites()
         
-        if let cameraEntity = entityManager.entities(for: PerspectiveCameraComponent.self).first,
+        if let cameraEntity = entityManager.entities(for: ArcballCameraComponent.self).first,
            var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity){
-            cameraTransform.position = [0, 2, -15]
+            cameraTransform.position = [0, 2, 15]
             cameraTransform.rotation = [0,0,0]
             entityManager.addComponent(component: cameraTransform, to: cameraEntity)
-            entityManager.addComponent(component: CameraInputComponent(cameraType: .perspective), to: cameraEntity)
+            entityManager.addComponent(component: CameraInputComponent(cameraType: .arcball), to: cameraEntity)
             //setup Systems
-            let cameraComponent = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity)!
+            let cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)!
 //            let rayDebugSystem = RayDebugSystem(projectionMatrix: cameraComponent.projectionMatrix)
 //            rayDebugSystem.updateLineVertices(vertices: [])
 //            systems.append(rayDebugSystem)
             systems.append(RenderSystem(cameraEntity: cameraEntity))
-            systems.append(InputSystem(entityManager: entityManager, cameraComponent: cameraComponent))//, rayDebugSystem: rayDebugSystem))
+            systems.append(InputSystem(entityManager: entityManager, cameraEntity: cameraEntity))//, rayDebugSystem: rayDebugSystem))
               systems.append(CameraControlSystem())
         } else {
             logger.info("Failed to retrieve transform component of camera entity.")
@@ -83,6 +83,13 @@ class GameScene: SceneProtocol {
         entityManager.addComponent(component: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), to: sunEntity)
         entityManager.addComponent(component: InputComponent(), to: sunEntity)
         entityManager.addComponent(component: SelectionComponent(), to: sunEntity)
+        
+        let moonEntity = Entity(name: "Moon")
+        entityManager.addEntity(entity: moonEntity)
+        entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "peg.usda"), to: moonEntity)
+        entityManager.addComponent(component: TransformComponent(position: float3(-10,0,0), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), to: moonEntity)
+        entityManager.addComponent(component: InputComponent(), to: moonEntity)
+        entityManager.addComponent(component: SelectionComponent(), to: moonEntity)
     }
 }
 

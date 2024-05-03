@@ -11,13 +11,20 @@ protocol Component { }
 
 // Example components
 import simd
+import OSLog
+
+
 
 struct TransformComponent: Component {
+    let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "Component")
     var position: float3
     var rotation: float3 // Use Euler angles for simplicity here; consider quaternions for complex rotations
     var scale: float3
     var up: float3 = [0, 1, 0] // Up vector for the camera
-    
+    let epsilon: Float = 0.0001
+    func nearlyEqual(a: Float, b: Float, epsilon: Float) -> Bool {
+        return abs(a - b) < epsilon
+    }
 
     init(position: float3 = [0, 0, 0], rotation: float3 = [0, 0, 0], scale: float3 = [1, 1, 1], up: float3 = [0,1,0]) {
         self.position = position
@@ -51,6 +58,11 @@ struct TransformComponent: Component {
         
         // Scaling matrix from your math utilities
         let scaleMatrix = float4x4(scaling: scale)
+        
+//       let combinedMatrix = translationMatrix * rotationMatrix * scaleMatrix
+//        if !nearlyEqual(a: combinedMatrix.determinant, b: 1.0, epsilon: epsilon) {
+//            logger.error("Potential precision loss detected in model matrix.")
+//        }
         
         // Combine transformations
         return translationMatrix * rotationMatrix * scaleMatrix
