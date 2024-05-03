@@ -29,18 +29,18 @@ class GameScene: SceneProtocol {
     func setUp() {
         
         // Set up entities specific to this scene
-        entityManager.addEntity(entity: entityManager.createCameraEntity(type: .arcball))
+        entityManager.addEntity(entity: entityManager.createCameraEntity(type: .perspective))
         
         setupEntites()
         
-        if let cameraEntity = entityManager.entities(for: ArcballCameraComponent.self).first,
+        if let cameraEntity = entityManager.entities(for: PerspectiveCameraComponent.self).first,
            var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity){
-            cameraTransform.position = [0, 2, 15]
+            cameraTransform.position = [1, 2, -15]
             cameraTransform.rotation = [0,0,0]
             entityManager.addComponent(component: cameraTransform, to: cameraEntity)
-            entityManager.addComponent(component: CameraInputComponent(cameraType: .arcball), to: cameraEntity)
+            entityManager.addComponent(component: CameraInputComponent(cameraType: .perspective), to: cameraEntity)
             //setup Systems
-            let cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)!
+            let cameraComponent = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity)!
 //            let rayDebugSystem = RayDebugSystem(projectionMatrix: cameraComponent.projectionMatrix)
 //            rayDebugSystem.updateLineVertices(vertices: [])
 //            systems.append(rayDebugSystem)

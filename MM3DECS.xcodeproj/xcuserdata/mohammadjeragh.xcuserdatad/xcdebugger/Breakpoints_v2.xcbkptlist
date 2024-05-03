@@ -26,12 +26,36 @@
             uuid = "AF941196-B694-42B2-A636-6AEE6DEB1EA1"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
+            continueAfterRunningActions = "Yes"
+            filePath = "MM3DECS/Navigation/InputSystem.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "130"
+            endingLineNumber = "130"
+            landmarkName = "handleTouchOnXZPlane(at:using:)"
+            landmarkType = "7">
+            <Actions>
+               <BreakpointActionProxy
+                  ActionExtensionID = "Xcode.BreakpointAction.Sound">
+                  <ActionContent
+                     soundName = "Glass">
+                  </ActionContent>
+               </BreakpointActionProxy>
+            </Actions>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "005F0AD7-7A7D-491B-AFC4-4A63A60B42F4"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MM3DECS/Navigation/InputSystem.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "131"
-            endingLineNumber = "131"
+            startingLineNumber = "105"
+            endingLineNumber = "105"
             landmarkName = "handleTouchOnXZPlane(at:using:)"
             landmarkType = "7">
          </BreakpointContent>

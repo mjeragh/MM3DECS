@@ -26,7 +26,7 @@ class InputSystem: SystemProtocol {
     init(entityManager: EntityManager, cameraEntity: Entity){//, rayDebugSystem: RayDebugSystem) {
         self.entityManager = entityManager
         self.cameraEntity = cameraEntity
-        self.cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)!
+        self.cameraComponent = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity)!
         // self.rayDebugSystem = rayDebugSystem
     }
     
@@ -80,7 +80,7 @@ class InputSystem: SystemProtocol {
             cameraInput.lastTouchPosition = nil
             entityManager.addComponent(component: cameraInput, to: cameraEntity)
             selectedEntity = nil
-            self.cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)!
+            self.cameraComponent = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity)!
         }
     }
     
@@ -176,11 +176,25 @@ class InputSystem: SystemProtocol {
 //        return tNear <= tFar && tFar >= 0
 //    }
     
+//    func calculateRayDirection(ndc: float3, projectionMatrix: float4x4, viewMatrix: float4x4) -> float3 {
+//        let clipCoords = float4(ndc.x, ndc.y, 0, 1.0) // Use -1.0 if your NDC z ranges from -1 to 1
+//        let eyeCoords = projectionMatrix.inverse * clipCoords
+//        let worldCoords = (viewMatrix.inverse * float4(eyeCoords.x, eyeCoords.y, 1.0, 0.0)).xyz
+//        return normalize(worldCoords)
+//    }
+    
     func calculateRayDirection(ndc: float3, projectionMatrix: float4x4, viewMatrix: float4x4) -> float3 {
-        let clipCoords = float4(ndc.x, ndc.y, 0, 1.0) // Use -1.0 if your NDC z ranges from -1 to 1
-        let eyeCoords = projectionMatrix.inverse * clipCoords
-        let worldCoords = (viewMatrix.inverse * float4(eyeCoords.x, eyeCoords.y, -1.0, 0.0)).xyz
-        return normalize(worldCoords)
+        // Transform NDC to clip space; Metal uses left-handed coordinate system
+        let clipCoords = float4(ndc.x, ndc.y, -1.0, 1.0)  // Setting z to -1.0 to point from the near plane into the scene
+
+        // Apply the inverse of the projection matrix to go from clip space to eye space
+        var eyeCoords = projectionMatrix.inverse * clipCoords
+        eyeCoords.z = 1.0   // We set z to 1.0 to point forwards in eye space
+        eyeCoords.w = 0.0   // Make it a direction vector
+
+        // Transform the eye space coordinates to world space using the inverse of the view matrix
+        let worldRayDir = normalize((viewMatrix.inverse * eyeCoords).xyz)
+        return worldRayDir
     }
     
     func touchToNDC(touchPoint: CGPoint) -> float3 {
