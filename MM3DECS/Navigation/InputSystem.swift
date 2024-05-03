@@ -104,8 +104,10 @@ class InputSystem: SystemProtocol {
             if let boundingBox = entityManager.getComponent(type: RenderableComponent.self, for: entity)?.boundingBox,
                let transform = entityManager.getComponent(type: TransformComponent.self, for: entity){
                 let worldBoundBox = transformBoundingBox(boundingBox: boundingBox, with: transform.modelMatrix)
-                logger.debug("Checking for entity:\(entity.name)\n")
-                if hitResult(boundingBox: worldBoundBox, contains: worldRayOrigin) {
+              //  let modelMatrix : float4x4 = transform.modelMatrix
+               // logger.debug("transform model matrix: \(modelMatrix)\n")
+                logger.debug("Checking for entity Hit:\(entity.name)\n")
+                if hitResult(boundingBox: worldBoundBox, ray: Ray(origin: cameraTransform.position, direction: (worldRayOrigin - cameraTransform.position).normalized)) {
                     let distance = (float3(transform.position.x - worldRayOrigin.x,
                                            transform.position.y - worldRayOrigin.y,
                                            transform.position.z - worldRayOrigin.z)).length // Calculate the distance to the entity's origin for depth sorting
@@ -124,17 +126,27 @@ class InputSystem: SystemProtocol {
         return closestEntity
     }
     
-    func hitResult(boundingBox: MDLAxisAlignedBoundingBox, contains point: float3) -> Bool {
-        logger.debug("hit result for: min Bound: \(boundingBox.minBounds), maxBound: \(boundingBox.maxBounds)\npoint \(point)")
-        return point.x >= boundingBox.minBounds.x && point.x <= boundingBox.maxBounds.x &&
-               /*point.y >= boundingBox.minBounds.y && point.y <= boundingBox.maxBounds.y &&*/
-               point.z >= boundingBox.minBounds.z && point.z <= boundingBox.maxBounds.z
+    func hitResult(boundingBox: MDLAxisAlignedBoundingBox, ray: Ray) -> Bool {
+        let tMin = (boundingBox.minBounds - ray.origin) / ray.direction
+        let tMax = (boundingBox.maxBounds - ray.origin) / ray.direction
+        logger.debug("tmin: \(tMin),\tmax:\(tMax)")
+        
+        let t1 = min(tMin, tMax)
+        let t2 = max(tMin, tMax)
+        logger.debug("t1: \(t1),\tt2: \(t2)\n")
+        
+        let tNear = max(max(t1.x, t1.y), t1.z)
+        let tFar = min(min(t2.x, t2.y), t2.z)
+        
+        logger.debug("tNear: \(tNear),\ttFar: \(tFar)")
+        
+        return tNear <= tFar && tFar >= 0
     }
     
     func touchToNDC(touchPoint: CGPoint) -> float3 {
         let x = (2.0 * Float(touchPoint.x) / Float(Renderer.params.width)) - 1.0
         let y = 1.0 - (2.0 * Float(touchPoint.y) / Float(Renderer.params.height))
-        return float3(x: x, y: y, z: 1.0)  // z = 1 for the purposes of ray casting
+        return float3(x: x, y: y, z: 0.0)  // z = 1 for the purposes of ray casting
     }
     
     
@@ -193,10 +205,10 @@ class InputSystem: SystemProtocol {
         return MDLAxisAlignedBoundingBox(maxBounds: newMax, minBounds: newMin)
     }
 
-    func checkIntersectionWithWorldRay(worldRayOrigin: float3, boundingBox: MDLAxisAlignedBoundingBox, objectTransform: TransformComponent) -> Bool {
-        let worldBoundingBox = transformBoundingBox(boundingBox: boundingBox, with: objectTransform.modelMatrix)
-        return hitResult(boundingBox: worldBoundingBox, contains: worldRayOrigin)
-    }
+//    func checkIntersectionWithWorldRay(worldRayOrigin: float3, boundingBox: MDLAxisAlignedBoundingBox, objectTransform: TransformComponent) -> Bool {
+//        let worldBoundingBox = transformBoundingBox(boundingBox: boundingBox, with: objectTransform.modelMatrix)
+//        return hitResult(boundingBox: worldBoundingBox, contains: worldRayOrigin)
+//    }
     
     func intersectionWithXZPlane(ray: Ray, planeY: Float = 0.0) -> float3? {
         if ray.direction.y == 0 {
