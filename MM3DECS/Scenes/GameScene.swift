@@ -87,7 +87,7 @@ class GameScene: SceneProtocol {
         let moonEntity = Entity(name: "Moon")
         entityManager.addEntity(entity: moonEntity)
         entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "peg.usda"), to: moonEntity)
-        entityManager.addComponent(component: TransformComponent(position: float3(-10,0,0), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), to: moonEntity)
+        entityManager.addComponent(component: TransformComponent(position: float3(-10,0,3), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), to: moonEntity)
         entityManager.addComponent(component: InputComponent(), to: moonEntity)
         entityManager.addComponent(component: SelectionComponent(), to: moonEntity)
     }

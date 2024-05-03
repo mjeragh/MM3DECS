@@ -196,18 +196,5 @@ class InputSystem: SystemProtocol {
 //        return (worldCoords / worldCoords.w).xyz // Ensuring homogenous coordinate normalization
 //    }
     
-    func unprojectToWorldSpace(ndc: float3, viewMatrix: float4x4, projectionMatrix: float4x4) -> float3 {
-        let clipCoords = float4(ndc.x, ndc.y, 0.0, 1.0)
-        
-        var eyeRayDir = projectionMatrix.inverse * clipCoords
-        eyeRayDir.z = 1.0
-        eyeRayDir.w = 0.0
-        
-        let worldRayDir = (viewMatrix.inverse * eyeRayDir).xyz
-        let direction = normalize(worldRayDir)
-        
-        return direction
-    }
-    
     
 }
