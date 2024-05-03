@@ -77,7 +77,7 @@ extension EntityManager {
         }
     
     func createCameraEntity(type: CameraType) -> Entity {
-        let cameraEntity = Entity()
+        let cameraEntity = Entity(name: "Camera")
         self.addEntity(entity: cameraEntity)
         
         // Common transform component for all cameras

@@ -104,6 +104,7 @@ class InputSystem: SystemProtocol {
             if let boundingBox = entityManager.getComponent(type: RenderableComponent.self, for: entity)?.boundingBox,
                let transform = entityManager.getComponent(type: TransformComponent.self, for: entity){
                 let worldBoundBox = transformBoundingBox(boundingBox: boundingBox, with: transform.modelMatrix)
+                logger.debug("Checking for entity:\(entity.name)\n")
                 if hitResult(boundingBox: worldBoundBox, contains: worldRayOrigin) {
                     let distance = (float3(transform.position.x - worldRayOrigin.x,
                                            transform.position.y - worldRayOrigin.y,
@@ -111,7 +112,11 @@ class InputSystem: SystemProtocol {
                     if distance < minDistance {
                         minDistance = distance
                         closestEntity = entity
+                        logger.debug("Hit: \(entity.name)")
                     }
+                } //if hitResult
+                else {
+                    logger.debug("\(entity.name) miss\n")
                 }
             }
         }
@@ -120,7 +125,7 @@ class InputSystem: SystemProtocol {
     }
     
     func hitResult(boundingBox: MDLAxisAlignedBoundingBox, contains point: float3) -> Bool {
-        logger.debug("min Bound: \(boundingBox.minBounds), maxBound: \(boundingBox.maxBounds)\npoint \(point)")
+        logger.debug("hit result for: min Bound: \(boundingBox.minBounds), maxBound: \(boundingBox.maxBounds)\npoint \(point)")
         return point.x >= boundingBox.minBounds.x && point.x <= boundingBox.maxBounds.x &&
                /*point.y >= boundingBox.minBounds.y && point.y <= boundingBox.maxBounds.y &&*/
                point.z >= boundingBox.minBounds.z && point.z <= boundingBox.maxBounds.z
@@ -132,34 +137,41 @@ class InputSystem: SystemProtocol {
         return float3(x: x, y: y, z: 1.0)  // z = 1 for the purposes of ray casting
     }
     
+    
     func unprojectToXZPlane(ndc: float3, inverseVPMatrix: matrix_float4x4) -> float3 {
-        let nearClip = float4(ndc.x, ndc.y, 0, 1)  // Using -1 for near plane
-        let farClip = float4(ndc.x, ndc.y, 1, 1)    // Using 1 for far plane
+        let nearClip = float4(ndc.x, ndc.y, 0, 1)  // Near plane at zero to ensure we get a direction
+        let farClip = float4(ndc.x, ndc.y, 1, 1)   // Far plane at one
 
         let nearWorld = (inverseVPMatrix * nearClip).xyz
         let farWorld = (inverseVPMatrix * farClip).xyz
+        
+        logger.debug("Clip Space Near: \(nearClip), Clip Space Far: \(farClip)")
+        logger.debug("World Space Near: \(nearWorld), World Space Far: \(farWorld)")
+        
 
         logger.debug("nearWorld:\(nearWorld), farWorld:\(farWorld)")
-        let rayOrigin = nearWorld
         var rayDirection = float3(x: farWorld.x - nearWorld.x,
                                   y: farWorld.y - nearWorld.y,
                                   z: farWorld.z - nearWorld.z)
-        logger.debug("Clip Space Near: \(nearClip), Clip Space Far: \(farClip)")
-        logger.debug("World Space Near: \(nearWorld), World Space Far: \(farWorld)")
-        logger.debug("Ray Direction Before Normalization: \(farWorld - nearWorld)")
-        
+        if rayDirection.length == 0 {
+            logger.error("Invalid ray direction; both near and far world points are the same.")
+            return nearWorld  // Return a default or handle this case appropriately
+        }
+
+        logger.debug("Ray Direction Before Normalization: \(rayDirection)")
         rayDirection = rayDirection.normalized
-        logger.debug("ray origin:\(rayOrigin), direction:\(rayDirection)")
+        logger.debug("ray origin:\(nearWorld), direction:\(rayDirection)")
 
         let planeY = Float(0.0)  // XZ plane
-        let t = (planeY - rayOrigin.y) / rayDirection.y
+        let t = (planeY - nearWorld.y) / rayDirection.y
         logger.debug("t= \(t)")
 
         if t >= 0 {
-            return rayOrigin + t * rayDirection  // Intersection point on XZ plane
+            logger.debug("before return the answer: \(nearWorld + t * rayDirection)")
+            return nearWorld + t * rayDirection  // Intersection point on XZ plane
         } else {
             logger.debug("Intersection behind the camera or ray parallel to plane")
-            return rayOrigin  // This would indicate an error or no intersection
+            return nearWorld  // This would indicate an error or no intersection
         }
     }
 
@@ -176,6 +188,8 @@ class InputSystem: SystemProtocol {
         let newMin = min(transformedMin, transformedMax)
         let newMax = max(transformedMin, transformedMax)
 
+        logger.debug("Original Min: \(boundingBox.minBounds), Max: \(boundingBox.maxBounds)")
+            logger.debug("Transformed Min: \(newMin), Max: \(newMax)")
         return MDLAxisAlignedBoundingBox(maxBounds: newMax, minBounds: newMin)
     }
 

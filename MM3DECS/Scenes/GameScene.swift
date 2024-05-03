@@ -63,10 +63,10 @@ class GameScene: SceneProtocol {
     }
 
     func setupEntites() {
-        let trainEntity = Entity()
+        let trainEntity = Entity(name: "train")
         entityManager.addEntity(entity: trainEntity)
         entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "train.usd"), to: trainEntity)
-        entityManager.addComponent(component: TransformComponent(position: float3(5, 0.6, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), to: trainEntity)
+        entityManager.addComponent(component: TransformComponent(position: float3(5, 0, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), to: trainEntity)
         entityManager.addComponent(component: InputComponent(), to: trainEntity)
         entityManager.addComponent(component: SelectionComponent(), to: trainEntity)
                // Add other entities and components as needed
@@ -76,7 +76,7 @@ class GameScene: SceneProtocol {
 //        entityManager.addComponent(component: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(1,1,1)), to: landEntity)
 //        entityManager.addComponent(component: InputComponent(), to: landEntity)
         
-        let sunEntity = Entity()
+        let sunEntity = Entity(name: "Sun")
         let scale = Float(0.1)
         entityManager.addEntity(entity: sunEntity)
         entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "peg.usda"), to: sunEntity)

@@ -8,5 +8,10 @@
 import Foundation
 struct Entity {
     let id: UUID = UUID()
+    let name : String
+    
+    init(name: String) {
+        self.name = name
+    }
 }
  
