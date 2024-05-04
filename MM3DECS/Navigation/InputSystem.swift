@@ -26,7 +26,7 @@ class InputSystem: SystemProtocol {
     init(entityManager: EntityManager, cameraEntity: Entity){//, rayDebugSystem: RayDebugSystem) {
         self.entityManager = entityManager
         self.cameraEntity = cameraEntity
-        self.cameraComponent = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity)!
+        self.cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)!
         // self.rayDebugSystem = rayDebugSystem
     }
     
@@ -80,7 +80,7 @@ class InputSystem: SystemProtocol {
             cameraInput.lastTouchPosition = nil
             entityManager.addComponent(component: cameraInput, to: cameraEntity)
             selectedEntity = nil
-            self.cameraComponent = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity)!
+            self.cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)!
         }
     }
     
@@ -189,7 +189,7 @@ class InputSystem: SystemProtocol {
 
         // Apply the inverse of the projection matrix to go from clip space to eye space
         var eyeCoords = projectionMatrix.inverse * clipCoords
-        eyeCoords.z = 1.0   // We set z to 1.0 to point forwards in eye space
+        eyeCoords.z = -1.0   // We set z to 1.0 to point forwards in eye space
         eyeCoords.w = 0.0   // Make it a direction vector
 
         // Transform the eye space coordinates to world space using the inverse of the view matrix
