@@ -22,28 +22,34 @@ class CameraControlSystem: SystemProtocol {
     let logger = Logger(subsystem: "com.lanterntech.mm3d", category: "CameraControlSystem")
     
     func update(deltaTime: Float, entityManager: EntityManager, renderEncoder: any MTLRenderCommandEncoder) {
-        // Get camera input component and apply movement to camera's transform component
-        if let cameraEntity = entityManager.entities(for: CameraInputComponent.self).first,
-                   var cameraInput = entityManager.getComponent(type: CameraInputComponent.self, for: cameraEntity),
-                   var transform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity),
-                   let dragStartPosition = cameraInput.dragStartPosition,
-                   let dragCurrentPosition = cameraInput.dragCurrentPosition {
-            
-                    // Apply camera control based on camera type
-                    switch cameraInput.cameraType {
-                    case .arcball:
-                        return //applyArcballControl(&cameraInput, &transform, deltaTime)
-                    case .perspective:
-                        applyPerspectiveControl(&cameraInput, &transform, deltaTime)
-                    case .orthographic:
-                        applyOrthographicControl(&cameraInput, &transform, deltaTime)
-                    }
-            // Update components
-                    entityManager.addComponent(component: transform, to: cameraEntity)
-                    cameraInput.dragStartPosition = dragCurrentPosition
-                    entityManager.addComponent(component: cameraInput, to: cameraEntity)
-                    }
-    }
+            // Iterate over camera entities
+            if let cameraEntity = entityManager.entities(for: CameraInputComponent.self).first,
+               var cameraInput = entityManager.getComponent(type: CameraInputComponent.self, for: cameraEntity),
+               var transform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity),
+               var cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity) {
+               
+               if let dragStart = cameraInput.dragStartPosition, let dragCurrent = cameraInput.dragCurrentPosition {
+                   // Handle rotation
+                   let rotationChange = float2(Float(dragCurrent.x - dragStart.x), Float(dragCurrent.y - dragStart.y)) * deltaTime
+                   transform.rotation.y += rotationChange.x * Settings.rotationSpeed
+                   transform.rotation.x -= rotationChange.y * Settings.rotationSpeed
+
+                   // Handle zoom based on drag distance
+                   let zoomChange = Float(dragCurrent.y - dragStart.y) * deltaTime * Settings.mouseScrollSensitivity
+                   cameraComponent.distance += zoomChange
+                   cameraComponent.distance = max(cameraComponent.minDistance, min(cameraComponent.distance, cameraComponent.maxDistance))
+               
+                   // Update the view matrix
+                   cameraComponent.updateViewMatrix(transformConstant: transform)
+
+                   // Save changes back to components
+                   entityManager.addComponent(component: transform, to: cameraEntity)
+                   entityManager.addComponent(component: cameraComponent, to: cameraEntity)
+                   cameraInput.dragStartPosition = dragCurrent // Update drag position for continuous interaction
+                   entityManager.addComponent(component: cameraInput, to: cameraEntity)
+               }
+            }
+        }
  
     //MARK: - Camera Control Methods
     private func applyArcballControl(_ input: inout CameraInputComponent, _ transform: inout TransformComponent, _ deltaTime: Float) {

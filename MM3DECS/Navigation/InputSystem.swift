@@ -122,7 +122,7 @@ class InputSystem: SystemProtocol {
                 
                 logger.debug("Checking for entity: \(entity.name)")
                 let bounds = [boundingBox.minBounds, boundingBox.maxBounds]
-                if hitResult(bounds: bounds, ray: ray) {
+                if ray.intersects(with: bounds) {
                     let distance = length(transform.position - rayOrigin)
                     if distance < minDistance {
                         minDistance = distance
@@ -183,26 +183,27 @@ class InputSystem: SystemProtocol {
 //        return normalize(worldCoords)
 //    }
     
-    func calculateRayDirection(ndc: float3, projectionMatrix: float4x4, viewMatrix: float4x4) -> float3 {
-        // Transform NDC to clip space; Metal uses left-handed coordinate system
-        let clipCoords = float4(ndc.x, ndc.y, -1.0, 1.0)  // Setting z to -1.0 to point from the near plane into the scene
-
-        // Apply the inverse of the projection matrix to go from clip space to eye space
-        var eyeCoords = projectionMatrix.inverse * clipCoords
-        eyeCoords.z = -1.0   // We set z to 1.0 to point forwards in eye space
-        eyeCoords.w = 0.0   // Make it a direction vector
-
-        // Transform the eye space coordinates to world space using the inverse of the view matrix
-        let worldRayDir = normalize((viewMatrix.inverse * eyeCoords).xyz)
-        return worldRayDir
-    }
-    
     func touchToNDC(touchPoint: CGPoint) -> float3 {
         let clipX = (2.0 * Float(touchPoint.x) / Float(Renderer.params.width)) - 1.0
         let clipY = 1.0 - (2.0 * Float(touchPoint.y) / Float(Renderer.params.height))
         return float3(x: clipX, y: clipY, z: 0.0)  // Assume clip space is hemicube, -Z is into the screen
     }
     
+    
+    func calculateRayDirection(ndc: float3, projectionMatrix: float4x4, viewMatrix: float4x4) -> float3 {
+        // Transform NDC to clip space; Metal uses left-handed coordinate system
+        let clipCoords = float4(ndc.x, ndc.y, 0, 1.0)  // Setting z to -1.0 to point from the near plane into the scene
+
+        // Apply the inverse of the projection matrix to go from clip space to eye space
+        var eyeCoords = projectionMatrix.inverse * clipCoords
+        eyeCoords.z = 1.0   // We set z to 1.0 to point forwards in eye space
+        eyeCoords.w = 0.0   // Make it a direction vector
+
+        // Transform the eye space coordinates to world space using the inverse of the view matrix
+        let worldRayDir = normalize((viewMatrix.inverse * eyeCoords).xyz)
+        return worldRayDir
+    }
+  
 //    func unprojectToWorldSpace(ndc: float3, viewMatrix: matrix_float4x4, projectionMatrix: matrix_float4x4) -> float3 {
 //        let clipCoords = float4(ndc.x, ndc.y, 1.0, 1.0) // z set to 1.0 to define a direction vector
 //        let invVP = (projectionMatrix * viewMatrix).inverse

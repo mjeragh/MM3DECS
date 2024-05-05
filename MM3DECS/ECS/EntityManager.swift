@@ -81,7 +81,8 @@ extension EntityManager {
         self.addEntity(entity: cameraEntity)
         
         // Common transform component for all cameras
-        self.addComponent(component: TransformComponent(position: [0, 0, 5]), to: cameraEntity)
+        let transformComponent = TransformComponent(position: [0, 0, 15])
+        self.addComponent(component: transformComponent, to: cameraEntity)
         
         let aspect = Float(16) / Float(9) // Example aspect ratio
         
@@ -91,7 +92,8 @@ extension EntityManager {
             self.addComponent(component: perspectiveCameraComponent, to: cameraEntity)
             
         case .arcball:
-            let arcballCameraComponent = ArcballCameraComponent(aspect: aspect, fov: Float(70).degreesToRadians, near: 0.1, far: 100, target: [0, 0, 0], distance: 15, minDistance: 1, maxDistance: 100)
+            var arcballCameraComponent = ArcballCameraComponent(target: [0,0,0], distance: 15, minDistance: 1, maxDistance: 100, aspect: aspect, fov: Float(70).degreesToRadians, near: 0.1, far: 100)
+            arcballCameraComponent.updateViewMatrix(transformConstant: transformComponent)
             self.addComponent(component: arcballCameraComponent, to: cameraEntity)
             
         case .orthographic:

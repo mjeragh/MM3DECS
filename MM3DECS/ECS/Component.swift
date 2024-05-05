@@ -156,56 +156,72 @@ struct PerspectiveCameraComponent: CameraComponent {
 // Similar implementations would be needed for ArcballCameraComponent and OrthographicCameraComponent
 
 
-struct ArcballCameraComponent: CameraComponent {
-    
-    var aspect: Float
-    var fov: Float
-    var near: Float
-    var far: Float
+struct ArcballCameraComponent {
     var target: float3
     var distance: Float
     var minDistance: Float
     var maxDistance: Float
+    var aspect: Float
+    var fov: Float
+    var near: Float
+    var far: Float
+   // var rotation: float3 // Managed externally, likely by a CameraControlSystem
 
-    // Implement required properties and methods...
-    func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
-        ///Calculating the view matrix for the arcball camera
-        /**In this code snippet:
-
-        - **'worldPosition'** and **'worldOrientation'** represent the camera's global position and orientation.
-        - **cameraPosition** is calculated by subtracting the normalized vector from the target to the world position, multiplied by the distance. This effectively places the camera a fixed distance from the target.
-        - **cameraRotation** is the rotation of the camera in the world space, based on the transform's rotation.
-        Please adjust the code as necessary to fit the specifics of how you want your arcball camera to behave, especially how you interpret the rotation and position in terms of the camera's movement around the target. The above example assumes the TransformComponent's position is the direction vector from the target to the camera, not the actual position of the camera in the world. If that's not the case, you will need to adjust the cameraPosition calculation accordingly.
-        */
-        
-        // Compute camera's world position based on target and distance
-               let worldPosition = transform.position
-               let worldOrientation = transform.rotation
-               
-               // Calculate the camera position relative to the target
-               // Here you might need to calculate the correct position based on the distance and rotation
-               // For example, if you want the camera to rotate around the target at a fixed distance:
-               let cameraPosition = target - worldPosition.normalized * distance
-               
-               // Calculate the rotation based on the target's position and the world orientation
-               let cameraRotation = float4x4(rotationYXZ: worldOrientation)
-               
-               // Calculate the up vector for the camera based on its rotation
-               let upVector = cameraRotation * float4(0, 1, 0, 0)
-
-               // Use the lookAt matrix to create the view matrix
-               return float4x4(eye: cameraPosition, center: target, up: float3(upVector.x, upVector.y, upVector.z))
-           
+    init(target: float3, distance: Float, minDistance: Float, maxDistance: Float, aspect: Float, fov: Float, near: Float, far: Float) {
+        self.target = target
+        self.distance = distance
+        self.minDistance = minDistance
+        self.maxDistance = maxDistance
+        self.aspect = aspect
+        self.fov = fov
+        self.near = near
+        self.far = far
     }
     
-    var projectionMatrix: float4x4 {
-        // Calculate projection matrix
-        float4x4(projectionFov: fov, near: near, far: far, aspect: aspect)
+    private var _viewMatrix: float4x4 = float4x4.identity
+    var viewMatrix: float4x4 {
+        get {
+            return _viewMatrix
+        }
+        set {
+            _viewMatrix = newValue
+        }
     }
+
+    mutating func updateViewMatrix(transformConstant: TransformComponent) {
+        var transform = transformConstant
+        let rotateMatrix = float4x4(rotationYXZ: [-transform.rotation.x, transform.rotation.y, 0])
+        let translateMatrix = float4x4(translation: [target.x, target.y, target.z - distance])
+        _viewMatrix = (rotateMatrix * translateMatrix).inverse
+        transform.position = rotateMatrix.upperLeft * -_viewMatrix.columns.3.xyz
+    }
+
+//    var projectionMatrix: float4x4 {
+//        return float4x4(projectionFov: fov, near: near, far: far, aspect: aspect, lhs: true)
+//    }
+
+//    mutating func updateAspect(_ aspect: Float) {
+//        self.aspect = aspect
+//    }
+}
+
+extension ArcballCameraComponent: CameraComponent {
+    var projectionMatrix: float4x4 {
+        return float4x4(projectionFov: fov, near: near, far: far, aspect: aspect, lhs: true)
+    }
+
     mutating func updateAspect(_ aspect: Float) {
         self.aspect = aspect
     }
+
+    func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
+        // Adjust to use the TransformComponent parameters
+        let rotationMatrix = float4x4(rotationYXZ: transform.rotation)
+        let translationMatrix = float4x4(translation: transform.position)
+        return (rotationMatrix * translationMatrix).inverse
+    }
 }
+
 
 struct OrthographicCameraComponent: CameraComponent {
     
