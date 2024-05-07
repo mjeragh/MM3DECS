@@ -127,7 +127,7 @@ struct UniformsComponent: Component {
 protocol CameraComponent: Component {
     var projectionMatrix: float4x4 { get }
     mutating func updateAspect(_ aspect: Float)
-    func calculateViewMatrix(transform: TransformComponent) -> float4x4
+    mutating func calculateViewMatrix(transform: TransformComponent) -> float4x4
 }
 
 // Example implementation for a PerspectiveCameraComponent:
@@ -146,7 +146,7 @@ struct PerspectiveCameraComponent: CameraComponent {
         aspectRatio = aspect
     }
     
-    func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
+    mutating func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
         let rotationMatrix = float4x4(rotationYXZ: transform.rotation)
         let translationMatrix = float4x4(translation: transform.position)
         return (rotationMatrix * translationMatrix).inverse
@@ -188,13 +188,7 @@ struct ArcballCameraComponent {
         }
     }
 
-    mutating func updateViewMatrix(transformConstant: TransformComponent) {
-        var transform = transformConstant
-        let rotateMatrix = float4x4(rotationYXZ: [-transform.rotation.x, transform.rotation.y, 0])
-        let translateMatrix = float4x4(translation: [target.x, target.y, target.z - distance])
-        _viewMatrix = (rotateMatrix * translateMatrix).inverse
-        transform.position = rotateMatrix.upperLeft * -_viewMatrix.columns.3.xyz
-    }
+    
 
 //    var projectionMatrix: float4x4 {
 //        return float4x4(projectionFov: fov, near: near, far: far, aspect: aspect, lhs: true)
@@ -213,12 +207,25 @@ extension ArcballCameraComponent: CameraComponent {
     mutating func updateAspect(_ aspect: Float) {
         self.aspect = aspect
     }
-
-    func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
+    
+    mutating func updateViewMatrix(transformConstant: TransformComponent) {
+            var transform = transformConstant
+            let rotateMatrix = float4x4(rotationYXZ: [-transform.rotation.x, transform.rotation.y, 0])
+            let translateMatrix = float4x4(translation: [target.x, target.y, target.z - distance])
+            _viewMatrix = (rotateMatrix * translateMatrix).inverse
+            transform.position = rotateMatrix.upperLeft * -_viewMatrix.columns.3.xyz
+        }
+    
+    mutating func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
         // Adjust to use the TransformComponent parameters
-        let rotationMatrix = float4x4(rotationYXZ: transform.rotation)
-        let translationMatrix = float4x4(translation: transform.position)
-        return (rotationMatrix * translationMatrix).inverse
+//        let rotationMatrix = float4x4(rotationYXZ: transform.rotation)
+//        let translationMatrix = float4x4(translation: transform.position)
+//        return (rotationMatrix * translationMatrix).inverse
+        if target == transform.position {
+            return (float4x4(translation: target) * float4x4(rotationYXZ: transform.rotation)).inverse
+        } else {
+            return float4x4(eye: transform.position, center: target, up: [0, 1, 0])
+        }
     }
 }
 
@@ -231,7 +238,7 @@ struct OrthographicCameraComponent: CameraComponent {
     var far: Float
 
     // Implement required properties and methods...
-    func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
+    mutating func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
         let translationMatrix = float4x4(translation: transform.position)
         let rotationMatrix = float4x4(rotation: transform.rotation)
         return (translationMatrix * rotationMatrix).inverse

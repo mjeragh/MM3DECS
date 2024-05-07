@@ -51,7 +51,7 @@ class InputSystem: SystemProtocol {
                     // An object was touched, mark it as selected
                     var selectionComponent = entityManager.getComponent(type: SelectionComponent.self, for: selected)!
                     entityManager.addComponent(component: selectionComponent, to: selected)
-                    logger.debug("Object has been selected")
+                    logger.debug("Object:\(selected.name) has been selected")
                 } else {
                     // No object was touched, the camera should be marked as selected
                     cameraInput.dragStartPosition = touchLocation

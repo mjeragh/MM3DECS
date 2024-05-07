@@ -30,7 +30,7 @@ class RenderSystem: SystemProtocol {
             fatalError("No camera transform component found")
         }
         
-        let cameraComponent: CameraComponent
+        var cameraComponent: CameraComponent
         if let perspectiveCamera = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity) {
             cameraComponent = perspectiveCamera
         } else if let arcballCamera = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity) {
