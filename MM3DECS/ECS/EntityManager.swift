@@ -93,7 +93,7 @@ extension EntityManager {
             
         case .arcball:
             var arcballCameraComponent = ArcballCameraComponent(target: [0,0,0], distance: 15, minDistance: 1, maxDistance: 100, aspect: aspect, fov: Float(70).degreesToRadians, near: 0.1, far: 100)
-            arcballCameraComponent.updateViewMatrix(transformConstant: transformComponent)
+            arcballCameraComponent.calculateViewMatrix(transform: transformComponent)
             self.addComponent(component: arcballCameraComponent, to: cameraEntity)
             
         case .orthographic:

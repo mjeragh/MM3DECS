@@ -98,7 +98,6 @@ class InputSystem: SystemProtocol {
         let ndc = touchToNDC(touchPoint: point)
         let viewMatrix = cameraComponent.calculateViewMatrix(transform: cameraTransform)
         let projectionMatrix = cameraComponent.projectionMatrix
-        
         let rayDirection = calculateRayDirection(ndc: ndc, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix)
         let rayOrigin = cameraTransform.position
         

@@ -39,9 +39,6 @@ class CameraControlSystem: SystemProtocol {
                    cameraComponent.distance += zoomChange
                    cameraComponent.distance = max(cameraComponent.minDistance, min(cameraComponent.distance, cameraComponent.maxDistance))
                
-                   // Update the view matrix
-                   cameraComponent.updateViewMatrix(transformConstant: transform)
-
                    // Save changes back to components
                    entityManager.addComponent(component: transform, to: cameraEntity)
                    entityManager.addComponent(component: cameraComponent, to: cameraEntity)
