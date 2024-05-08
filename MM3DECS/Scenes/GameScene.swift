@@ -35,7 +35,7 @@ class GameScene: SceneProtocol {
         
         if let cameraEntity = entityManager.entities(for: ArcballCameraComponent.self).first,
            var cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity){
-            cameraTransform.position = [0, 2,-15]
+            cameraTransform.position = [0, 2,15]
             cameraTransform.rotation = [0,0,0]
             entityManager.addComponent(component: cameraTransform, to: cameraEntity)
             entityManager.addComponent(component: CameraInputComponent(cameraType: .arcball), to: cameraEntity)

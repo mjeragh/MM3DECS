@@ -32,7 +32,7 @@ class InputSystem: SystemProtocol {
     
     func update(deltaTime: Float, entityManager: EntityManager, renderEncoder: any MTLRenderCommandEncoder) {
         //not implemented
-        self.entityManager = entityManager
+       
     }
     
     // Other methods...
@@ -138,51 +138,7 @@ class InputSystem: SystemProtocol {
         return closestEntity
     }
     
-    func hitResult(bounds: [float3], ray: Ray) -> Bool {
-        let tMin = float3(x: Float(bounds[0].x - ray.origin.x) / ray.direction.x,
-                          y: Float(bounds[0].y - ray.origin.y) / ray.direction.y,
-                          z: Float(bounds[0].z - ray.origin.z) / ray.direction.z)
-        
-        let tMax = float3(x: Float(bounds[1].x - ray.origin.x) / ray.direction.x,
-                          y: Float(bounds[1].y - ray.origin.y) / ray.direction.y,
-                          z: Float(bounds[1].z - ray.origin.z) / ray.direction.z)
-        let t1 = min(tMin, tMax)
-        let t2 = max(tMin, tMax)
-        logger.debug("tmin: \(tMin),\tmax:\(tMax)")
-        logger.debug("BoundingBox: min:\(bounds[0])\tmax:\(bounds[1])")
-        logger.debug("t1: \(t1),\tt2: \(t2)\n")
-
-        let tNear = max(max(t1.x, t1.y), t1.z)
-        let tFar = min(min(t2.x, t2.y), t2.z)
-        logger.debug("tNear: \(tNear),\ttFar: \(tFar)")
-
-        return nearlyEqual(a: tNear, b: tFar, epsilon: epsilon) || (tNear <= tFar && tFar >= 0)
-    }
-    
-//    func hitResult(boundingBox: MDLAxisAlignedBoundingBox, ray: Ray) -> Bool {
-//        let tMin = (boundingBox.minBounds - ray.origin) / ray.direction
-//        let tMax = (boundingBox.maxBounds - ray.origin) / ray.direction
-//        logger.debug("tmin: \(tMin),\tmax:\(tMax)")
-//        logger.debug("BoundingBox: min:\(boundingBox.minBounds)\tmax:\(boundingBox.maxBounds)")
-//        let t1 = min(tMin, tMax)
-//        let t2 = max(tMin, tMax)
-//        logger.debug("t1: \(t1),\tt2: \(t2)\n")
-//
-//        let tNear = max(max(t1.x, t1.y), t1.z)
-//        let tFar = min(min(t2.x, t2.y), t2.z)
-//
-//        logger.debug("tNear: \(tNear),\ttFar: \(tFar)")
-//
-//        return tNear <= tFar && tFar >= 0
-//    }
-    
-//    func calculateRayDirection(ndc: float3, projectionMatrix: float4x4, viewMatrix: float4x4) -> float3 {
-//        let clipCoords = float4(ndc.x, ndc.y, 0, 1.0) // Use -1.0 if your NDC z ranges from -1 to 1
-//        let eyeCoords = projectionMatrix.inverse * clipCoords
-//        let worldCoords = (viewMatrix.inverse * float4(eyeCoords.x, eyeCoords.y, 1.0, 0.0)).xyz
-//        return normalize(worldCoords)
-//    }
-    
+  
     func touchToNDC(touchPoint: CGPoint) -> float3 {
         let clipX = (2.0 * Float(touchPoint.x) / Float(Renderer.params.width)) - 1.0
         let clipY = 1.0 - (2.0 * Float(touchPoint.y) / Float(Renderer.params.height))
@@ -203,13 +159,5 @@ class InputSystem: SystemProtocol {
         let worldRayDir = normalize((viewMatrix.inverse * eyeCoords).xyz)
         return worldRayDir
     }
-  
-//    func unprojectToWorldSpace(ndc: float3, viewMatrix: matrix_float4x4, projectionMatrix: matrix_float4x4) -> float3 {
-//        let clipCoords = float4(ndc.x, ndc.y, 1.0, 1.0) // z set to 1.0 to define a direction vector
-//        let invVP = (projectionMatrix * viewMatrix).inverse
-//        let worldCoords = invVP * clipCoords
-//        return (worldCoords / worldCoords.w).xyz // Ensuring homogenous coordinate normalization
-//    }
-    
     
 }
