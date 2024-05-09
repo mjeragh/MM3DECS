@@ -6,9 +6,12 @@
 //
 
 import Foundation
+import os.log
+
 class EntityManager {
     private var entities: [UUID: Entity] = [:]
     private var componentsByType: [String: [UUID: Component]] = [:]
+    let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "EntityManager")
 
     func addEntity(entity: Entity) {
         entities[entity.id] = entity
@@ -84,7 +87,8 @@ extension EntityManager {
         let transformComponent = TransformComponent(position: [0, 0, 15])
         self.addComponent(component: transformComponent, to: cameraEntity)
         
-        let aspect = Float(16) / Float(9) // Example aspect ratio
+        let aspect = Float(Renderer.params.width) / Float(Renderer.params.height) // Example aspect ratio
+        logger.debug("inside creating camera Aspect ratio: \(aspect)")
         
         switch type {
         case .perspective:
@@ -92,8 +96,8 @@ extension EntityManager {
             self.addComponent(component: perspectiveCameraComponent, to: cameraEntity)
             
         case .arcball:
-            var arcballCameraComponent = ArcballCameraComponent(target: [0,0,0], distance: 15, minDistance: 1, maxDistance: 100, aspect: aspect, fov: Float(70).degreesToRadians, near: 0.1, far: 100)
-            arcballCameraComponent.calculateViewMatrix(transform: transformComponent)
+            let arcballCameraComponent = ArcballCameraComponent(target: [0,0,0], distance: 15, minDistance: 1, maxDistance: 100, aspect: aspect, fov: Float(70).degreesToRadians, near: 0.1, far: 100)
+            
             self.addComponent(component: arcballCameraComponent, to: cameraEntity)
             
         case .orthographic:

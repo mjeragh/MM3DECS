@@ -131,13 +131,11 @@ extension Renderer: MTKViewDelegate {
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         
         let aspect = Float(view.bounds.width) / Float(view.bounds.height)
-        
-        delegate?.updateSceneCamera(aspectRatio: aspect)
-        
-        
         Renderer.params.width = Float(view.bounds.width) //UInt32(size.width)
-        Renderer.params.height = Float(view.bounds.height)//UInt32(size.height)
-        logger.debug("width: \(Renderer.params.width), height: \(Renderer.params.height)")
+               Renderer.params.height = Float(view.bounds.height)//UInt32(size.height)
+               logger.debug("width: \(Renderer.params.width), height: \(Renderer.params.height)")
+        delegate?.updateSceneCamera(aspectRatio: aspect)
+       
     }
     
     
