@@ -61,7 +61,7 @@ class RayDebugSystem : SystemProtocol {
         
     }
 
-    func update(deltaTime: Float, entityManager: EntityManager, renderEncoder: any MTLRenderCommandEncoder) {
+    func update(deltaTime: Float, renderEncoder: any MTLRenderCommandEncoder) {
         drawDebugLines(renderEncoder: renderEncoder)
     }
     

@@ -59,7 +59,7 @@ class SceneManager {
     func updateCurrentSceneSystems(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder) {
 //        currentScene?.updateSystems(deltaTime: deltaTime, renderEncoder: renderEncoder)
         currentScene?.systems.forEach { system in
-            system.update(deltaTime: deltaTime, entityManager: SceneManager.entityManager, renderEncoder: renderEncoder)
+            system.update(deltaTime: deltaTime, renderEncoder: renderEncoder)
         }
     }
     
@@ -125,10 +125,7 @@ extension SceneManager : SceneDelegate{
     func getAcctiveCameraInputComponent() -> CameraInputComponent {
         return SceneManager.entityManager.getComponent(type: CameraInputComponent.self, for: SceneManager.cameraManager.getActiveCameraEntity()!)!
     }
-//    func addEntityToScene(_ entity: Entity) {
-//        currentScene?.entityManager.addEntity(entity: entity)
-//    }
-//
+
 //    func removeEntityFromScene(_ entity: Entity) {
 //        currentScene?.entityManager.removeEntity(entity: entity)
 //    }

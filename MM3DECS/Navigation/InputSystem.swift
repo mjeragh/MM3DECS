@@ -22,15 +22,9 @@ class InputSystem: SystemProtocol {
     // let rayDebugSystem : RayDebugSystem
     
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "InputSystem")
+   
     
-    init(){//, rayDebugSystem: RayDebugSystem) {
-//        self.entityManager = entityManager
-//        self.cameraEntity = cameraEntity
-//        self.cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)!
-        // self.rayDebugSystem = rayDebugSystem
-    }
-    
-    func update(deltaTime: Float, entityManager: EntityManager, renderEncoder: any MTLRenderCommandEncoder) {
+    func update(deltaTime: Float, renderEncoder: any MTLRenderCommandEncoder) {
         //not implemented
        
     }

@@ -64,7 +64,7 @@ class DebugBoundingBox : SystemProtocol {
     self.boundingBoxIndexCount = indices.count
   }
   
-    func update(deltaTime: Float, entityManager: EntityManager, renderEncoder: any MTLRenderCommandEncoder) {
+    func update(deltaTime: Float, renderEncoder: any MTLRenderCommandEncoder) {
         var uniforms = Uniforms()
         render(renderEncoder: renderEncoder,  uniforms: uniforms)
     }

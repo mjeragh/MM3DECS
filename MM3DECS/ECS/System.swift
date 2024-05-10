@@ -6,6 +6,6 @@
 //
 import MetalKit
 protocol SystemProtocol {
-    func update(deltaTime: Float, entityManager: EntityManager, renderEncoder: MTLRenderCommandEncoder)
+    func update(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder)
 }
 

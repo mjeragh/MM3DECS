@@ -21,12 +21,12 @@ enum Settings {
 class CameraControlSystem: SystemProtocol {
     let logger = Logger(subsystem: "com.lanterntech.mm3d", category: "CameraControlSystem")
     
-    func update(deltaTime: Float, entityManager: EntityManager, renderEncoder: any MTLRenderCommandEncoder) {
+    func update(deltaTime: Float, renderEncoder: any MTLRenderCommandEncoder) {
             // Iterate over camera entities
-            if let cameraEntity = entityManager.entities(for: CameraInputComponent.self).first,
-               var cameraInput = entityManager.getComponent(type: CameraInputComponent.self, for: cameraEntity),
-               var transform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity),
-               var cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity) {
+        if let cameraEntity = SceneManager.entityManager.entities(for: CameraInputComponent.self).first,
+           var cameraInput = SceneManager.entityManager.getComponent(type: CameraInputComponent.self, for: cameraEntity),
+           var transform = SceneManager.entityManager.getComponent(type: TransformComponent.self, for: cameraEntity),
+           var cameraComponent = SceneManager.entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity) {
                
                if let dragStart = cameraInput.dragStartPosition, let dragCurrent = cameraInput.dragCurrentPosition {
                    // Handle rotation
@@ -40,10 +40,10 @@ class CameraControlSystem: SystemProtocol {
                    cameraComponent.distance = max(cameraComponent.minDistance, min(cameraComponent.distance, cameraComponent.maxDistance))
                
                    // Save changes back to components
-                   entityManager.addComponent(component: transform, to: cameraEntity)
-                   entityManager.addComponent(component: cameraComponent, to: cameraEntity)
+                   SceneManager.entityManager.addComponent(component: transform, to: cameraEntity)
+                   SceneManager.entityManager.addComponent(component: cameraComponent, to: cameraEntity)
                    cameraInput.dragStartPosition = dragCurrent // Update drag position for continuous interaction
-                   entityManager.addComponent(component: cameraInput, to: cameraEntity)
+                   SceneManager.entityManager.addComponent(component: cameraInput, to: cameraEntity)
                }
             }
         }
