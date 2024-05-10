@@ -24,12 +24,14 @@ class SceneManager {
     static var cameraManager:  CameraManager!
     static var entityManager: EntityManager!
     
-    init(scene: SceneProtocol, entityManager: EntityManager) {
+    init() {
+        let scene = GameScene(delegate: self)
+        let entityManager = EntityManager()
         SceneManager.cameraManager = CameraManager(entityManager: entityManager)
         SceneManager.entityManager = entityManager
         addScene(scene, name: "Initial Scene")
         currentScene = scene
-        scene.dele
+       
         scene.setUp()
     }
 

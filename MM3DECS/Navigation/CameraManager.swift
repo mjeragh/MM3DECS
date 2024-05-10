@@ -31,7 +31,7 @@ class CameraManager {
 
     func setCamera(type: CameraType, withCameraInputComponent:Bool = false) {
         activeCameraType = type
-        activeCameraEntity = createCameraEntity(type: type)
+        activeCameraEntity = createCameraEntity(type: type, withCameraInputComponent: withCameraInputComponent)
     }
 
     func getActiveCameraEntity() -> Entity? {
