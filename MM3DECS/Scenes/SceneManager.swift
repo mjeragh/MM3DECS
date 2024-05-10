@@ -7,13 +7,13 @@
 import MetalKit
 
 protocol SceneProtocol {
-    var entityManager: EntityManager { get }
+   // var entityManager: EntityManager { get }
     var systems: [SystemProtocol] { get set }
     func setUp()
     func update(deltaTime: Float)
     func tearDown()
     
-    func updateSystems(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder)
+   // func updateSystems(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder)
 }
 
 
@@ -21,10 +21,15 @@ protocol SceneProtocol {
 class SceneManager {
     private var scenes: [String: SceneProtocol] = [:]
     var currentScene: SceneProtocol?
+    static var cameraManager:  CameraManager!
+    static var entityManager: EntityManager!
     
-    init(scene: SceneProtocol) {
+    init(scene: SceneProtocol, entityManager: EntityManager) {
+        SceneManager.cameraManager = CameraManager(entityManager: entityManager)
+        SceneManager.entityManager = entityManager
         addScene(scene, name: "Initial Scene")
         currentScene = scene
+        scene.dele
         scene.setUp()
     }
 
@@ -41,25 +46,7 @@ class SceneManager {
 
     func updateCurrentSceneCamera(with aspectRatio: Float) {
         // Update Perspective Camera
-        if let cameraEntity = currentScene?.entityManager.entitiesWithAnyComponents([PerspectiveCameraComponent.self]).first,
-           var cameraComponent = currentScene?.entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity) {
-            cameraComponent.aspectRatio = aspectRatio
-            currentScene?.entityManager.addComponent(component: cameraComponent, to: cameraEntity)
-        }
-        
-        // Update Arcball Camera
-        if let arcballCameraEntity = currentScene?.entityManager.entitiesWithAnyComponents([ArcballCameraComponent.self]).first,
-           var arcballCameraComponent = currentScene?.entityManager.getComponent(type: ArcballCameraComponent.self, for: arcballCameraEntity) {
-            arcballCameraComponent.aspect = aspectRatio
-            currentScene?.entityManager.addComponent(component: arcballCameraComponent, to: arcballCameraEntity)
-        }
-        
-        // Update Orthographic Camera
-        if let orthoCameraEntity = currentScene?.entityManager.entitiesWithAnyComponents([OrthographicCameraComponent.self]).first,
-           var orthoCameraComponent = currentScene?.entityManager.getComponent(type: OrthographicCameraComponent.self, for: orthoCameraEntity) {
-            orthoCameraComponent.aspect = aspectRatio
-            currentScene?.entityManager.addComponent(component: orthoCameraComponent, to: orthoCameraEntity)
-        }
+        SceneManager.cameraManager.updateAspect(aspectRatio)
         
     }
     
@@ -68,7 +55,84 @@ class SceneManager {
     }
     
     func updateCurrentSceneSystems(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder) {
-        currentScene?.updateSystems(deltaTime: deltaTime, renderEncoder: renderEncoder)
+//        currentScene?.updateSystems(deltaTime: deltaTime, renderEncoder: renderEncoder)
+        currentScene?.systems.forEach { system in
+            system.update(deltaTime: deltaTime, entityManager: SceneManager.entityManager, renderEncoder: renderEncoder)
+        }
     }
+    
+    //Static function for the Systems
+    // Static functions to retrieve the camera matrices
+        static func getViewMatrix() -> float4x4? {
+            // Retrieve the camera manager from the current scene's manager
+            guard let manager = cameraManager else { return nil }
+            return manager.getViewMatrix()
+        }
+
+        static func getProjectionMatrix() -> float4x4? {
+            // Retrieve the camera manager from the current scene's manager
+            return SceneManager.cameraManager.getProjectionMatrix()
+        }
+    
+    static func entitesToRender() -> [Entity]{
+        return entityManager.entitiesWithComponents([RenderableComponent.self, TransformComponent.self])
+    }
+}
+
+// Protocol definition for SceneDelegate
+protocol SceneDelegate: AnyObject {
+    // Camera Management
+    func createCamera(type: CameraType,withCameraInputComponent: Bool)
+    func updateActiveCamera(with transform: TransformComponent)
+    func updateActiveCamera(with cameraInputComponent: CameraInputComponent)
+    
+    // Additional scene management
+    //TODO: Implement these functions
+    func addEntityToScene(name: String, with renderableComponent:RenderableComponent, with tranformComponent:TransformComponent, withInputComponent: Bool, withSelectionComponent: Bool)
+//    func removeEntityFromScene(_ entity: Entity)
+//    func findEntityByName(_ name: String) -> Entity?
+}
+
+extension SceneManager : SceneDelegate{
+    
+    func addEntityToScene(name: String, with renderableComponent:RenderableComponent, with tranformComponent:TransformComponent, withInputComponent: Bool = false, withSelectionComponent: Bool = false) {
+        let entity = Entity(name: name)
+        SceneManager.entityManager.addEntity(entity: entity)
+        SceneManager.entityManager.addComponent(component: renderableComponent, to: entity)
+        SceneManager.entityManager.addComponent(component: tranformComponent, to: entity)
+        if withInputComponent {
+            SceneManager.entityManager.addComponent(component: InputComponent(), to: entity)
+        }
+        if withSelectionComponent {
+            SceneManager.entityManager.addComponent(component: SelectionComponent(), to: entity)
+        }
+    }
+    
+    func createCamera(type: CameraType, withCameraInputComponent: Bool = false) {
+        SceneManager.cameraManager.setCamera(type: type, withCameraInputComponent: withCameraInputComponent)
+    }
+    
+    func updateActiveCamera(with transform: TransformComponent) {
+        SceneManager.entityManager.addComponent(component: transform, to: SceneManager.cameraManager.getActiveCameraEntity()!)
+    }
+    
+    func updateActiveCamera(with cameraInputComponent: CameraInputComponent) {
+        SceneManager.entityManager.addComponent(component: cameraInputComponent, to: SceneManager.cameraManager.getActiveCameraEntity()!)
+    }
+    
+    func getAcctiveCameraInputComponent() -> CameraInputComponent {
+        return SceneManager.entityManager.getComponent(type: CameraInputComponent.self, for: SceneManager.cameraManager.getActiveCameraEntity()!)!
+    }
+//    func addEntityToScene(_ entity: Entity) {
+//        currentScene?.entityManager.addEntity(entity: entity)
+//    }
+//
+//    func removeEntityFromScene(_ entity: Entity) {
+//        currentScene?.entityManager.removeEntity(entity: entity)
+//    }
+//
+//    func findEntityByName(_ name: String) -> Entity? {
+//        return currentScene?.entityManager.findEntityByName(name)
+//    }
 }
 

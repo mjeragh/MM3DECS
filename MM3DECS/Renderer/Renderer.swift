@@ -35,12 +35,6 @@ import OSLog
 
 // swiftlint:disable implicitly_unwrapped_optional
 
-enum CameraType {
-    case perspective
-    case arcball
-    case orthographic
-}
-
 
 
 class Renderer: NSObject {

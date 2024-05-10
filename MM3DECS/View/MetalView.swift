@@ -50,7 +50,7 @@ struct MetalViewRepresentable: ViewRepresentable {
       let renderer = Renderer(metalView: metalView)
       engine.setupGame(
         renderer: renderer,
-        sceneManager: SceneManager(scene: GameScene(entityManager: EntityManager())),
+        sceneManager: SceneManager(scene: GameScene(), entityManager: EntityManager()),
         options: options)
       engine.start()
       return metalView

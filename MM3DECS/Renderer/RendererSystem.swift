@@ -10,11 +10,11 @@ import MetalKit
 
 class RenderSystem: SystemProtocol {
     var timer : Float = 0.0
-    var cameraEntity: Entity?
-    var cameraComponent: CameraComponent?
+//    var cameraEntity: Entity?
+//    var cameraComponent: CameraComponent?
     
-    init(cameraEntity: Entity) {
-        updateCameraEntity(cameraEntity)
+    init() {
+       // updateCameraEntity(cameraEntity)
     }
     
     
@@ -23,38 +23,38 @@ class RenderSystem: SystemProtocol {
         
 
             // Assume that there's only one camera entity for simplicity
-        guard let cameraEntity = cameraEntity else {
-            fatalError("No Camere Entity found")
-        }
-        guard  let cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity) else {
-            fatalError("No camera transform component found")
-        }
+//        guard let cameraEntity = cameraEntity else {
+//            fatalError("No Camere Entity found")
+//        }
+//        guard  let cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity) else {
+//            fatalError("No camera transform component found")
+//        }
         
-        var cameraComponent: CameraComponent
-        if let perspectiveCamera = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity) {
-            cameraComponent = perspectiveCamera
-        } else if let arcballCamera = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity) {
-            cameraComponent = arcballCamera
-        } else if let orthographicCamera = entityManager.getComponent(type: OrthographicCameraComponent.self, for: cameraEntity) {
-            cameraComponent = orthographicCamera
-        } else {
-            fatalError("No camera component found")
-        }
+//        var cameraComponent: CameraComponent
+//        if let perspectiveCamera = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity) {
+//            cameraComponent = perspectiveCamera
+//        } else if let arcballCamera = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity) {
+//            cameraComponent = arcballCamera
+//        } else if let orthographicCamera = entityManager.getComponent(type: OrthographicCameraComponent.self, for: cameraEntity) {
+//            cameraComponent = orthographicCamera
+//        } else {
+//            fatalError("No camera component found")
+//        }
 
         // Compute the view matrix using the camera's transform
-        let viewMatrix = cameraComponent.calculateViewMatrix(transform: cameraTransform)
+        let viewMatrix = SceneManager.getViewMatrix()
         // The projection matrix is already part of the CameraComponent protocol
-        let projectionMatrix = cameraComponent.projectionMatrix
+        let projectionMatrix = SceneManager.getProjectionMatrix()
 
 
         // Render entities with calculated matrices
-        let entities = entityManager.entitiesWithComponents([RenderableComponent.self, TransformComponent.self])
+        let entities = SceneManager.entitesToRender()//entityManager.entitiesWithComponents([RenderableComponent.self, TransformComponent.self])
         for entity in entities {
             guard let renderable = entityManager.getComponent(type: RenderableComponent.self, for: entity),
                   let transform = entityManager.getComponent(type: TransformComponent.self, for: entity) else {
                 continue
             }
-            render(with: renderable, transformConstant: transform, viewMatrix: viewMatrix, projectionMatrix: projectionMatrix, renderEncoder: renderEncoder)
+            render(with: renderable, transformConstant: transform, viewMatrix: viewMatrix!, projectionMatrix: projectionMatrix!, renderEncoder: renderEncoder)
         }
     }
 
@@ -83,8 +83,8 @@ class RenderSystem: SystemProtocol {
         }
     
     // Call this when the camera entity is changed/updated
-        func updateCameraEntity(_ newCameraEntity: Entity) {
-            cameraEntity = newCameraEntity
-        }
+//        func updateCameraEntity(_ newCameraEntity: Entity) {
+//            cameraEntity = newCameraEntity
+//        }
    
 }

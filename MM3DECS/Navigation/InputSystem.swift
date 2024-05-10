@@ -11,9 +11,9 @@ import os.log
 import simd
 
 class InputSystem: SystemProtocol {
-    var entityManager: EntityManager
-    let cameraEntity: Entity
-    var cameraComponent:CameraComponent
+//    var entityManager: EntityManager
+//    let cameraEntity: Entity
+//    var cameraComponent:CameraComponent
     var selectedEntity: Entity? = nil
     let epsilon: Float = 0
     func nearlyEqual(a: Float, b: Float, epsilon: Float) -> Bool {
@@ -23,10 +23,10 @@ class InputSystem: SystemProtocol {
     
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "InputSystem")
     
-    init(entityManager: EntityManager, cameraEntity: Entity){//, rayDebugSystem: RayDebugSystem) {
-        self.entityManager = entityManager
-        self.cameraEntity = cameraEntity
-        self.cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)!
+    init(){//, rayDebugSystem: RayDebugSystem) {
+//        self.entityManager = entityManager
+//        self.cameraEntity = cameraEntity
+//        self.cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)!
         // self.rayDebugSystem = rayDebugSystem
     }
     
@@ -41,65 +41,60 @@ class InputSystem: SystemProtocol {
     func touchMovedOrBegan(gesture: DragGesture.Value) {
         let touchLocation = gesture.location
         // Get the camera entity
-        if let cameraEntity = entityManager.entities(for: CameraInputComponent.self).first,
-           var cameraInput = entityManager.getComponent(type: CameraInputComponent.self, for: cameraEntity) {
+        
+        var cameraInput = SceneManager.cameraManager.getActiveCameraInputComponent()
             
             // Check if this is the first touch
             if cameraInput.dragStartPosition == nil {//it is began
-                selectedEntity = handleTouchOnXZPlane(at: touchLocation, using: cameraEntity)
+                selectedEntity = handleTouchOnXZPlane(at: touchLocation)
                 if let selected = selectedEntity {
                     // An object was touched, mark it as selected
-                    var selectionComponent = entityManager.getComponent(type: SelectionComponent.self, for: selected)!
-                    entityManager.addComponent(component: selectionComponent, to: selected)
+                    var selectionComponent = SceneManager.entityManager.getComponent(type: SelectionComponent.self, for: selected)!
+                    SceneManager.entityManager.addComponent(component: selectionComponent, to: selected)
                     logger.debug("Object:\(selected.name) has been selected")
                 } else {
                     // No object was touched, the camera should be marked as selected
                     cameraInput.dragStartPosition = touchLocation
-                    entityManager.addComponent(component: cameraInput, to: cameraEntity)
+                    SceneManager.entityManager.addComponent(component: cameraInput, to: SceneManager.cameraManager.getActiveCameraEntity()!)
                 }
             }//began
             else {//it is moved
                 // Similar logic as touchBegan, update camera position if it's the selected entity
                 cameraInput.dragCurrentPosition = touchLocation
-                entityManager.addComponent(component: cameraInput, to: cameraEntity)
+                SceneManager.entityManager.addComponent(component: cameraInput, to: SceneManager.cameraManager.getActiveCameraEntity()!)
                 //later I need to check if the camera is selected
                 
             }//else moved
             
-        }
+       
         
         
     }//touchedMovedOrBegan
     
     func touchEnded(gesture: DragGesture.Value) {
         // Clear selected state or camera input as needed
-        if let cameraEntity = entityManager.entities(for: CameraInputComponent.self).first {
-            var cameraInput = entityManager.getComponent(type: CameraInputComponent.self, for: cameraEntity) ?? CameraInputComponent()
+        var cameraInput = SceneManager.cameraManager.getActiveCameraInputComponent()
             cameraInput.dragStartPosition = nil
             cameraInput.dragCurrentPosition = nil
             cameraInput.lastTouchPosition = nil
-            entityManager.addComponent(component: cameraInput, to: cameraEntity)
+        SceneManager.entityManager.addComponent(component: cameraInput, to: SceneManager.cameraManager.getActiveCameraEntity()!)
             selectedEntity = nil
-            self.cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)!
-        }
+            //self.cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)!
     }
     
     
     
-    func handleTouchOnXZPlane(at point: CGPoint, using cameraEntity: Entity) -> Entity? {
-        guard let cameraTransform = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity) else {
-            logger.warning("Camera components not found")
-            return nil
-        }
+    func handleTouchOnXZPlane(at point: CGPoint) -> Entity? {
+        let cameraTransform = SceneManager.cameraManager.getActiveTransformComponent()
         
         logger.debug("in function handleTouchOnXZPlane Picking at \(point.x), \(point.y)")
         logger.debug("in function handleTouchOnXZPlane Camera position: \(cameraTransform.position)")
         
         let ndc = touchToNDC(touchPoint: point)
-        let viewMatrix = cameraComponent.calculateViewMatrix(transform: cameraTransform)
-        let projectionMatrix = cameraComponent.projectionMatrix
+        let viewMatrix = SceneManager.getViewMatrix()!
+        let projectionMatrix = SceneManager.getProjectionMatrix()
         //logger.debug("in function handleTouchOnXZPlane cameracomponent aspect: \(cameraComponent.aspect)")
-        let rayDirection = calculateRayDirection(ndc: ndc, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix)
+        let rayDirection = calculateRayDirection(ndc: ndc, projectionMatrix: projectionMatrix!, viewMatrix: viewMatrix)
         let rayOrigin = cameraTransform.position
         
         logger.debug("ndc: \(ndc), rayOrigin: \(rayOrigin), rayDirection: \(rayDirection)")
@@ -107,11 +102,11 @@ class InputSystem: SystemProtocol {
         var closestEntity: Entity? = nil
         var minDistance: Float = Float.greatestFiniteMagnitude
         
-        let entities = entityManager.entitiesWithComponents([RenderableComponent.self])
+        let entities = SceneManager.entitesToRender()
         
         for entity in entities {
-            if let boundingBox = entityManager.getComponent(type: RenderableComponent.self, for: entity)?.boundingBox,
-               let transform = entityManager.getComponent(type: TransformComponent.self, for: entity) {
+            if let boundingBox = SceneManager.entityManager.getComponent(type: RenderableComponent.self, for: entity)?.boundingBox,
+               let transform = SceneManager.entityManager.getComponent(type: TransformComponent.self, for: entity) {
                 let modelMatrix = transform.modelMatrix
                 let modelMatrixInverse = modelMatrix.inverse
                 
