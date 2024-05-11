@@ -47,10 +47,9 @@ struct MetalViewRepresentable: ViewRepresentable {
 
   
   func makeUIView(context: Context) -> MTKView {
-      let renderer = Renderer(metalView: metalView)
+//      let renderer = Renderer(metalView: metalView)
       engine.setupGame(
-        renderer: renderer,
-        sceneManager: SceneManager(),
+        metalView: metalView,
         options: options)
       engine.start()
       return metalView

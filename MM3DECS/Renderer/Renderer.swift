@@ -50,7 +50,7 @@ class Renderer: NSObject {
     //static var defaultPipelinestate: MTLRenderPipelineState!
     var logger = Logger(subsystem: "MM3DECS", category: "Renderer")
     
-    var isReadyToRender = false
+//    var isReadyToRender = false
     static var params = Params()
     
 //    func startRendering() {
@@ -101,8 +101,8 @@ class Renderer: NSObject {
             blue: 0.19,
             alpha: 1.0)
         metalView.depthStencilPixelFormat = .depth32Float
-        metalView.delegate = self
-        mtkView(metalView, drawableSizeWillChange: metalView.bounds.size)
+//        metalView.delegate = self
+//        mtkView(metalView, drawableSizeWillChange: metalView.bounds.size)
         
         
     }//Init
@@ -121,25 +121,14 @@ class Renderer: NSObject {
     }
 }
 
-extension Renderer: MTKViewDelegate {
-    func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        
-        let aspect = Float(view.bounds.width) / Float(view.bounds.height)
-        Renderer.params.width = Float(view.bounds.width) //UInt32(size.width)
-               Renderer.params.height = Float(view.bounds.height)//UInt32(size.height)
-               logger.debug("width: \(Renderer.params.width), height: \(Renderer.params.height)")
-        delegate?.updateSceneCamera(aspectRatio: aspect)
-       
-    }
-    
-    
-    
+extension Renderer{
+    //This use to be inherting MTKViewDelegate and the resize function was here
+    //but now it is with the engine
     
     
     func draw(in view: MTKView) {
-        guard delegate?.isRunning() == true else {
-            return
-        }
+       //The engine is the real delegate, but in the future when handling multple passes and other GPU
+        //code it will be handled here
         guard
             let commandBuffer = Renderer.commandQueue.makeCommandBuffer(),
             let descriptor = view.currentRenderPassDescriptor,
