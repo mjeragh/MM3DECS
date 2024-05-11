@@ -76,9 +76,10 @@ class SceneManager {
             return SceneManager.cameraManager.getProjectionMatrix()
         }
     
-    static func entitesToRender() -> [Entity]{
+    static func getEntitesToRender() -> [Entity]{
         return entityManager.entitiesWithComponents([RenderableComponent.self, TransformComponent.self])
     }
+    
 }
 
 // Protocol definition for SceneDelegate

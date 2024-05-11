@@ -48,11 +48,7 @@ class GameScene: SceneProtocol {
     func setupEntites() {
         delegate?.addEntityToScene(name: "train", with: RenderableComponent(device: Renderer.device, name: "train.usd"), with: TransformComponent(position: float3(10, 0, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), withInputComponent: true, withSelectionComponent: true)
                // Add other entities and components as needed
-//        let landEntity = Entity()
-//        entityManager.addEntity(entity: landEntity)
-//        entityManager.addComponent(component: RenderableComponent(device: Renderer.device, name: "plane1000.usda"), to: landEntity)
-//        entityManager.addComponent(component: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(1,1,1)), to: landEntity)
-//        entityManager.addComponent(component: InputComponent(), to: landEntity)
+       
 //        delegate?.addEntityToScene(name: "land", with: RenderableComponent(device: Renderer.device, name: "plane1000.usda"), with: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(1,1,1)), withInputComponent: false, withSelectionComponent: false)
         let scale = Float(0.1)
         delegate?.addEntityToScene(name: "Sun", with: RenderableComponent(device: Renderer.device, name: "peg.usda"), with: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), withInputComponent: true, withSelectionComponent: true)

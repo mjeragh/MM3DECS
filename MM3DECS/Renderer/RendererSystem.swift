@@ -13,7 +13,7 @@ class RenderSystem: SystemProtocol {
     
     func update(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder) {
        // Render entities with calculated matrices
-        for entity in SceneManager.entitesToRender() {
+        for entity in SceneManager.getEntitesToRender() {
             guard let renderable = SceneManager.entityManager.getComponent(type: RenderableComponent.self, for: entity),
                   let transform = SceneManager.entityManager.getComponent(type: TransformComponent.self, for: entity) else {
                 continue
