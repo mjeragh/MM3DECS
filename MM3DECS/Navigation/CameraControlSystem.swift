@@ -22,82 +22,50 @@ class CameraControlSystem: SystemProtocol {
     let logger = Logger(subsystem: "com.lanterntech.mm3d", category: "CameraControlSystem")
     
     func update(deltaTime: Float, renderEncoder: any MTLRenderCommandEncoder) {
-            // Iterate over camera entities
+        // Get camera input component and apply movement to camera's transform component
         if let cameraEntity = SceneManager.entityManager.entities(for: CameraInputComponent.self).first,
            var cameraInput = SceneManager.entityManager.getComponent(type: CameraInputComponent.self, for: cameraEntity),
            var transform = SceneManager.entityManager.getComponent(type: TransformComponent.self, for: cameraEntity),
-           var cameraComponent = SceneManager.entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity) {
-               
-               if let dragStart = cameraInput.dragStartPosition, let dragCurrent = cameraInput.dragCurrentPosition {
-                   // Handle rotation
-                   let rotationChange = float2(Float(dragCurrent.x - dragStart.x), Float(dragCurrent.y - dragStart.y)) * deltaTime
-                   transform.rotation.y += rotationChange.x * Settings.rotationSpeed
-                   transform.rotation.x -= rotationChange.y * Settings.rotationSpeed
-
-                   // Handle zoom based on drag distance
-                   let zoomChange = Float(dragCurrent.y - dragStart.y) * deltaTime * Settings.mouseScrollSensitivity
-                   cameraComponent.distance += zoomChange
-                   cameraComponent.distance = max(cameraComponent.minDistance, min(cameraComponent.distance, cameraComponent.maxDistance))
-               
-                   // Save changes back to components
-                   SceneManager.entityManager.addComponent(component: transform, to: cameraEntity)
-                   SceneManager.entityManager.addComponent(component: cameraComponent, to: cameraEntity)
-                   cameraInput.dragStartPosition = dragCurrent // Update drag position for continuous interaction
-                   SceneManager.entityManager.addComponent(component: cameraInput, to: cameraEntity)
-               }
-            }
-        }
+                   let dragStartPosition = cameraInput.dragStartPosition,
+                   let dragCurrentPosition = cameraInput.dragCurrentPosition {
+            
+                    // Apply camera control based on camera type
+                    switch cameraInput.cameraType {
+                    case .arcball:
+                        applyArcballControl(&cameraInput, &transform, deltaTime)
+                    case .perspective:
+                        applyPerspectiveControl(&cameraInput, &transform, deltaTime)
+                    case .orthographic:
+                        applyOrthographicControl(&cameraInput, &transform, deltaTime)
+                    }
+            // Update components
+            SceneManager.entityManager.addComponent(component: transform, to: cameraEntity)
+                    cameraInput.dragStartPosition = dragCurrentPosition
+            SceneManager.entityManager.addComponent(component: cameraInput, to: cameraEntity)
+                    }
+    }
  
     //MARK: - Camera Control Methods
     private func applyArcballControl(_ input: inout CameraInputComponent, _ transform: inout TransformComponent, _ deltaTime: Float) {
         // Existing arcball control logic here
         var captainLog = "CameraControlSystem: Updating camera transform startPosition:\(input.dragStartPosition!.x),\(input.dragStartPosition!.y)\ncurrentPosition:\(input.dragCurrentPosition!.x),\(input.dragCurrentPosition!.y))\n"
      //   logger.debug("\(captainLog)")
-        // Constants for the distance scale can be adjusted to fit the needs of your application.
-        // It could be based on the initial distance of the camera or just a fixed value that feels right.
-        let fixedDistanceScale: Float = 125.0
-        // This value should be tuned to your liking. large numbers for big worlds, while smaller numbers for smaller worlds
-
+        if let dragStart = input.dragStartPosition, let dragCurrent = input.dragCurrentPosition {
+            // Handle rotation
+            let rotationChange = float2(Float(dragCurrent.x - dragStart.x), Float(dragCurrent.y - dragStart.y)) * deltaTime
+            transform.rotation.y += rotationChange.x * Settings.rotationSpeed
+            transform.rotation.x -= rotationChange.y * Settings.rotationSpeed
+            var cameraComponent = SceneManager.entityManager.getComponent(type: ArcballCameraComponent.self, for: SceneManager.cameraManager.getActiveCameraEntity()!)
+            // Handle zoom based on drag distance
+            let zoomChange = Float(dragCurrent.y - dragStart.y) * deltaTime * Settings.mouseScrollSensitivity
+            cameraComponent!.distance += zoomChange
+            cameraComponent!.distance = max(cameraComponent!.minDistance, min(cameraComponent!.distance, cameraComponent!.maxDistance))
         
-        
-                // Calculate the amount of drag
-        let dragDelta = CGPoint(x: input.dragCurrentPosition!.x - input.dragStartPosition!.x, y: input.dragCurrentPosition!.y - input.dragStartPosition!.y)
-        captainLog = "CameraControlSystem: transform(\(transform.position.x), \(transform.position.y), \(transform.position.z)\n"
-     //   logger.debug("\(captainLog)")
-        
-                let rotationDelta = -Float(dragDelta.x) * deltaTime * Settings.rotationSpeed
-        
-        
-        // Apply incremental rotation around the Y axis
-                transform.rotation.y += rotationDelta
-       
-        // Apply horizontal and vertical movement
-        let horizontalMove = transform.right * Float(dragDelta.x) * deltaTime * Settings.translationSpeed * fixedDistanceScale
-        let verticalMove = transform.up * Float(-dragDelta.y) * deltaTime * Settings.translationSpeed * fixedDistanceScale
-
-        // Update the transform position
-        transform.position.x += horizontalMove.x + verticalMove.x
-        transform.position.z += horizontalMove.z + verticalMove.z
-        transform.position.y += horizontalMove.y + verticalMove.y //disable this to lock on the xz plane
-                
-        // Clamping the rotation and position to avoid erratic behavior.
-            transform.rotation.y = clampAngle(transform.rotation.y)
-        captainLog = "CameraControlSystem: transform Y rotation(\(transform.rotation.y)\n"
-       // logger.debug("\(captainLog)")
-            transform.position = clampPosition(transform.position, within: [-180, 180]) // Example boundsOS
-            //The clamp position bounderis effect the smoothness of the camera movement, the bigger the smoother the movement
-            
-        guard isFinite(transform.position.x) && isFinite(transform.position.y) && isFinite(transform.position.z) else {
-                        // Reset transform if values become extreme or NaN
-                        transform.position = float3(0, 0, 5) // Example default position
-                        transform.rotation = float3(0, 0, 0) // Example default rotation
-                        input.dragStartPosition = nil
-                        logger.warning("CameraControlSystem: Resetting camera transform due to extreme values")
-//                        entityManager.addComponent(component: transform, to: cameraEntity)
-                        input.dragCurrentPosition = nil
-//                        entityManager.addComponent(component: cameraInput, to: cameraEntity)
-                        return
-                    }
+            // Save changes back to components
+           
+            input.dragStartPosition = dragCurrent // Update drag position for continuous interaction
+            SceneManager.entityManager.addComponent(component: cameraComponent!, to: SceneManager.cameraManager.getActiveCameraEntity()!)
+        }
     }
 
     func applyPerspectiveControl(_ input: inout CameraInputComponent, _ transform: inout TransformComponent, _ deltaTime: Float) {
