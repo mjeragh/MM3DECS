@@ -67,7 +67,7 @@ class CameraManager {
         entityManager.addEntity(entity: cameraEntity)
         
         // Common transform component for all cameras
-        let transformComponent = TransformComponent(position: [0, 0, 15])
+        let transformComponent = TransformComponent(position: [0, 2, 15])
         entityManager.addComponent(component: transformComponent, to: cameraEntity)
         
         let aspect = Float(Renderer.params.width) / Float(Renderer.params.height) // Example aspect ratio

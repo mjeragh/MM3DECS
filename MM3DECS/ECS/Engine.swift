@@ -69,7 +69,7 @@ extension Engine : MTKViewDelegate {
         Renderer.params.width = Float(view.bounds.width) //UInt32(size.width)
         Renderer.params.height = Float(view.bounds.height)//UInt32(size.height)
         logger.debug("inside Engine: width: \(Renderer.params.width), height: \(Renderer.params.height)")
-        sceneManager?.updateCurrentSceneCamera(with: aspect)
+        sceneManager?.updateCurrentSceneCameraAspectRatio(with: aspect)
     }
     
     func draw(in view: MTKView) {

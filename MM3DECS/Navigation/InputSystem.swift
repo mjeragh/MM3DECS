@@ -96,7 +96,7 @@ class InputSystem: SystemProtocol {
         var closestEntity: Entity? = nil
         var minDistance: Float = Float.greatestFiniteMagnitude
         
-        let entities = SceneManager.getEntitesToRender()
+        let entities = SceneManager.getEntitesToBeSelected()
         
         for entity in entities {
             if let boundingBox = SceneManager.entityManager.getComponent(type: RenderableComponent.self, for: entity)?.boundingBox,

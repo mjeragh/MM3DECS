@@ -46,14 +46,10 @@ class SceneManager {
         scene.setUp()
     }
 
-    func updateCurrentSceneCamera(with aspectRatio: Float) {
+    func updateCurrentSceneCameraAspectRatio(with aspectRatio: Float) {
         // Update Perspective Camera
         SceneManager.cameraManager.updateAspect(aspectRatio)
         
-    }
-    
-    func updateCurrentScene(deltaTime: Float) {
-        currentScene?.update(deltaTime: deltaTime)
     }
     
     func updateCurrentSceneSystems(deltaTime: Float, renderEncoder: MTLRenderCommandEncoder) {
@@ -79,7 +75,9 @@ class SceneManager {
     static func getEntitesToRender() -> [Entity]{
         return entityManager.entitiesWithComponents([RenderableComponent.self, TransformComponent.self])
     }
-    
+    static func getEntitesToBeSelected() -> [Entity]{
+        return entityManager.entitiesWithComponents([RenderableComponent.self, TransformComponent.self, SelectionComponent.self])
+    }
 }
 
 // Protocol definition for SceneDelegate
