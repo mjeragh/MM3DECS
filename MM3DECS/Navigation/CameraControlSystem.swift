@@ -49,7 +49,7 @@ class CameraControlSystem: SystemProtocol {
     private func applyArcballControl(_ input: inout CameraInputComponent, _ transform: inout TransformComponent, _ deltaTime: Float) {
         // Existing arcball control logic here
         var captainLog = "CameraControlSystem: Updating camera transform startPosition:\(input.dragStartPosition!.x),\(input.dragStartPosition!.y)\ncurrentPosition:\(input.dragCurrentPosition!.x),\(input.dragCurrentPosition!.y))\n"
-     //   logger.debug("\(captainLog)")
+        logger.debug("\(captainLog)")
         if let dragStart = input.dragStartPosition, let dragCurrent = input.dragCurrentPosition {
             // Handle rotation
             let rotationChange = float2(Float(dragCurrent.x - dragStart.x), Float(dragCurrent.y - dragStart.y)) * deltaTime

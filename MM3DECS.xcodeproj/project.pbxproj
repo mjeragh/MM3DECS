@@ -29,6 +29,7 @@
 		B259C2952BAADDF50049BA2C /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2942BAADDF50049BA2C /* System.swift */; };
 		B259C2972BAADE760049BA2C /* EntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2962BAADE760049BA2C /* EntityManager.swift */; };
 		B259C29A2BAADF2A0049BA2C /* RendererSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2992BAADF2A0049BA2C /* RendererSystem.swift */; };
+		B262E28C2BF007B900B6FC38 /* InputManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B262E28B2BF007B900B6FC38 /* InputManager.swift */; };
 		B269F1492BE62C7800A3C801 /* HitResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B269F1482BE62C7800A3C801 /* HitResult.swift */; };
 		B269F14B2BECDD1E00A3C801 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B269F14A2BECDD1E00A3C801 /* CameraManager.swift */; };
 		B28FD96C2BE160A00057B63E /* RayDebug.metal in Sources */ = {isa = PBXBuildFile; fileRef = B28FD96B2BE160A00057B63E /* RayDebug.metal */; };
@@ -72,6 +73,7 @@
 		B259C2942BAADDF50049BA2C /* System.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = System.swift; sourceTree = "<group>"; };
 		B259C2962BAADE760049BA2C /* EntityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityManager.swift; sourceTree = "<group>"; };
 		B259C2992BAADF2A0049BA2C /* RendererSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererSystem.swift; sourceTree = "<group>"; };
+		B262E28B2BF007B900B6FC38 /* InputManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputManager.swift; sourceTree = "<group>"; };
 		B269F1482BE62C7800A3C801 /* HitResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitResult.swift; sourceTree = "<group>"; };
 		B269F14A2BECDD1E00A3C801 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		B28FD96B2BE160A00057B63E /* RayDebug.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = RayDebug.metal; sourceTree = "<group>"; };
@@ -219,6 +221,7 @@
 				B28FD96D2BE165290057B63E /* RayDebugSystem.swift */,
 				B269F1482BE62C7800A3C801 /* HitResult.swift */,
 				B269F14A2BECDD1E00A3C801 /* CameraManager.swift */,
+				B262E28B2BF007B900B6FC38 /* InputManager.swift */,
 			);
 			path = Navigation;
 			sourceTree = "<group>";
@@ -330,6 +333,7 @@
 				B259C2952BAADDF50049BA2C /* System.swift in Sources */,
 				B269F1492BE62C7800A3C801 /* HitResult.swift in Sources */,
 				B259C27E2BA2FF710049BA2C /* MathLibrary.swift in Sources */,
+				B262E28C2BF007B900B6FC38 /* InputManager.swift in Sources */,
 				B294EDEE2BD3E90F008E6F2E /* InputComponent.swift in Sources */,
 				B259C29A2BAADF2A0049BA2C /* RendererSystem.swift in Sources */,
 				B259C2912BAADD0E0049BA2C /* Entity.swift in Sources */,

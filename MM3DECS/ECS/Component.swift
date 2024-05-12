@@ -217,35 +217,7 @@ struct ArcballCameraComponent : CameraComponent{
     }
 }
 
-//extension ArcballCameraComponent: CameraComponent {
-//    var projectionMatrix: float4x4 {
-//        return float4x4(projectionFov: fov, near: near, far: far, aspect: aspect, lhs: true)
-//    }
-//
-//    mutating func updateAspect(_ aspect: Float) {
-//        self.aspect = aspect
-//    }
-//    
-//    mutating func updateViewMatrix(transformConstant: TransformComponent) {
-//            var transform = transformConstant
-//            let rotateMatrix = float4x4(rotationYXZ: [-transform.rotation.x, transform.rotation.y, 0])
-//            let translateMatrix = float4x4(translation: [target.x, target.y, target.z - distance])
-//            _viewMatrix = (rotateMatrix * translateMatrix).inverse
-//            transform.position = rotateMatrix.upperLeft * -_viewMatrix.columns.3.xyz
-//        }
-//    
-//   func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
-//        // Adjust to use the TransformComponent parameters
-////        let rotationMatrix = float4x4(rotationYXZ: transform.rotation)
-////        let translationMatrix = float4x4(translation: transform.position)
-////        return (rotationMatrix * translationMatrix).inverse
-//        if target == transform.position {
-//            return (float4x4(translation: target) * float4x4(rotationYXZ: transform.rotation)).inverse
-//        } else {
-//            return float4x4(eye: transform.position, center: target, up: [0, 1, 0])
-//        }
-//    }
-//}
+
 
 
 struct OrthographicCameraComponent: CameraComponent {
