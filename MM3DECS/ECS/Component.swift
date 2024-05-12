@@ -178,30 +178,36 @@ struct ArcballCameraComponent : CameraComponent{
         self.far = far
     }
     
-    private var _viewMatrix: float4x4 = float4x4.identity
-    var viewMatrix: float4x4 {
-        get {
-            return _viewMatrix
-        }
-        set {
-            _viewMatrix = newValue
-        }
-    }
-
-    mutating func updateViewMatrix(transformConstant: TransformComponent) {
-            var transform = transformConstant
-            let rotateMatrix = float4x4(rotationYXZ: [-transform.rotation.x, transform.rotation.y, 0])
-            let translateMatrix = float4x4(translation: [target.x, target.y, target.z - distance])
-            _viewMatrix = (rotateMatrix * translateMatrix).inverse
-            transform.position = rotateMatrix.upperLeft * -_viewMatrix.columns.3.xyz
-        }
+    mutating func update(deltaTime: Float) {
+            let maxRotationX: CGFloat = 0.27 // don't rotate below the horizon
+            var rotation = float3(0,0,0), position = float3(0,0,0)
+            let input = InputManager.shared
+            let scrollSensitivity = Settings.mouseScrollSensitivity
+        distance -= Float((input.mouseScrollDelta.x + input.mouseScrollDelta.y))
+              * scrollSensitivity
+            distance = min(maxDistance, distance)
+            distance = max(minDistance, distance)
+            input.mouseScrollDelta = .zero
+            if input.leftMouseDown {
+              let sensitivity = Settings.mousePanSensitivity
+              let testRotation = CGFloat(rotation.x) + input.mouseDelta.y * CGFloat(sensitivity)
+              if testRotation < maxRotationX {
+                  rotation.x += Float(input.mouseDelta.y * CGFloat(sensitivity))
+                rotation.x = max(-.pi / 2, min(rotation.x, .pi / 2))
+              }
+                rotation.y += Float(input.mouseDelta.x) * sensitivity
+              input.mouseDelta = .zero
+            }
+            let rotateMatrix = float4x4(
+              rotationYXZ: [-rotation.x, rotation.y, 0])
+            let distanceVector = float4(0, 0, -distance, 0)
+            let rotatedVector = rotateMatrix * distanceVector
+            position = target + rotatedVector.xyz
+//            print(position)
+          }
     
    func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
-        // Adjust to use the TransformComponent parameters
-//        let rotationMatrix = float4x4(rotationYXZ: transform.rotation)
-//        let translationMatrix = float4x4(translation: transform.position)
-//        return (rotationMatrix * translationMatrix).inverse
-        if target == transform.position {
+       if target == transform.position {
             return (float4x4(translation: target) * float4x4(rotationYXZ: transform.rotation)).inverse
         } else {
             return float4x4(eye: transform.position, center: target, up: [0, 1, 0])

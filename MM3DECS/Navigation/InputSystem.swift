@@ -25,15 +25,34 @@ class InputSystem: SystemProtocol {
    
     
     func update(deltaTime: Float, renderEncoder: any MTLRenderCommandEncoder) {
-        //not implemented
-       
-    }
+            handleTouches()
+        }
+
+        private func handleTouches() {
+            // Check if a new touch has begun
+            if InputManager.shared.touchStarted {
+                touchMovedOrBegan(location: InputManager.shared.touchLocation!)
+            }
+
+            // Check for ongoing touch movement
+            if InputManager.shared.isTouchActive && !InputManager.shared.touchEnded {
+                touchMovedOrBegan(location: InputManager.shared.touchLocation!)
+            }
+
+            // Check if the touch has ended
+            if InputManager.shared.touchEnded {
+                touchEnded()
+            }
+
+            // Reset touch flags at the end of the update cycle
+            InputManager.shared.clearTouchFlags()
+        }
     
     // Other methods...
     
     
-    func touchMovedOrBegan(gesture: DragGesture.Value) {
-        let touchLocation = gesture.location
+    func touchMovedOrBegan(location: CGPoint) {
+        let touchLocation = location
         // Get the camera entity
         
         var cameraInput = SceneManager.cameraManager.getActiveCameraInputComponent()
@@ -65,7 +84,7 @@ class InputSystem: SystemProtocol {
         
     }//touchedMovedOrBegan
     
-    func touchEnded(gesture: DragGesture.Value) {
+    func touchEnded() {
         // Clear selected state or camera input as needed
         var cameraInput = SceneManager.cameraManager.getActiveCameraInputComponent()
             cameraInput.dragStartPosition = nil

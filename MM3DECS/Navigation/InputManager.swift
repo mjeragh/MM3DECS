@@ -19,6 +19,10 @@ class InputManager {
     var leftMouseDown: Bool = false
     var mouseDelta: CGPoint = .zero
     var mouseScrollDelta: CGPoint = .zero
+    
+    var isTouchActive : Bool = false
+    var touchStarted : Bool = false
+    var touchEnded : Bool = true
 
     // Touch input properties for SwiftUI binding
     @Published var touchLocation: CGPoint?
@@ -67,16 +71,29 @@ class InputManager {
     }
 }
 extension InputManager {
-    // Update touch location and delta
     func updateTouchLocation(_ location: CGPoint) {
-        touchLocation = location
+            touchLocation = location
+            if !isTouchActive {
+                isTouchActive = true
+                touchStarted = true
+            }
+            touchEnded = false
+        }
+    func updateTouchDelta(_ translation: CGSize){
+        touchDelta = translation
     }
+        func resetTouchDelta() {
+            if isTouchActive {
+                touchEnded = true
+            }
+            isTouchActive = false
+            touchLocation = nil
+            touchStarted = false
+        }
 
-    func updateTouchDelta(_ delta: CGSize) {
-        touchDelta = delta
-    }
-
-    func resetTouchDelta() {
-        touchDelta = nil
-    }
+        // To be called at the end of each frame to reset the flags
+        func clearTouchFlags() {
+            touchStarted = false
+            touchEnded = false
+        }
 }
