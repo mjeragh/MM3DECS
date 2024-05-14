@@ -199,10 +199,10 @@ struct ArcballCameraComponent : CameraComponent{
             if input.leftMouseDown {
               let sensitivity = Settings.mousePanSensitivity
                 let testRotation = CGFloat(transform.rotation.x) + input.mouseDelta.y * CGFloat(sensitivity)
-//              if testRotation < maxRotationX {
-//                  transform.rotation.x += Float(input.mouseDelta.y * CGFloat(sensitivity))
-//                  transform.rotation.x = max(-.pi / 2, min(transform.rotation.x, .pi / 2))
-//              }
+              if testRotation < maxRotationX {
+                  transform.rotation.x += Float(input.mouseDelta.y * CGFloat(sensitivity))
+                  transform.rotation.x = max(-.pi / 2, min(transform.rotation.x, .pi / 2))
+              }
                 transform.rotation.y += Float(input.mouseDelta.x) * sensitivity
               input.mouseDelta = .zero
             }
