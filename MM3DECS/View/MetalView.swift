@@ -14,7 +14,6 @@ struct MetalView: View {
     let options: Options
     @State private var metalView = MTKView()
     @StateObject private var engine = Engine()
-    @State private var previousTranslation = CGSize.zero
     @State private var previousScroll: CGFloat = 1
 
   var body: some View {
@@ -23,20 +22,9 @@ struct MetalView: View {
         engine: engine,
         metalView: $metalView,
         options: options).gesture(DragGesture(minimumDistance: 0).onChanged { value in
-            InputManager.shared.touchLocation = value.location
-            InputManager.shared.touchDelta = CGSize(
-              width: value.translation.width - previousTranslation.width,
-              height: value.translation.height - previousTranslation.height)
-            previousTranslation = value.translation
-            // if the user drags, cancel the tap touch
-//            if abs(value.translation.width) > 1 ||
-//              abs(value.translation.height) > 1 {
-//              InputManager.shared.touchLocation = nil
-//            }
-            InputManager.shared.updateTouchDelta()
-            InputManager.shared.updateTouchLocation()
+            InputManager.shared.updateTouchDelta(value.translation)
+            InputManager.shared.updateTouchLocation(value.location)
         }.onEnded { _ in
-            previousTranslation = .zero
             InputManager.shared.resetTouchDelta()
         })
     }
