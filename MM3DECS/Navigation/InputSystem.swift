@@ -25,18 +25,19 @@ class InputSystem: SystemProtocol {
    
     
     func update(deltaTime: Float, renderEncoder: any MTLRenderCommandEncoder) {
-            handleTouches()
+            handleTouches(deltaTime: deltaTime)
         }
 
-        private func handleTouches() {
+        private func handleTouches(deltaTime: Float) {
             // Check if a new touch has begun
             if InputManager.shared.touchStarted {
-                touchMovedOrBegan(location: InputManager.shared.touchLocation!)
+                touchMovedOrBegan(location: InputManager.shared.touchLocation!, deltaTime: deltaTime)
+                return
             }
 
             // Check for ongoing touch movement
             if InputManager.shared.isTouchActive && !InputManager.shared.touchEnded {
-                touchMovedOrBegan(location: InputManager.shared.touchLocation!)
+                touchMovedOrBegan(location: InputManager.shared.touchLocation!, deltaTime: deltaTime)
             }
 
             // Check if the touch has ended
@@ -44,14 +45,12 @@ class InputSystem: SystemProtocol {
                 touchEnded()
             }
 
-            // Reset touch flags at the end of the update cycle
-            InputManager.shared.clearTouchFlags()
         }
     
     // Other methods...
     
     
-    func touchMovedOrBegan(location: CGPoint) {
+    func touchMovedOrBegan(location: CGPoint, deltaTime: Float) {
         let touchLocation = location
         // Get the camera entity
         
@@ -73,9 +72,19 @@ class InputSystem: SystemProtocol {
             }//began
             else {//it is moved
                 // Similar logic as touchBegan, update camera position if it's the selected entity
-                cameraInput.dragCurrentPosition = touchLocation
-                SceneManager.entityManager.addComponent(component: cameraInput, to: SceneManager.cameraManager.getActiveCameraEntity()!)
-                //later I need to check if the camera is selected
+                if let selected = selectedEntity{
+                    //move item
+                }else {
+                    //move Camera
+                    cameraInput.dragCurrentPosition = touchLocation
+                    var cameraComponent = SceneManager.cameraManager.getActiveCameraComponent()
+                    var transform = SceneManager.cameraManager.getActiveTransformComponent()
+                    logger.debug("camera Movement:\(transform.position.x), \(transform.position.y), \(transform.position.z)\n")
+                    cameraComponent?.update(deltaTime: deltaTime, transform: &transform)
+                    logger.debug("camera Movement after update:\(transform.position.x), \(transform.position.y), \(transform.position.z)\n")
+                    //later I need to check if the camera is selected
+                }
+                
                 
             }//else moved
             

@@ -62,6 +62,23 @@ class CameraManager {
         logger.debug("CameraManager: Aspect ratio updated to: \(aspectRatio)")
     }
     
+    func getActiveCameraComponent() -> CameraComponent? {
+        switch activeCameraType {
+        case .perspective:
+            return entityManager.getComponent(type: PerspectiveCameraComponent.self, for: activeCameraEntity!)!
+        case .arcball:
+            return entityManager.getComponent(type: ArcballCameraComponent.self, for: activeCameraEntity!)!
+        case .orthographic:
+            return entityManager.getComponent(type: OrthographicCameraComponent.self, for: activeCameraEntity!)!
+        default:
+            return nil
+        }
+    }
+    
+    func moveActiveCamera(to transform: TransformComponent){
+        entityManager.addComponent(component: transform, to: activeCameraEntity!)
+    }
+    
     private func createCameraEntity(type: CameraType, withCameraInputComponent:Bool = false) -> Entity {
         let cameraEntity = Entity(name: "Camera")
         entityManager.addEntity(entity: cameraEntity)

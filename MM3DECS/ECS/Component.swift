@@ -11,12 +11,12 @@ protocol Component { }
 
 // Example components
 import simd
-import OSLog
+import os.log
 
 
 
 struct TransformComponent: Component {
-    let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "Component")
+    let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "TransformComponent")
     var position: float3
     var rotation: float3 // Use Euler angles for simplicity here; consider quaternions for complex rotations
     var scale: float3
@@ -128,6 +128,8 @@ protocol CameraComponent: Component {
     var projectionMatrix: float4x4 { get }
     mutating func updateAspect(_ aspect: Float)
     func calculateViewMatrix(transform: TransformComponent) -> float4x4
+    mutating func update(deltaTime: Float, transform: inout TransformComponent)
+    
 }
 
 // Example implementation for a PerspectiveCameraComponent:
@@ -151,6 +153,9 @@ struct PerspectiveCameraComponent: CameraComponent {
         let translationMatrix = float4x4(translation: transform.position)
         return (rotationMatrix * translationMatrix).inverse
     }
+    mutating func update(deltaTime: Float, transform: inout TransformComponent){
+        
+    }
 }
 
 // Similar implementations would be needed for ArcballCameraComponent and OrthographicCameraComponent
@@ -166,6 +171,7 @@ struct ArcballCameraComponent : CameraComponent{
     var near: Float
     var far: Float
    // var rotation: float3 // Managed externally, likely by a CameraControlSystem
+    let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "ArcBallComponentComponent")
 
     init(target: float3, distance: Float, minDistance: Float, maxDistance: Float, aspect: Float, fov: Float, near: Float, far: Float) {
         self.target = target
@@ -178,9 +184,8 @@ struct ArcballCameraComponent : CameraComponent{
         self.far = far
     }
     
-    mutating func update(deltaTime: Float) {
+    mutating func update(deltaTime: Float, transform: inout TransformComponent) {
             let maxRotationX: CGFloat = 0.27 // don't rotate below the horizon
-            var rotation = float3(0,0,0), position = float3(0,0,0)
             let input = InputManager.shared
             let scrollSensitivity = Settings.mouseScrollSensitivity
         distance -= Float((input.mouseScrollDelta.x + input.mouseScrollDelta.y))
@@ -190,20 +195,20 @@ struct ArcballCameraComponent : CameraComponent{
             input.mouseScrollDelta = .zero
             if input.leftMouseDown {
               let sensitivity = Settings.mousePanSensitivity
-              let testRotation = CGFloat(rotation.x) + input.mouseDelta.y * CGFloat(sensitivity)
+                let testRotation = CGFloat(transform.rotation.x) + input.mouseDelta.y * CGFloat(sensitivity)
               if testRotation < maxRotationX {
-                  rotation.x += Float(input.mouseDelta.y * CGFloat(sensitivity))
-                rotation.x = max(-.pi / 2, min(rotation.x, .pi / 2))
+                  transform.rotation.x += Float(input.mouseDelta.y * CGFloat(sensitivity))
+                  transform.rotation.x = max(-.pi / 2, min(transform.rotation.x, .pi / 2))
               }
-                rotation.y += Float(input.mouseDelta.x) * sensitivity
+                transform.rotation.y += Float(input.mouseDelta.x) * sensitivity
               input.mouseDelta = .zero
             }
             let rotateMatrix = float4x4(
-              rotationYXZ: [-rotation.x, rotation.y, 0])
+                rotationYXZ: [-transform.rotation.x, transform.rotation.y, 0])
             let distanceVector = float4(0, 0, -distance, 0)
             let rotatedVector = rotateMatrix * distanceVector
-            position = target + rotatedVector.xyz
-//            print(position)
+            transform.position = target + rotatedVector.xyz
+         
           }
     
    func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
@@ -252,6 +257,9 @@ struct OrthographicCameraComponent: CameraComponent {
     }
     mutating func updateAspect(_ aspect: Float) {
         self.aspect = aspect
+    }
+    mutating func update(deltaTime: Float, transform: inout TransformComponent){
+       
     }
 }
 

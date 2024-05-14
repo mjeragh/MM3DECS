@@ -78,6 +78,9 @@ class SceneManager {
     static func getEntitesToBeSelected() -> [Entity]{
         return entityManager.entitiesWithComponents([RenderableComponent.self, TransformComponent.self, SelectionComponent.self])
     }
+    static func moveActiveCamera(transform: TransformComponent){
+        cameraManager.moveActiveCamera(to: transform)
+    }
 }
 
 // Protocol definition for SceneDelegate

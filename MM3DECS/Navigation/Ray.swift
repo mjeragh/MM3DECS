@@ -58,7 +58,7 @@ extension Ray {
     /// Check if the ray intersects with an axis-aligned bounding box.
     func intersects(with bounds: [float3]) -> Bool {
         assert(bounds.count == 2, "Bounds array must have two elements.")
-        logger.debug("\nray: origin\(origin), direction:\(direction)")
+       // logger.debug("\nray: origin\(origin), direction:\(direction)")
        // Compute inverse direction safely
         let inverseDirection = float3(
             x: direction.x == 0 ? Float.greatestFiniteMagnitude : 1 / direction.x,
@@ -66,20 +66,20 @@ extension Ray {
             z: direction.z == 0 ? Float.greatestFiniteMagnitude : 1 / direction.z
         )
        // let inverseDirection = INVdirection
-        logger.debug("inveseDirection: \(inverseDirection)")
+      //  logger.debug("inveseDirection: \(inverseDirection)")
         
         var tmin = bounds[0]
         var tmax = bounds[1]
-        logger.debug("tmin(min Bound):\(tmin), tmax(maxBound):\(tmax)\n")
+      //  logger.debug("tmin(min Bound):\(tmin), tmax(maxBound):\(tmax)\n")
         let sign = [(inverseDirection.x < 0) ? 1 : 0, (inverseDirection.y < 0) ? 1 : 0, (inverseDirection.z < 0) ? 1 : 0]
-        logger.debug("sign: \(sign)")
+     //   logger.debug("sign: \(sign)")
         tmin.x = (bounds[sign[0]].x - origin.x) * inverseDirection.x
         tmax.x = (bounds[1 - sign[0]].x - origin.x) * inverseDirection.x
         
         tmin.y = (bounds[sign[1]].y - origin.y) * inverseDirection.y;
         tmax.y = (bounds[1 - sign[1]].y - origin.y) * inverseDirection.y;
         
-        logger.debug("tmin:\(tmin), tmax:\(tmax) after updating with sign and inverseDirection\n")
+       // logger.debug("tmin:\(tmin), tmax:\(tmax) after updating with sign and inverseDirection\n")
         
         var t0 = Float(tmax.z);
         logger.debug("t0: \(t0)")
@@ -95,7 +95,7 @@ extension Ray {
             logger.debug("first fail")
              return false;
         }
-        logger.debug("tmin.x: \(tmin.x), tmax.y: \(tmax.y), after passing the first failure test\n")
+        //logger.debug("tmin.x: \(tmin.x), tmax.y: \(tmax.y), after passing the first failure test\n")
         
         if (tmin.y > tmin.x){
             tmin.x = tmin.y;
@@ -109,12 +109,12 @@ extension Ray {
         tmin.z = (bounds[sign[2]].z - origin.z) * inverseDirection.z;
         tmax.z = (bounds[1-sign[2]].z - origin.z) * inverseDirection.z;
         
-        logger.debug("tmin:\(tmin), tmax:\(tmax) before checking for the second failur test and after updating the z-axis of tmin and tmax sign and inverseDirection\n")
+       // logger.debug("tmin:\(tmin), tmax:\(tmax) before checking for the second failur test and after updating the z-axis of tmin and tmax sign and inverseDirection\n")
         if ((tmin.x > tmax.z) || (tmin.z > tmax.x)){
             logger.debug("Second fail")
             return false;
         }
-        logger.debug("tmin.x: \(tmin.x), tmax.z: \(tmax.z), after passing the second failure test, this means success!\n")
+       // logger.debug("tmin.x: \(tmin.x), tmax.z: \(tmax.z), after passing the second failure test, this means success!\n")
         if (tmin.z > tmin.x){
             tmin.x = tmin.z;
             t0 = tmin.x

@@ -14,8 +14,6 @@ struct MetalView: View {
   let options: Options
   @State private var metalView = MTKView()
     @StateObject private var engine = Engine()
-    @State private var previousTranslation = CGSize.zero
-  @State private var previousScroll: CGFloat = 1
 
   var body: some View {
     VStack {
@@ -42,7 +40,6 @@ struct MetalViewRepresentable: ViewRepresentable {
 
   
   func makeUIView(context: Context) -> MTKView {
-//      let renderer = Renderer(metalView: metalView)
       engine.setupGame(
         metalView: metalView,
         options: options)
