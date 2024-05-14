@@ -32,8 +32,16 @@ class InputManager {
     var logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "InputManager")
     
     // Touch input properties for SwiftUI binding
-    @Published var touchLocation: CGPoint?
-    @Published var touchDelta: CGSize?
+    var touchLocation: CGPoint?
+    var touchDelta: CGSize? {
+      didSet {
+        touchDelta?.height *= -1
+        if let delta = touchDelta {
+          mouseDelta = CGPoint(x: CGFloat(delta.width), y: CGFloat(delta.height))
+        }
+        leftMouseDown = touchDelta != nil
+      }
+    }
 
     private init() {
         setupGameControllerObservers()
@@ -78,29 +86,29 @@ class InputManager {
     }
 }
 extension InputManager {
-    func updateTouchLocation(_ location: CGPoint) {//Begin
-            touchLocation = location
-            mouseDelta = location
+    func updateTouchLocation() {//Begin
+//            touchLocation = location
+//            mouseDelta = location
             if !isTouchActive {
                 isTouchActive = true
                 touchStarted = true
             }
             touchEnded = false
         }
-    func updateTouchDelta(_ translation: CGSize){//Move
-        mouseDelta = CGPoint(x: translation.width - previousTranslation.width, y: translation.height-previousTranslation.height)
-        touchDelta = CGSize(width: translation.width - previousTranslation.width,
-                            height: translation.height - previousTranslation.height)
-        previousTranslation = translation
-        
-        leftMouseDown = touchDelta != nil
+    func updateTouchDelta(){//Move
+//        mouseDelta = CGPoint(x: translation.width - previousTranslation.width, y: translation.height-previousTranslation.height)
+//        touchDelta = CGSize(width: translation.width - previousTranslation.width,
+//                            height: translation.height - previousTranslation.height)
+//        previousTranslation = translation
+//        
+ //       leftMouseDown = touchDelta != nil
         
         logger.debug("updateTouchDelta: mouseDelta:\(self.mouseDelta.x), \(self.mouseDelta.y), touchDelta:\(self.touchDelta!.width),\(self.touchDelta!.height)\n")
-        if abs(translation.width) > 1 ||
-            abs(translation.height) > 1 {
-            touchLocation = nil
-            logger.warning("touchlocation Resetted, because of touch")
-        }
+//        if abs(translation.width) > 1 ||
+//            abs(translation.height) > 1 {
+//            touchLocation = nil
+//            logger.warning("touchlocation Resetted, because of touch")
+//        }
     }
         func resetTouchDelta() {//end
             if isTouchActive {
