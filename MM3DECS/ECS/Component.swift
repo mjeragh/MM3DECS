@@ -185,6 +185,9 @@ struct ArcballCameraComponent : CameraComponent{
     }
     
     mutating func update(deltaTime: Float, transform: inout TransformComponent) {
+        logger.info("Updating Arcball Camera")
+        var constantTransform = transform
+        logger.debug("position: \(constantTransform.position.x), \(constantTransform.position.y), \(constantTransform.position.z),\trotation:\(constantTransform.rotation.x),\(constantTransform.rotation.y),\(constantTransform.rotation.z)\n")
             let maxRotationX: CGFloat = 0.27 // don't rotate below the horizon
             let input = InputManager.shared
             let scrollSensitivity = Settings.mouseScrollSensitivity
@@ -196,10 +199,10 @@ struct ArcballCameraComponent : CameraComponent{
             if input.leftMouseDown {
               let sensitivity = Settings.mousePanSensitivity
                 let testRotation = CGFloat(transform.rotation.x) + input.mouseDelta.y * CGFloat(sensitivity)
-              if testRotation < maxRotationX {
-                  transform.rotation.x += Float(input.mouseDelta.y * CGFloat(sensitivity))
-                  transform.rotation.x = max(-.pi / 2, min(transform.rotation.x, .pi / 2))
-              }
+//              if testRotation < maxRotationX {
+//                  transform.rotation.x += Float(input.mouseDelta.y * CGFloat(sensitivity))
+//                  transform.rotation.x = max(-.pi / 2, min(transform.rotation.x, .pi / 2))
+//              }
                 transform.rotation.y += Float(input.mouseDelta.x) * sensitivity
               input.mouseDelta = .zero
             }
@@ -208,7 +211,9 @@ struct ArcballCameraComponent : CameraComponent{
             let distanceVector = float4(0, 0, -distance, 0)
             let rotatedVector = rotateMatrix * distanceVector
             transform.position = target + rotatedVector.xyz
-         
+            constantTransform = transform
+        logger.debug("At the end of arcball updating\n")
+        logger.debug("position: \(constantTransform.position.x), \(constantTransform.position.y), \(constantTransform.position.z),\trotation:\(constantTransform.rotation.x),\(constantTransform.rotation.y),\(constantTransform.rotation.z)\n")
           }
     
    func calculateViewMatrix(transform: TransformComponent) -> float4x4 {

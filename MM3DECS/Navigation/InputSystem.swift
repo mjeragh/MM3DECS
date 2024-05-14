@@ -77,11 +77,12 @@ class InputSystem: SystemProtocol {
                 }else {
                     //move Camera
 //                    cameraInput.dragCurrentPosition = touchLocation
-//                    var cameraComponent = SceneManager.cameraManager.getActiveCameraComponent()
-//                    var transform = SceneManager.cameraManager.getActiveTransformComponent()
-//                    logger.debug("camera Movement:\(transform.position.x), \(transform.position.y), \(transform.position.z)\n")
-//                    cameraComponent?.update(deltaTime: deltaTime, transform: &transform)
-//                    logger.debug("camera Movement after update:\(transform.position.x), \(transform.position.y), \(transform.position.z)\n")
+                    var cameraComponent = SceneManager.cameraManager.getActiveCameraComponent()
+                    var transform = SceneManager.cameraManager.getActiveTransformComponent()
+                    logger.debug("camera Movement:\(transform.position.x), \(transform.position.y), \(transform.position.z)\n")
+                    cameraComponent?.update(deltaTime: deltaTime, transform: &transform)
+                    logger.debug("camera Movement after update:\(transform.position.x), \(transform.position.y), \(transform.position.z)\n")
+                    SceneManager.cameraManager.moveActiveCamera(to: transform)
                     //later I need to check if the camera is selected
                 }
                 
@@ -109,8 +110,8 @@ class InputSystem: SystemProtocol {
     func handleTouchOnXZPlane(at point: CGPoint) -> Entity? {
         let cameraTransform = SceneManager.cameraManager.getActiveTransformComponent()
         
-        logger.debug("in function handleTouchOnXZPlane Picking at \(point.x), \(point.y)")
-        logger.debug("in function handleTouchOnXZPlane Camera position: \(cameraTransform.position)")
+//        logger.debug("in function handleTouchOnXZPlane Picking at \(point.x), \(point.y)")
+//        logger.debug("in function handleTouchOnXZPlane Camera position: \(cameraTransform.position)")
         
         let ndc = touchToNDC(touchPoint: point)
         let viewMatrix = SceneManager.getViewMatrix()!
@@ -119,7 +120,7 @@ class InputSystem: SystemProtocol {
         let rayDirection = calculateRayDirection(ndc: ndc, projectionMatrix: projectionMatrix!, viewMatrix: viewMatrix)
         let rayOrigin = cameraTransform.position
         
-        logger.debug("ndc: \(ndc), rayOrigin: \(rayOrigin), rayDirection: \(rayDirection)")
+//        logger.debug("ndc: \(ndc), rayOrigin: \(rayOrigin), rayDirection: \(rayDirection)")
         
         var closestEntity: Entity? = nil
         var minDistance: Float = Float.greatestFiniteMagnitude
@@ -137,7 +138,7 @@ class InputSystem: SystemProtocol {
                 
                 let ray = Ray(origin: localRayOrigin, direction: localRayDirection)
                 
-                logger.debug("Checking for entity: \(entity.name)")
+//                logger.debug("Checking for entity: \(entity.name)")
                 let bounds = [boundingBox.minBounds, boundingBox.maxBounds]
                 if ray.intersects(with: bounds) {
                     let distance = length(transform.position - rayOrigin)

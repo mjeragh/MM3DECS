@@ -91,12 +91,21 @@ extension InputManager {
         mouseDelta = CGPoint(x: translation.width - previousTranslation.width, y: translation.height-previousTranslation.height)
         touchDelta = CGSize(width: translation.width - previousTranslation.width,
                             height: translation.height - previousTranslation.height)
-          previousTranslation = translation
+        previousTranslation = translation
+        
+        leftMouseDown = touchDelta != nil
+        
         logger.debug("updateTouchDelta: mouseDelta:\(self.mouseDelta.x), \(self.mouseDelta.y), touchDelta:\(self.touchDelta!.width),\(self.touchDelta!.height)\n")
+        if abs(translation.width) > 1 ||
+            abs(translation.height) > 1 {
+            touchLocation = nil
+            logger.warning("touchlocation Resetted, because of touch")
+        }
     }
         func resetTouchDelta() {//end
             if isTouchActive {
                 touchEnded = true
+                previousTranslation = .zero
             }
             isTouchActive = false
             touchLocation = nil

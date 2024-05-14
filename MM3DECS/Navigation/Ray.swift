@@ -82,7 +82,7 @@ extension Ray {
        // logger.debug("tmin:\(tmin), tmax:\(tmax) after updating with sign and inverseDirection\n")
         
         var t0 = Float(tmax.z);
-        logger.debug("t0: \(t0)")
+//        logger.debug("t0: \(t0)")
             
 //        if !nearlyEqual(a: tmin.x, b: tmax.y, epsilon: epsilon) &&
 //            !nearlyEqual(a: tmin.y, b: tmax.x, epsilon: epsilon) &&
@@ -92,7 +92,7 @@ extension Ray {
 //        }
         
         if ((tmin.x > tmax.y) || (tmin.y > tmax.x)){
-            logger.debug("first fail")
+//            logger.debug("first fail")
              return false;
         }
         //logger.debug("tmin.x: \(tmin.x), tmax.y: \(tmax.y), after passing the first failure test\n")
@@ -111,7 +111,7 @@ extension Ray {
         
        // logger.debug("tmin:\(tmin), tmax:\(tmax) before checking for the second failur test and after updating the z-axis of tmin and tmax sign and inverseDirection\n")
         if ((tmin.x > tmax.z) || (tmin.z > tmax.x)){
-            logger.debug("Second fail")
+//            logger.debug("Second fail")
             return false;
         }
        // logger.debug("tmin.x: \(tmin.x), tmax.z: \(tmax.z), after passing the second failure test, this means success!\n")
