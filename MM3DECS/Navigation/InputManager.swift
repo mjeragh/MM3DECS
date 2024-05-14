@@ -1,15 +1,18 @@
-//
-//  InputManager.swift
-//  MM3DECS
-//
-//  Created by Mohammad Jeragh on 11/05/2024.
-//
-
 import SwiftUI
 import Metal
 import GameController
 import Combine
 import os.log
+
+enum Settings {
+    static var rotationSpeed : Float { 1.5 }
+    static var translationSpeed : Float { 3.0 }
+    static var mouseScrollSensitivity : Float { 0.1 }
+    static var mousePanSensitivity : Float { 0.008 }
+    static var touchZoomSensitivity: Float { 10 }
+}
+
+
 
 class InputManager {
     static let shared = InputManager()

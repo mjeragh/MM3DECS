@@ -76,12 +76,12 @@ class InputSystem: SystemProtocol {
                     //move item
                 }else {
                     //move Camera
-                    cameraInput.dragCurrentPosition = touchLocation
-                    var cameraComponent = SceneManager.cameraManager.getActiveCameraComponent()
-                    var transform = SceneManager.cameraManager.getActiveTransformComponent()
-                    logger.debug("camera Movement:\(transform.position.x), \(transform.position.y), \(transform.position.z)\n")
-                    cameraComponent?.update(deltaTime: deltaTime, transform: &transform)
-                    logger.debug("camera Movement after update:\(transform.position.x), \(transform.position.y), \(transform.position.z)\n")
+//                    cameraInput.dragCurrentPosition = touchLocation
+//                    var cameraComponent = SceneManager.cameraManager.getActiveCameraComponent()
+//                    var transform = SceneManager.cameraManager.getActiveTransformComponent()
+//                    logger.debug("camera Movement:\(transform.position.x), \(transform.position.y), \(transform.position.z)\n")
+//                    cameraComponent?.update(deltaTime: deltaTime, transform: &transform)
+//                    logger.debug("camera Movement after update:\(transform.position.x), \(transform.position.y), \(transform.position.z)\n")
                     //later I need to check if the camera is selected
                 }
                 
