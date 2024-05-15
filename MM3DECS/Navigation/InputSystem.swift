@@ -53,11 +53,9 @@ class InputSystem: SystemProtocol {
     func touchMovedOrBegan(location: CGPoint, deltaTime: Float) {
         let touchLocation = location
         // Get the camera entity
-        
-        var cameraInput = SceneManager.cameraManager.getActiveCameraInputComponent()
             
             // Check if this is the first touch
-            if cameraInput.dragStartPosition == nil {//it is began
+        if InputManager.shared.previousTranslation == .zero {//it is began
                 selectedEntity = handleTouchOnXZPlane(at: touchLocation)
                 if let selected = selectedEntity {
                     // An object was touched, mark it as selected
@@ -66,8 +64,7 @@ class InputSystem: SystemProtocol {
                     logger.debug("Object:\(selected.name) has been selected")
                 } else {
                     // No object was touched, the camera should be marked as selected
-                    cameraInput.dragStartPosition = touchLocation
-                    SceneManager.entityManager.addComponent(component: cameraInput, to: SceneManager.cameraManager.getActiveCameraEntity()!)
+                    
                 }
             }//began
             else {//it is moved
@@ -96,13 +93,9 @@ class InputSystem: SystemProtocol {
     
     func touchEnded() {
         // Clear selected state or camera input as needed
-        var cameraInput = SceneManager.cameraManager.getActiveCameraInputComponent()
-            cameraInput.dragStartPosition = nil
-            cameraInput.dragCurrentPosition = nil
-            cameraInput.lastTouchPosition = nil
-        SceneManager.entityManager.addComponent(component: cameraInput, to: SceneManager.cameraManager.getActiveCameraEntity()!)
-            selectedEntity = nil
-            //self.cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)!
+       
+        selectedEntity = nil
+        
     }
     
     

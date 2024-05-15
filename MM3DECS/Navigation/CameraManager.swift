@@ -31,7 +31,7 @@ class CameraManager {
 
     func setCamera(type: CameraType, withCameraInputComponent:Bool = false) {
         activeCameraType = type
-        activeCameraEntity = createCameraEntity(type: type, withCameraInputComponent: withCameraInputComponent)
+        activeCameraEntity = createCameraEntity(type: type)
     }
 
     func getActiveCameraEntity() -> Entity? {
@@ -79,7 +79,7 @@ class CameraManager {
         entityManager.addComponent(component: transform, to: activeCameraEntity!)
     }
     
-    private func createCameraEntity(type: CameraType, withCameraInputComponent:Bool = false) -> Entity {
+    private func createCameraEntity(type: CameraType) -> Entity {
         let cameraEntity = Entity(name: "Camera")
         entityManager.addEntity(entity: cameraEntity)
         
@@ -104,9 +104,7 @@ class CameraManager {
             let orthographicCameraComponent = OrthographicCameraComponent(aspect: aspect, viewSize: 10, near: 0.1, far: 100)
             entityManager.addComponent(component: orthographicCameraComponent, to: cameraEntity)
         }
-        if withCameraInputComponent {
-            entityManager.addComponent(component: CameraInputComponent(cameraType: type), to: cameraEntity)
-        }
+       
         return cameraEntity
     }
     
@@ -149,9 +147,7 @@ class CameraManager {
                 return nil
             }
         }
-    func getActiveCameraInputComponent() -> CameraInputComponent {
-        entityManager.getComponent(type: CameraInputComponent.self, for: activeCameraEntity!)!
-    }
+   
     func getActiveTransformComponent() -> TransformComponent {
         entityManager.getComponent(type: TransformComponent.self, for: activeCameraEntity!)!
     }

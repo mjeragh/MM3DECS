@@ -32,7 +32,7 @@ class GameScene: SceneProtocol {
     
             systems.append(RenderSystem())
             systems.append(InputSystem())//, rayDebugSystem: rayDebugSystem))
-            //systems.append(CameraControlSystem()) //I will combine with inputSystem, and later it will be handled by the inputsystem as a subsystem
+           
     }
 
     func update(deltaTime: Float) {

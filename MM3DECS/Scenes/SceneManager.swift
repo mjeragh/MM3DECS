@@ -88,8 +88,7 @@ protocol SceneDelegate: AnyObject {
     // Camera Management
     func createCamera(type: CameraType,withCameraInputComponent: Bool)
     func updateActiveCamera(with transform: TransformComponent)
-    func updateActiveCamera(with cameraInputComponent: CameraInputComponent)
-    
+   
     // Additional scene management
     //TODO: Implement these functions
     func addEntityToScene(name: String, with renderableComponent:RenderableComponent, with tranformComponent:TransformComponent, withInputComponent: Bool, withSelectionComponent: Bool)
@@ -120,14 +119,6 @@ extension SceneManager : SceneDelegate{
         SceneManager.entityManager.addComponent(component: transform, to: SceneManager.cameraManager.getActiveCameraEntity()!)
     }
     
-    func updateActiveCamera(with cameraInputComponent: CameraInputComponent) {
-        SceneManager.entityManager.addComponent(component: cameraInputComponent, to: SceneManager.cameraManager.getActiveCameraEntity()!)
-    }
-    
-    func getAcctiveCameraInputComponent() -> CameraInputComponent {
-        return SceneManager.entityManager.getComponent(type: CameraInputComponent.self, for: SceneManager.cameraManager.getActiveCameraEntity()!)!
-    }
-
 //    func removeEntityFromScene(_ entity: Entity) {
 //        currentScene?.entityManager.removeEntity(entity: entity)
 //    }
