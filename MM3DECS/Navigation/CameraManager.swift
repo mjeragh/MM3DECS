@@ -24,20 +24,20 @@ class CameraManager {
     private var activeCameraType: CameraType?
     
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "CameraManager")
-
+    
     init(entityManager: EntityManager) {
         self.entityManager = entityManager
     }
-
+    
     func setCamera(type: CameraType, withCameraInputComponent:Bool = false) {
         activeCameraType = type
         activeCameraEntity = createCameraEntity(type: type)
     }
-
+    
     func getActiveCameraEntity() -> Entity? {
         return activeCameraEntity
     }
-
+    
     func updateAspect(_ aspectRatio: Float) {
         guard let cameraEntity = activeCameraEntity else { return }
         switch activeCameraType {
@@ -104,51 +104,60 @@ class CameraManager {
             let orthographicCameraComponent = OrthographicCameraComponent(aspect: aspect, viewSize: 10, near: 0.1, far: 100)
             entityManager.addComponent(component: orthographicCameraComponent, to: cameraEntity)
         }
-       
+        
         return cameraEntity
     }
     
     // Retrieve the view matrix of the active camera
-        func getViewMatrix() -> float4x4? {
-            guard let cameraEntity = activeCameraEntity,
-                  let transformComponent = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity) else { return nil }
-            
-            switch activeCameraType {
-            case .perspective:
-                if let cameraComponent = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity) {
-                    return cameraComponent.calculateViewMatrix(transform: transformComponent)
-                }
-            case .arcball:
-                if let cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity) {
-                    return cameraComponent.calculateViewMatrix(transform: transformComponent)
-                }
-            case .orthographic:
-                if let cameraComponent = entityManager.getComponent(type: OrthographicCameraComponent.self, for: cameraEntity) {
-                    return cameraComponent.calculateViewMatrix(transform: transformComponent)
-                }
-            default:
-                return nil
+    func getViewMatrix() -> float4x4? {
+        guard let cameraEntity = activeCameraEntity,
+              let transformComponent = entityManager.getComponent(type: TransformComponent.self, for: cameraEntity) else { return nil }
+        
+        switch activeCameraType {
+        case .perspective:
+            if let cameraComponent = entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity) {
+                return cameraComponent.calculateViewMatrix(transform: transformComponent)
             }
+        case .arcball:
+            if let cameraComponent = entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity) {
+                return cameraComponent.calculateViewMatrix(transform: transformComponent)
+            }
+        case .orthographic:
+            if let cameraComponent = entityManager.getComponent(type: OrthographicCameraComponent.self, for: cameraEntity) {
+                return cameraComponent.calculateViewMatrix(transform: transformComponent)
+            }
+        default:
             return nil
         }
-
-        // Retrieve the projection matrix of the active camera
-        func getProjectionMatrix() -> float4x4? {
-            guard let cameraEntity = activeCameraEntity else { return nil }
-            
-            switch activeCameraType {
-            case .perspective:
-                return entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity)?.projectionMatrix
-            case .arcball:
-                return entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)?.projectionMatrix
-            case .orthographic:
-                return entityManager.getComponent(type: OrthographicCameraComponent.self, for: cameraEntity)?.projectionMatrix
-            default:
-                return nil
-            }
+        return nil
+    }
+    
+    // Retrieve the projection matrix of the active camera
+    func getProjectionMatrix() -> float4x4? {
+        guard let cameraEntity = activeCameraEntity else { return nil }
+        
+        switch activeCameraType {
+        case .perspective:
+            return entityManager.getComponent(type: PerspectiveCameraComponent.self, for: cameraEntity)?.projectionMatrix
+        case .arcball:
+            return entityManager.getComponent(type: ArcballCameraComponent.self, for: cameraEntity)?.projectionMatrix
+        case .orthographic:
+            return entityManager.getComponent(type: OrthographicCameraComponent.self, for: cameraEntity)?.projectionMatrix
+        default:
+            return nil
         }
-   
+    }
+    
     func getActiveTransformComponent() -> TransformComponent {
         entityManager.getComponent(type: TransformComponent.self, for: activeCameraEntity!)!
+    }
+    
+    func updateCameraDistance(with distance: Float) {
+        guard let camera = getActiveCameraEntity(),
+        var archballCamera = entityManager.getComponent(type: ArcballCameraComponent.self, for: camera) else { 
+            logger.warning("Updating non archball caemra!!!!")
+            return
+        }
+        archballCamera.distance = distance
     }
 }

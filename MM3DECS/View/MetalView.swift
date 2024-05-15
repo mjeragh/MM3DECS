@@ -26,7 +26,15 @@ struct MetalView: View {
             InputManager.shared.updateTouchLocation(value.location)
         }.onEnded { _ in
             InputManager.shared.resetTouchDelta()
-        })
+        }).gesture(MagnificationGesture()
+            .onChanged { value in
+              let scroll = value - previousScroll
+                InputManager.shared.mouseScrollDelta.x = CGFloat(Float(scroll) * Settings.touchZoomSensitivity)
+              previousScroll = value
+            }
+            .onEnded {_ in
+              previousScroll = 1
+            })
     }
   }
 }

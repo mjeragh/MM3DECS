@@ -214,10 +214,11 @@ struct ArcballCameraComponent : CameraComponent{
             let maxRotationX: CGFloat = 0.27 // don't rotate below the horizon
             let input = InputManager.shared
             let scrollSensitivity = Settings.mouseScrollSensitivity
-        distance -= Float((input.mouseScrollDelta.x + input.mouseScrollDelta.y))
+            distance -= Float(input.mouseScrollDelta.x + input.mouseScrollDelta.y)
               * scrollSensitivity
             distance = min(maxDistance, distance)
             distance = max(minDistance, distance)
+            CameraManager.updateCameraDistance(dis)
             input.mouseScrollDelta = .zero
             if input.leftMouseDown {
               let sensitivity = Settings.mousePanSensitivity
