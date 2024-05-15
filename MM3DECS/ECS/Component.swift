@@ -154,7 +154,30 @@ struct PerspectiveCameraComponent: CameraComponent {
         return (rotationMatrix * translationMatrix).inverse
     }
     mutating func update(deltaTime: Float, transform: inout TransformComponent){
-        
+        let input = InputManager.shared
+        // Calculate rotation
+        let rotationChange = CGPoint(x: input.mouseDelta.x,
+                                     y: input.mouseDelta.y)
+        let rotationDelta = float2(Float(rotationChange.x), Float(rotationChange.y)) * deltaTime * Settings.rotationSpeed
+
+        // Apply rotation around Y axis and a free rotation around X axis
+        transform.rotation.y += rotationDelta.x
+        transform.rotation.x += rotationDelta.y
+
+        // Calculate zoom based on vertical mouse drag or scroll wheel
+        let zoomDelta = Float(input.mouseDelta.y) * deltaTime * Settings.mouseScrollSensitivity
+        transform.position.z += zoomDelta // assuming the forward vector is along the z-axis
+
+        // Calculate panning (left-right, up-down movement)
+        let panDelta = float2(Float(rotationChange.x), Float(rotationChange.y)) * deltaTime * Settings.translationSpeed
+        transform.position.x += panDelta.x
+        transform.position.y -= panDelta.y
+
+        // Ensure rotation angles and position are within acceptable limits
+        transform.rotation.x = clampAngle(transform.rotation.x)
+        transform.rotation.y = clampAngle(transform.rotation.y)
+        transform.rotation.z = clampAngle(transform.rotation.z)
+        transform.position = clampPosition(transform.position, within: [-180, 180])
     }
 }
 
@@ -264,8 +287,52 @@ struct OrthographicCameraComponent: CameraComponent {
         self.aspect = aspect
     }
     mutating func update(deltaTime: Float, transform: inout TransformComponent){
-       
+        let input = InputManager.shared
+        // Calculate panning based on drag
+        let panChange = CGPoint(x: input.mouseDelta.x,
+                                y: input.mouseDelta.y)
+        let panDelta = float2(Float(panChange.x), Float(panChange.y)) * deltaTime * Settings.translationSpeed
+
+        // Convert panDelta.x to account for the rotation of the camera
+        // When camera is rotated around Y by -pi/2, left/right panning is along world's z-axis
+        let worldPanDeltaZ = panDelta.x * (transform.rotation.y == -Float.pi / 2 ? 1 : -1)
+
+        // Apply the pan deltas to the position, y is for up/down panning
+        transform.position.z -= worldPanDeltaZ
+        transform.position.y += panDelta.y // y remains unchanged since it's screen space up/down
+        // transform.position.x remains unchanged for orthographic panning
+
+        // Clamp the position to avoid moving too far
+        transform.position = clampPosition(transform.position, within: [-180,180])
     }
+}
+
+
+
+// MARK: - Private Methods
+//    private func clamp<T: Comparable>(value: T, min: T, max: T) -> T {
+//            return Swift.max(min, Swift.min(max, value))
+//        }
+//
+private func isFinite(_ value: Float) -> Bool {
+        return !value.isInfinite && !value.isNaN
+    }
+
+private func clampAngle(_ angle: Float) -> Float {
+    // Assuming angle is in radians and we want to keep it between -PI and PI
+    return fmod(angle + .pi, 2 * .pi) - .pi
+}
+
+private func clampPosition(_ position: float3, within bounds: [Float]) -> float3 {
+    return float3(
+        clamp(position.x, min: bounds[0], max: bounds[1]),
+        clamp(position.y, min: bounds[0], max: bounds[1]),
+        clamp(position.z, min: bounds[0], max: bounds[1])
+    )
+}
+
+private func clamp(_ value: Float, min: Float, max: Float) -> Float {
+    return Swift.max(min, Swift.min(max, value))
 }
 
 
