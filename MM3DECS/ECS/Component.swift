@@ -154,30 +154,30 @@ struct PerspectiveCameraComponent: CameraComponent {
         return (rotationMatrix * translationMatrix).inverse
     }
     mutating func update(deltaTime: Float, transform: inout TransformComponent){
-        let input = InputManager.shared
-        // Calculate rotation
-        let rotationChange = CGPoint(x: input.mouseDelta.x,
-                                     y: input.mouseDelta.y)
-        let rotationDelta = float2(Float(rotationChange.x), Float(rotationChange.y)) * deltaTime * Settings.rotationSpeed
-
-        // Apply rotation around Y axis and a free rotation around X axis
-        transform.rotation.y += rotationDelta.x
-        transform.rotation.x += rotationDelta.y
-
-        // Calculate zoom based on vertical mouse drag or scroll wheel
-        let zoomDelta = Float(input.mouseDelta.y) * deltaTime * Settings.mouseScrollSensitivity
-        transform.position.z += zoomDelta // assuming the forward vector is along the z-axis
-
-        // Calculate panning (left-right, up-down movement)
-        let panDelta = float2(Float(rotationChange.x), Float(rotationChange.y)) * deltaTime * Settings.translationSpeed
-        transform.position.x += panDelta.x
-        transform.position.y -= panDelta.y
-
-        // Ensure rotation angles and position are within acceptable limits
-        transform.rotation.x = clampAngle(transform.rotation.x)
-        transform.rotation.y = clampAngle(transform.rotation.y)
-        transform.rotation.z = clampAngle(transform.rotation.z)
-        transform.position = clampPosition(transform.position, within: [-180, 180])
+//        let input = InputManager.shared
+//        // Calculate rotation
+//        let rotationChange = CGPoint(x: input.mouseDelta.x,
+//                                     y: input.mouseDelta.y)
+//        let rotationDelta = float2(Float(rotationChange.x), Float(rotationChange.y)) * deltaTime * Settings.rotationSpeed
+//
+//        // Apply rotation around Y axis and a free rotation around X axis
+//        transform.rotation.y += rotationDelta.x
+//        transform.rotation.x += rotationDelta.y
+//
+//        // Calculate zoom based on vertical mouse drag or scroll wheel
+//        let zoomDelta = Float(input.mouseDelta.y) * deltaTime * Settings.mouseScrollSensitivity
+//        transform.position.z += zoomDelta // assuming the forward vector is along the z-axis
+//
+//        // Calculate panning (left-right, up-down movement)
+//        let panDelta = float2(Float(rotationChange.x), Float(rotationChange.y)) * deltaTime * Settings.translationSpeed
+//        transform.position.x += panDelta.x
+//        transform.position.y -= panDelta.y
+//
+//        // Ensure rotation angles and position are within acceptable limits
+//        transform.rotation.x = clampAngle(transform.rotation.x)
+//        transform.rotation.y = clampAngle(transform.rotation.y)
+//        transform.rotation.z = clampAngle(transform.rotation.z)
+//        transform.position = clampPosition(transform.position, within: [-180, 180])
     }
 }
 
@@ -210,32 +210,45 @@ struct ArcballCameraComponent : CameraComponent{
     mutating func update(deltaTime: Float, transform: inout TransformComponent) {
         logger.info("Updating Arcball Camera")
         var constantTransform = transform
+        
         logger.debug("position: \(constantTransform.position.x), \(constantTransform.position.y), \(constantTransform.position.z),\trotation:\(constantTransform.rotation.x),\(constantTransform.rotation.y),\(constantTransform.rotation.z)\n")
+            
             let maxRotationX: CGFloat = 0.27 // don't rotate below the horizon
             let input = InputManager.shared
-            let scrollSensitivity = Settings.mouseScrollSensitivity
-            distance -= Float(input.mouseScrollDelta.x + input.mouseScrollDelta.y)
-              * scrollSensitivity
-            distance = min(maxDistance, distance)
-            distance = max(minDistance, distance)
-            SceneManager.cameraManager.updateCameraDistance(with: distance)
-            input.mouseScrollDelta = .zero
+            
+        //magnification code will not work here
+//            let scrollSensitivity = Settings.mouseScrollSensitivity
+//            
+//            distance -= Float(input.mouseScrollDelta.x + input.mouseScrollDelta.y)
+//              * scrollSensitivity
+//            distance = min(maxDistance, distance)
+//            distance = max(minDistance, distance)
+//            SceneManager.cameraManager.updateCameraDistance(with: distance)
+//            input.mouseScrollDelta = .zero
+        //End of magnifiction code
+            
+            
             if input.leftMouseDown {
+                let touchDeltaPoint = CGPoint(x: CGFloat(input.touchDelta!.width), y: CGFloat(input.touchDelta!.height))
               let sensitivity = Settings.mousePanSensitivity
-                let testRotation = CGFloat(transform.rotation.x) + input.mouseDelta.y * CGFloat(sensitivity)
+                let testRotation = CGFloat(transform.rotation.x) + touchDeltaPoint.y * CGFloat(sensitivity)
               if testRotation < maxRotationX {
-                  transform.rotation.x += Float(input.mouseDelta.y * CGFloat(sensitivity))
+                  transform.rotation.x += Float(touchDeltaPoint.y * CGFloat(sensitivity))
                   transform.rotation.x = max(-.pi / 2, min(transform.rotation.x, .pi / 2))
               }
-                transform.rotation.y += Float(input.mouseDelta.x) * sensitivity
-              input.mouseDelta = .zero
+                transform.rotation.y += Float(touchDeltaPoint.x) * sensitivity
+              //input.mouseDelta = .zero
             }
+            
             let rotateMatrix = float4x4(
                 rotationYXZ: [-transform.rotation.x, transform.rotation.y, 0])
+           
             let distanceVector = float4(0, 0, -distance, 0)
+            
             let rotatedVector = rotateMatrix * distanceVector
             transform.position = target + rotatedVector.xyz
             constantTransform = transform
+        
         logger.debug("At the end of arcball updating\n")
         logger.debug("position: \(constantTransform.position.x), \(constantTransform.position.y), \(constantTransform.position.z),\trotation:\(constantTransform.rotation.x),\(constantTransform.rotation.y),\(constantTransform.rotation.z)\n")
           }
@@ -288,23 +301,23 @@ struct OrthographicCameraComponent: CameraComponent {
         self.aspect = aspect
     }
     mutating func update(deltaTime: Float, transform: inout TransformComponent){
-        let input = InputManager.shared
-        // Calculate panning based on drag
-        let panChange = CGPoint(x: input.mouseDelta.x,
-                                y: input.mouseDelta.y)
-        let panDelta = float2(Float(panChange.x), Float(panChange.y)) * deltaTime * Settings.translationSpeed
-
-        // Convert panDelta.x to account for the rotation of the camera
-        // When camera is rotated around Y by -pi/2, left/right panning is along world's z-axis
-        let worldPanDeltaZ = panDelta.x * (transform.rotation.y == -Float.pi / 2 ? 1 : -1)
-
-        // Apply the pan deltas to the position, y is for up/down panning
-        transform.position.z -= worldPanDeltaZ
-        transform.position.y += panDelta.y // y remains unchanged since it's screen space up/down
-        // transform.position.x remains unchanged for orthographic panning
-
-        // Clamp the position to avoid moving too far
-        transform.position = clampPosition(transform.position, within: [-180,180])
+//        let input = InputManager.shared
+//        // Calculate panning based on drag
+//        let panChange = CGPoint(x: input.mouseDelta.x,
+//                                y: input.mouseDelta.y)
+//        let panDelta = float2(Float(panChange.x), Float(panChange.y)) * deltaTime * Settings.translationSpeed
+//
+//        // Convert panDelta.x to account for the rotation of the camera
+//        // When camera is rotated around Y by -pi/2, left/right panning is along world's z-axis
+//        let worldPanDeltaZ = panDelta.x * (transform.rotation.y == -Float.pi / 2 ? 1 : -1)
+//
+//        // Apply the pan deltas to the position, y is for up/down panning
+//        transform.position.z -= worldPanDeltaZ
+//        transform.position.y += panDelta.y // y remains unchanged since it's screen space up/down
+//        // transform.position.x remains unchanged for orthographic panning
+//
+//        // Clamp the position to avoid moving too far
+//        transform.position = clampPosition(transform.position, within: [-180,180])
     }
 }
 

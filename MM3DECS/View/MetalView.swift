@@ -26,15 +26,7 @@ struct MetalView: View {
             InputManager.shared.updateTouchLocation(value.location)
         }.onEnded { _ in
             InputManager.shared.resetTouchDelta()
-        }).gesture(MagnificationGesture()
-            .onChanged { value in
-                InputManager.shared.zoomScale = Float(value / previousScroll)
-              previousScroll = value
-            }
-            .onEnded {_ in
-              previousScroll = 1
-                InputManager.shared.zoomScale = 1.0
-            })
+        })
     }
   }
 }

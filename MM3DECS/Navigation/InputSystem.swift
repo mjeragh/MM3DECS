@@ -11,9 +11,6 @@ import os.log
 import simd
 
 class InputSystem: SystemProtocol {
-//    var entityManager: EntityManager
-//    let cameraEntity: Entity
-//    var cameraComponent:CameraComponent
     var selectedEntity: Entity? = nil
     let epsilon: Float = 0
     func nearlyEqual(a: Float, b: Float, epsilon: Float) -> Bool {
@@ -98,9 +95,7 @@ class InputSystem: SystemProtocol {
     
     func touchEnded() {
         // Clear selected state or camera input as needed
-       
-        selectedEntity = nil
-        
+        selectedEntity = nil 
     }
     
     
