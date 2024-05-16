@@ -152,6 +152,38 @@ class CameraManager {
         entityManager.getComponent(type: TransformComponent.self, for: activeCameraEntity!)!
     }
     
+    
+    func updateCameraTransformFromInputManager() {
+        
+        guard let camera = getActiveCameraEntity(),
+        var archballCamera = entityManager.getComponent(type: ArcballCameraComponent.self, for: camera),
+        var transform = entityManager.getComponent(type: TransformComponent.self, for: camera)
+            else {
+            logger.warning("Updating non archball camera!!!!")
+            return
+        }
+        
+        let maxRotationX: CGFloat = 0.27 // don't rotate below the horizon
+        let input = InputManager.shared
+    
+        let touchDeltaPoint = CGPoint(x: CGFloat(input.touchDelta!.width), y: CGFloat(input.touchDelta!.height))
+        let sensitivity = Settings.mousePanSensitivity
+        let testRotation = CGFloat(transform.rotation.x) + touchDeltaPoint.y * CGFloat(sensitivity)
+        if testRotation < maxRotationX {
+              transform.rotation.x += Float(touchDeltaPoint.y * CGFloat(sensitivity))
+              transform.rotation.x = max(-.pi / 2, min(transform.rotation.x, .pi / 2))
+          }
+        transform.rotation.y += Float(touchDeltaPoint.x) * sensitivity
+        
+        let rotateMatrix = float4x4(
+            rotationYXZ: [-transform.rotation.x, transform.rotation.y, 0])
+       
+        let distanceVector = float4(0, 0, -archballCamera.distance, 0)
+        let rotatedVector = rotateMatrix * distanceVector
+        transform.position = archballCamera.target + rotatedVector.xyz
+        entityManager.addComponent(component: transform, to: camera)
+    }
+    
     func updateCameraDistance() {
         guard let camera = getActiveCameraEntity(),
         var archballCamera = entityManager.getComponent(type: ArcballCameraComponent.self, for: camera),

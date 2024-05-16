@@ -210,35 +210,18 @@ struct ArcballCameraComponent : CameraComponent{
     mutating func update(deltaTime: Float, transform: inout TransformComponent) {
         logger.info("Updating Arcball Camera")
         var constantTransform = transform
-        
-        logger.debug("position: \(constantTransform.position.x), \(constantTransform.position.y), \(constantTransform.position.z),\trotation:\(constantTransform.rotation.x),\(constantTransform.rotation.y),\(constantTransform.rotation.z)\n")
-            
+           
             let maxRotationX: CGFloat = 0.27 // don't rotate below the horizon
             let input = InputManager.shared
-            
-        //magnification code will not work here
-//            let scrollSensitivity = Settings.mouseScrollSensitivity
-//            
-//            distance -= Float(input.mouseScrollDelta.x + input.mouseScrollDelta.y)
-//              * scrollSensitivity
-//            distance = min(maxDistance, distance)
-//            distance = max(minDistance, distance)
-//            SceneManager.cameraManager.updateCameraDistance(with: distance)
-//            input.mouseScrollDelta = .zero
-        //End of magnifiction code
-            
-            
-            if input.leftMouseDown {
-                let touchDeltaPoint = CGPoint(x: CGFloat(input.touchDelta!.width), y: CGFloat(input.touchDelta!.height))
-              let sensitivity = Settings.mousePanSensitivity
-                let testRotation = CGFloat(transform.rotation.x) + touchDeltaPoint.y * CGFloat(sensitivity)
-              if testRotation < maxRotationX {
+        
+            let touchDeltaPoint = CGPoint(x: CGFloat(input.touchDelta!.width), y: CGFloat(input.touchDelta!.height))
+            let sensitivity = Settings.mousePanSensitivity
+            let testRotation = CGFloat(transform.rotation.x) + touchDeltaPoint.y * CGFloat(sensitivity)
+            if testRotation < maxRotationX {
                   transform.rotation.x += Float(touchDeltaPoint.y * CGFloat(sensitivity))
                   transform.rotation.x = max(-.pi / 2, min(transform.rotation.x, .pi / 2))
               }
-                transform.rotation.y += Float(touchDeltaPoint.x) * sensitivity
-              //input.mouseDelta = .zero
-            }
+            transform.rotation.y += Float(touchDeltaPoint.x) * sensitivity
             
             let rotateMatrix = float4x4(
                 rotationYXZ: [-transform.rotation.x, transform.rotation.y, 0])

@@ -32,22 +32,16 @@ class InputSystem: SystemProtocol {
         handleTouches(deltaTime: deltaTime)
         }
 
-        private func handleTouches(deltaTime: Float) {
+    private func handleTouches(deltaTime: Float) {
             // Check if a new touch has begun
-            if InputManager.shared.touchStarted {
-                touchMovedOrBegan(location: InputManager.shared.touchLocation!, deltaTime: deltaTime)
-                return
+        if InputManager.shared.touchState {
+            touchMovedOrBegan(location: InputManager.shared.touchLocation!, deltaTime: deltaTime)
+            return
+            } 
+        else {
+            touchEnded()
             }
 
-            // Check for ongoing touch movement
-//            if InputManager.shared.isTouchActive && !InputManager.shared.touchEnded {
-//                touchMovedOrBegan(location: InputManager.shared.touchLocation!, deltaTime: deltaTime)
-//            }
-
-            // Check if the touch has ended
-            if InputManager.shared.touchEnded {
-                touchEnded()
-            }
 
         }
     
@@ -77,13 +71,7 @@ class InputSystem: SystemProtocol {
                     //move item
                 }else {
                     //move Camera
-//                    cameraInput.dragCurrentPosition = touchLocation
-                    var cameraComponent = SceneManager.cameraManager.getActiveCameraComponent()
-                    var transform = SceneManager.cameraManager.getActiveTransformComponent()
-                    logger.debug("camera Movement:\(transform.position.x), \(transform.position.y), \(transform.position.z)\n")
-                    cameraComponent?.update(deltaTime: deltaTime, transform: &transform)
-                    logger.debug("camera Movement after update:\(transform.position.x), \(transform.position.y), \(transform.position.z)\n")
-                    SceneManager.cameraManager.moveActiveCamera(to: transform)
+                   SceneManager.cameraManager.updateCameraTransformFromInputManager()
                     //later I need to check if the camera is selected
                 }
                 

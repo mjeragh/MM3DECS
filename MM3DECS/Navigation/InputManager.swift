@@ -20,13 +20,10 @@ class InputManager {
     // Input States
     var keysPressed: Set<GCKeyCode> = []
     var leftMouseDown: Bool = false
-//    var mouseDelta: CGPoint = .zero
     var mouseScroll: CGPoint = .zero
     var previousTranslation : CGSize = .zero
-    var zoomScale : Float = 1.0
     
-    var touchStarted : Bool = false
-    var touchEnded : Bool = true
+    var touchState = false
 
     var logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "InputManager")
     
@@ -40,7 +37,7 @@ class InputManager {
 
     private func setupGameControllerObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardConnect(_:)), name: .GCKeyboardDidConnect, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleMouseConnect(_:)), name: .GCMouseDidConnect, object: nil)
+        
     }
 
     @objc private func handleKeyboardConnect(_ notification: Notification) {
@@ -54,46 +51,17 @@ class InputManager {
             }
         }
     }
-
-    
-
-    
-    @objc private func handleMouseConnect(_ notification: Notification) {
-        guard let mouse = notification.object as? GCMouse else { return }
-
-//        mouse.mouseInput?.leftButton.pressedChangedHandler = { [weak self] (button, _, pressed) in
-//            self?.leftMouseDown = pressed
-//        }
-        
-//        mouse.mouseInput?.mouseMovedHandler = { [weak self] (mouseInput, deltaX, deltaY) in
-//            // Ensure the types for deltaX and deltaY are CGFloat and convert if necessary
-//            self?.mouseDelta = CGPoint(x: CGFloat(deltaX), y: CGFloat(deltaY))
-//        }
-        
-        mouse.mouseInput?.scroll.valueChangedHandler = { [weak self] (mouseInput, xScroll, yScroll) in
-            // xScroll and yScroll are likely CGFloats; convert if different
-            self?.mouseScroll = CGPoint(x: CGFloat(xScroll), y: CGFloat(yScroll))
-//            self!.zoomScale -= Float(xScroll + yScroll)
-//            * Settings.mouseScrollSensitivity
-        }
-    }
 }
 extension InputManager {
     func updateTouchLocation(_ location: CGPoint) {//Begin
             touchLocation = location
-        if !touchStarted {
-                touchStarted = true
-            }
-            touchEnded = false
+            touchState = true
         }
     func updateTouchDelta(_ translation: CGSize){
         //Move
         touchDelta = CGSize(width: translation.width - previousTranslation.width,
                             height: translation.height - previousTranslation.height)
         touchDelta?.height *= -1
-//        if let delta = touchDelta {
-//            mouseDelta = CGPoint(x: CGFloat(delta.width), y: CGFloat(delta.height))
-//        }
         previousTranslation = translation
         
         leftMouseDown = touchDelta != nil
@@ -106,10 +74,9 @@ extension InputManager {
 //        }
     }
         func resetTouchDelta() {//end
-            touchEnded = true
+            touchState = false
             previousTranslation = .zero
-            touchLocation = nil
-            touchStarted = false
-            touchDelta = nil
+//            touchLocation = nil
+//            touchDelta = nil
         }
 }
