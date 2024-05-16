@@ -23,9 +23,14 @@ class InputSystem: SystemProtocol {
     
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "InputSystem")
    
+    func handleZoomGesture() {
+        
+        SceneManager.cameraManager.updateCameraDistance(with: 1.0)
+    }
     
     func update(deltaTime: Float, renderEncoder: any MTLRenderCommandEncoder) {
-            handleTouches(deltaTime: deltaTime)
+        handleZoomGesture()
+        handleTouches(deltaTime: deltaTime)
         }
 
         private func handleTouches(deltaTime: Float) {
@@ -36,9 +41,9 @@ class InputSystem: SystemProtocol {
             }
 
             // Check for ongoing touch movement
-            if InputManager.shared.isTouchActive && !InputManager.shared.touchEnded {
-                touchMovedOrBegan(location: InputManager.shared.touchLocation!, deltaTime: deltaTime)
-            }
+//            if InputManager.shared.isTouchActive && !InputManager.shared.touchEnded {
+//                touchMovedOrBegan(location: InputManager.shared.touchLocation!, deltaTime: deltaTime)
+//            }
 
             // Check if the touch has ended
             if InputManager.shared.touchEnded {

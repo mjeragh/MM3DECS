@@ -218,7 +218,7 @@ struct ArcballCameraComponent : CameraComponent{
               * scrollSensitivity
             distance = min(maxDistance, distance)
             distance = max(minDistance, distance)
-            CameraManager.updateCameraDistance(dis)
+            SceneManager.cameraManager.updateCameraDistance(with: distance)
             input.mouseScrollDelta = .zero
             if input.leftMouseDown {
               let sensitivity = Settings.mousePanSensitivity

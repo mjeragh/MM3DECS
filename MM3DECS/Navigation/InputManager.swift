@@ -19,13 +19,12 @@ class InputManager {
 
     // Input States
     var keysPressed: Set<GCKeyCode> = []
-    var mousePosition: CGPoint = .zero
     var leftMouseDown: Bool = false
     var mouseDelta: CGPoint = .zero
     var mouseScrollDelta: CGPoint = .zero
     var previousTranslation : CGSize = .zero
+    var zoomScale : Float = 1.0
     
-    var isTouchActive : Bool = false
     var touchStarted : Bool = false
     var touchEnded : Bool = true
 
@@ -34,15 +33,6 @@ class InputManager {
     // Touch input properties for SwiftUI binding
     var touchLocation: CGPoint?
     var touchDelta: CGSize? 
-//    {
-//      didSet {
-//        touchDelta?.height *= -1
-//        if let delta = touchDelta {
-//          mouseDelta = CGPoint(x: CGFloat(delta.width), y: CGFloat(delta.height))
-//        }
-//        leftMouseDown = touchDelta != nil
-//      }
-//    }
 
     private init() {
         setupGameControllerObservers()
@@ -83,6 +73,8 @@ class InputManager {
         mouse.mouseInput?.scroll.valueChangedHandler = { [weak self] (mouseInput, xScroll, yScroll) in
             // xScroll and yScroll are likely CGFloats; convert if different
             self?.mouseScrollDelta = CGPoint(x: CGFloat(xScroll), y: CGFloat(yScroll))
+            self!.zoomScale -= Float(xScroll + yScroll)
+            * Settings.mouseScrollSensitivity
         }
     }
 }
@@ -90,16 +82,13 @@ extension InputManager {
     func updateTouchLocation(_ location: CGPoint) {//Begin
             touchLocation = location
 //            mouseDelta = location
-            if !isTouchActive {
-                isTouchActive = true
+            if !touchStarted {
                 touchStarted = true
             }
             touchEnded = false
         }
     func updateTouchDelta(_ translation: CGSize){
         //Move
-//        mouseDelta = CGPoint(x: translation.width - previousTranslation.width, y: translation.height-previousTranslation.height)
-        
         touchDelta = CGSize(width: translation.width - previousTranslation.width,
                             height: translation.height - previousTranslation.height)
         touchDelta?.height *= -1
@@ -118,11 +107,10 @@ extension InputManager {
         }
     }
         func resetTouchDelta() {//end
-            if isTouchActive {
+            if touchStarted {
                 touchEnded = true
                 previousTranslation = .zero
             }
-            isTouchActive = false
             touchLocation = nil
             touchStarted = false
             touchDelta = nil

@@ -155,9 +155,9 @@ class CameraManager {
     func updateCameraDistance(with distance: Float) {
         guard let camera = getActiveCameraEntity(),
         var archballCamera = entityManager.getComponent(type: ArcballCameraComponent.self, for: camera) else { 
-            logger.warning("Updating non archball caemra!!!!")
+            logger.warning("Updating non archball camera!!!!")
             return
         }
-        archballCamera.distance = distance
+        archballCamera.distance *= Float(InputManager.shared.zoomScale)
     }
 }
