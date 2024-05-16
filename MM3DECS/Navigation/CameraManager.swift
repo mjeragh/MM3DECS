@@ -162,7 +162,7 @@ class CameraManager {
         }
         let input = InputManager.shared
         let scrollSensitivity = Settings.mouseScrollSensitivity
-        archballCamera.distance -= Float(input.mouseScroll.x)
+        archballCamera.distance -= Float(input.mouseScroll.x + input.mouseScroll.y)
           * scrollSensitivity
         archballCamera.distance = min(archballCamera.maxDistance, archballCamera.distance)
         archballCamera.distance = max(archballCamera.minDistance, archballCamera.distance)

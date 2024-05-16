@@ -40,7 +40,7 @@ class InputManager {
 
     private func setupGameControllerObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardConnect(_:)), name: .GCKeyboardDidConnect, object: nil)
-//        NotificationCenter.default.addObserver(self, selector: #selector(handleMouseConnect(_:)), name: .GCMouseDidConnect, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleMouseConnect(_:)), name: .GCMouseDidConnect, object: nil)
     }
 
     @objc private func handleKeyboardConnect(_ notification: Notification) {
@@ -58,25 +58,25 @@ class InputManager {
     
 
     
-//    @objc private func handleMouseConnect(_ notification: Notification) {
-//        guard let mouse = notification.object as? GCMouse else { return }
-//
+    @objc private func handleMouseConnect(_ notification: Notification) {
+        guard let mouse = notification.object as? GCMouse else { return }
+
 //        mouse.mouseInput?.leftButton.pressedChangedHandler = { [weak self] (button, _, pressed) in
 //            self?.leftMouseDown = pressed
 //        }
-//        
+        
 //        mouse.mouseInput?.mouseMovedHandler = { [weak self] (mouseInput, deltaX, deltaY) in
 //            // Ensure the types for deltaX and deltaY are CGFloat and convert if necessary
 //            self?.mouseDelta = CGPoint(x: CGFloat(deltaX), y: CGFloat(deltaY))
 //        }
-//        
-//        mouse.mouseInput?.scroll.valueChangedHandler = { [weak self] (mouseInput, xScroll, yScroll) in
-//            // xScroll and yScroll are likely CGFloats; convert if different
-//            self?.mouseScrollDelta = CGPoint(x: CGFloat(xScroll), y: CGFloat(yScroll))
+        
+        mouse.mouseInput?.scroll.valueChangedHandler = { [weak self] (mouseInput, xScroll, yScroll) in
+            // xScroll and yScroll are likely CGFloats; convert if different
+            self?.mouseScroll = CGPoint(x: CGFloat(xScroll), y: CGFloat(yScroll))
 //            self!.zoomScale -= Float(xScroll + yScroll)
 //            * Settings.mouseScrollSensitivity
-//        }
-//    }
+        }
+    }
 }
 extension InputManager {
     func updateTouchLocation(_ location: CGPoint) {//Begin
