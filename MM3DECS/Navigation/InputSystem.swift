@@ -21,8 +21,10 @@ class InputSystem: SystemProtocol {
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "InputSystem")
    
     func handleZoomGesture() {
+        if InputManager.shared.mouseScroll.x != 0 {
+            SceneManager.cameraManager.updateCameraDistance()
+        }
         
-        SceneManager.cameraManager.updateCameraDistance(with: 1.0)
     }
     
     func update(deltaTime: Float, renderEncoder: any MTLRenderCommandEncoder) {

@@ -7,7 +7,7 @@ import os.log
 enum Settings {
     static var rotationSpeed : Float { 1.5 }
     static var translationSpeed : Float { 3.0 }
-    static var mouseScrollSensitivity : Float { 0.1 }
+    static var mouseScrollSensitivity : Float { 2.5 }
     static var mousePanSensitivity : Float { 0.008 }
     static var touchZoomSensitivity: Float { 10 }
 }
@@ -21,7 +21,7 @@ class InputManager {
     var keysPressed: Set<GCKeyCode> = []
     var leftMouseDown: Bool = false
 //    var mouseDelta: CGPoint = .zero
-    var mouseScrollDelta: CGPoint = .zero
+    var mouseScroll: CGPoint = .zero
     var previousTranslation : CGSize = .zero
     var zoomScale : Float = 1.0
     

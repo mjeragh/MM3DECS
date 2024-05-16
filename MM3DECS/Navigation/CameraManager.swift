@@ -152,12 +152,30 @@ class CameraManager {
         entityManager.getComponent(type: TransformComponent.self, for: activeCameraEntity!)!
     }
     
-    func updateCameraDistance(with distance: Float) {
+    func updateCameraDistance() {
         guard let camera = getActiveCameraEntity(),
-        var archballCamera = entityManager.getComponent(type: ArcballCameraComponent.self, for: camera) else { 
+        var archballCamera = entityManager.getComponent(type: ArcballCameraComponent.self, for: camera),
+        var archballTranspose = entityManager.getComponent(type: TransformComponent.self, for: camera)
+            else {
             logger.warning("Updating non archball camera!!!!")
             return
         }
-        archballCamera.distance *= Float(InputManager.shared.zoomScale)
+        let input = InputManager.shared
+        let scrollSensitivity = Settings.mouseScrollSensitivity
+        archballCamera.distance -= Float(input.mouseScroll.x)
+          * scrollSensitivity
+        archballCamera.distance = min(archballCamera.maxDistance, archballCamera.distance)
+        archballCamera.distance = max(archballCamera.minDistance, archballCamera.distance)
+        input.mouseScroll = .zero
+        
+        
+        let rotateMatrix = float4x4(
+            rotationYXZ: [-archballTranspose.rotation.x, archballTranspose.rotation.y, 0])
+        let distanceVector = float4(0, 0, -archballCamera.distance, 0)
+        let rotatedVector = rotateMatrix * distanceVector
+        archballTranspose.position = archballCamera.target + rotatedVector.xyz
+        entityManager.addComponent(component: archballTranspose, to: camera)
+        entityManager.addComponent(component: archballCamera, to: camera)
+        logger.debug("new distance: \(archballCamera.distance)")
     }
 }
