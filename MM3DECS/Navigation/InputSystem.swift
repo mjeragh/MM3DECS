@@ -71,6 +71,7 @@ class InputSystem: SystemProtocol {
                 // Similar logic as touchBegan, update camera position if it's the selected entity
                 if let selected = selectedEntity{
                     //move item
+                    moveEntityOnXZPlane(touchLocation: touchLocation)
                 }else {
                     //move Camera
                    SceneManager.cameraManager.updateCameraTransformFromInputManager()
@@ -93,6 +94,8 @@ class InputSystem: SystemProtocol {
         ///I have to listen to him again
         ///I tried teh deferSystemgesture from chat but still no use, same result
         ///I will move on since I have spent a lot of time and I might not need it at the end
+        ///an idea that I will explore later is to use on the view when in switch app to call teh resettouch and switching to app call the resetrouch
+        ///.onAppear{InputManager.shared.resetTouchDelta()} but for some reason it did not work also
         InputManager.shared.resetTouchDelta()
         selectedEntity = nil
     }
@@ -170,4 +173,27 @@ class InputSystem: SystemProtocol {
         return worldRayDir
     }
     
+    func moveEntityOnXZPlane(touchLocation: CGPoint) {
+            guard let entity = selectedEntity,
+                  var transform = SceneManager.entityManager.getComponent(type: TransformComponent.self, for: entity)
+            else {
+                    logger.warning("Something is wrong with the selected Entity")
+                    return
+                }
+            let ndc = touchToNDC(touchPoint: touchLocation)
+            let viewMatrix = SceneManager.getViewMatrix()!
+            let projectionMatrix = SceneManager.getProjectionMatrix()
+            let rayDirection = calculateRayDirection(ndc: ndc, projectionMatrix: projectionMatrix!, viewMatrix: viewMatrix)
+            let rayOrigin = SceneManager.cameraManager.getActiveTransformComponent().position
+            
+            let intersectionPoint = rayPlaneIntersection(rayOrigin: rayOrigin, rayDirection: rayDirection, planeNormal: [0, 1, 0], planePoint: transform.position)
+            transform.position = intersectionPoint
+            SceneManager.entityManager.addComponent(component: transform, to: entity)
+        }
+    
+    func rayPlaneIntersection(rayOrigin: float3, rayDirection: float3, planeNormal: float3, planePoint: float3) -> float3 {
+            let d = dot(planeNormal, planePoint)
+            let t = (d - dot(planeNormal, rayOrigin)) / dot(planeNormal, rayDirection)
+            return rayOrigin + t * rayDirection
+        }
 }
