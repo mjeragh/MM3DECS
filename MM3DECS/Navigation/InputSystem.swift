@@ -19,7 +19,9 @@ class InputSystem: SystemProtocol {
     // let rayDebugSystem : RayDebugSystem
     
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "InputSystem")
-   
+    let log = OSLog(subsystem: "com.lanterntech.mm3decs", category: .pointsOfInterest)
+    //let signPostID = OSSignpostID(log: log)
+    
     func handleZoomGesture() {
         if InputManager.shared.mouseScroll.x != 0 {
             SceneManager.cameraManager.updateCameraDistance()
@@ -51,9 +53,14 @@ class InputSystem: SystemProtocol {
     
     
     func touchMovedOrBegan(location: CGPoint, deltaTime: Float) {
+        os_signpost(.begin, log: log, name: "begin touches")
+        defer {
+            os_signpost(.end, log: log, name: "begin touches")
+        }
         let touchLocation = location
         // Get the camera entity
-            
+        
+        
             // Check if this is the first touch
         if InputManager.shared.previousTranslation == .zero {//it is began
                 selectedEntity = handleTouchOnXZPlane(at: touchLocation)
@@ -103,6 +110,10 @@ class InputSystem: SystemProtocol {
     
     
     func handleTouchOnXZPlane(at point: CGPoint) -> Entity? {
+        os_signpost(.begin, log: log, name: "handleTouchesonXZPlane")
+        defer {
+            os_signpost(.end, log: log, name: "handleTouchesonXZPlane")
+        }
         let cameraTransform = SceneManager.cameraManager.getActiveTransformComponent()
         
 //        logger.debug("in function handleTouchOnXZPlane Picking at \(point.x), \(point.y)")
