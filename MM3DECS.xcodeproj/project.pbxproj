@@ -30,7 +30,6 @@
 		B259C2972BAADE760049BA2C /* EntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2962BAADE760049BA2C /* EntityManager.swift */; };
 		B259C29A2BAADF2A0049BA2C /* RendererSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2992BAADF2A0049BA2C /* RendererSystem.swift */; };
 		B262E28C2BF007B900B6FC38 /* InputManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B262E28B2BF007B900B6FC38 /* InputManager.swift */; };
-		B269F1492BE62C7800A3C801 /* HitResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B269F1482BE62C7800A3C801 /* HitResult.swift */; };
 		B269F14B2BECDD1E00A3C801 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B269F14A2BECDD1E00A3C801 /* CameraManager.swift */; };
 		B28FD96C2BE160A00057B63E /* RayDebug.metal in Sources */ = {isa = PBXBuildFile; fileRef = B28FD96B2BE160A00057B63E /* RayDebug.metal */; };
 		B28FD96E2BE165290057B63E /* RayDebugSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28FD96D2BE165290057B63E /* RayDebugSystem.swift */; };
@@ -71,7 +70,6 @@
 		B259C2962BAADE760049BA2C /* EntityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityManager.swift; sourceTree = "<group>"; };
 		B259C2992BAADF2A0049BA2C /* RendererSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererSystem.swift; sourceTree = "<group>"; };
 		B262E28B2BF007B900B6FC38 /* InputManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputManager.swift; sourceTree = "<group>"; };
-		B269F1482BE62C7800A3C801 /* HitResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitResult.swift; sourceTree = "<group>"; };
 		B269F14A2BECDD1E00A3C801 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		B28FD96B2BE160A00057B63E /* RayDebug.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = RayDebug.metal; sourceTree = "<group>"; };
 		B28FD96D2BE165290057B63E /* RayDebugSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RayDebugSystem.swift; sourceTree = "<group>"; };
@@ -119,7 +117,6 @@
 				B259C2652BA2FABE0049BA2C /* MM3DECSApp.swift */,
 				B259C28E2BA31B5B0049BA2C /* View */,
 				B259C2982BAADF050049BA2C /* Renderer */,
-				B259C27F2BA3001D0049BA2C /* VertexDescriptor.swift */,
 				B259C2692BA2FABF0049BA2C /* Assets.xcassets */,
 				B259C28C2BA304690049BA2C /* Models */,
 				B259C27D2BA2FF710049BA2C /* Utility */,
@@ -155,6 +152,7 @@
 		B259C27D2BA2FF710049BA2C /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				B28FD96D2BE165290057B63E /* RayDebugSystem.swift */,
 				B22D8DDD2BE54A15005EE7D9 /* DebugBoundingBox.swift */,
 				B259C27C2BA2FF710049BA2C /* MathLibrary.swift */,
 			);
@@ -197,6 +195,7 @@
 			isa = PBXGroup;
 			children = (
 				B259C2802BA3001D0049BA2C /* Renderer.swift */,
+				B259C27F2BA3001D0049BA2C /* VertexDescriptor.swift */,
 				B259C2992BAADF2A0049BA2C /* RendererSystem.swift */,
 			);
 			path = Renderer;
@@ -209,8 +208,6 @@
 				B294EDED2BD3E90F008E6F2E /* InputComponent.swift */,
 				B294EDF12BD4F863008E6F2E /* SelectionComponent.swift */,
 				B24913542BDD6E0E00A31CCA /* Ray.swift */,
-				B28FD96D2BE165290057B63E /* RayDebugSystem.swift */,
-				B269F1482BE62C7800A3C801 /* HitResult.swift */,
 				B269F14A2BECDD1E00A3C801 /* CameraManager.swift */,
 				B262E28B2BF007B900B6FC38 /* InputManager.swift */,
 			);
@@ -319,7 +316,6 @@
 				B259C2662BA2FABE0049BA2C /* MM3DECSApp.swift in Sources */,
 				B294EDF22BD4F863008E6F2E /* SelectionComponent.swift in Sources */,
 				B259C2952BAADDF50049BA2C /* System.swift in Sources */,
-				B269F1492BE62C7800A3C801 /* HitResult.swift in Sources */,
 				B259C27E2BA2FF710049BA2C /* MathLibrary.swift in Sources */,
 				B262E28C2BF007B900B6FC38 /* InputManager.swift in Sources */,
 				B294EDEE2BD3E90F008E6F2E /* InputComponent.swift in Sources */,

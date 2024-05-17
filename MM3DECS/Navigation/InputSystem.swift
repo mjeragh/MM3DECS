@@ -23,6 +23,8 @@ class InputSystem: SystemProtocol {
     func handleZoomGesture() {
         if InputManager.shared.mouseScroll.x != 0 {
             SceneManager.cameraManager.updateCameraDistance()
+            ///look at the comment inside touchEnd method
+            touchEnded()
         }
         
     }
@@ -85,7 +87,14 @@ class InputSystem: SystemProtocol {
     
     func touchEnded() {
         // Clear selected state or camera input as needed
-        selectedEntity = nil 
+        ///Im adding reset resetTouchDelta, because for some reason when Im adjusting the screen the system gestures are interfering(I guess) this solved the issue for now
+        ///still with the ipad in stage manager it has the bug when swipe over the right bottom
+        ///samething with the iphone when you hit the system bar at the bottom. I saw the guying on the developer vidoe talking about system gestures overriding your gestures.
+        ///I have to listen to him again
+        ///I tried teh deferSystemgesture from chat but still no use, same result
+        ///I will move on since I have spent a lot of time and I might not need it at the end
+        InputManager.shared.resetTouchDelta()
+        selectedEntity = nil
     }
     
     

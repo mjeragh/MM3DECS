@@ -208,32 +208,7 @@ struct ArcballCameraComponent : CameraComponent{
     }
     
     mutating func update(deltaTime: Float, transform: inout TransformComponent) {
-        logger.info("Updating Arcball Camera")
-        var constantTransform = transform
-           
-            let maxRotationX: CGFloat = 0.27 // don't rotate below the horizon
-            let input = InputManager.shared
-        
-            let touchDeltaPoint = CGPoint(x: CGFloat(input.touchDelta!.width), y: CGFloat(input.touchDelta!.height))
-            let sensitivity = Settings.mousePanSensitivity
-            let testRotation = CGFloat(transform.rotation.x) + touchDeltaPoint.y * CGFloat(sensitivity)
-            if testRotation < maxRotationX {
-                  transform.rotation.x += Float(touchDeltaPoint.y * CGFloat(sensitivity))
-                  transform.rotation.x = max(-.pi / 2, min(transform.rotation.x, .pi / 2))
-              }
-            transform.rotation.y += Float(touchDeltaPoint.x) * sensitivity
-            
-            let rotateMatrix = float4x4(
-                rotationYXZ: [-transform.rotation.x, transform.rotation.y, 0])
-           
-            let distanceVector = float4(0, 0, -distance, 0)
-            
-            let rotatedVector = rotateMatrix * distanceVector
-            transform.position = target + rotatedVector.xyz
-            constantTransform = transform
-        
-        logger.debug("At the end of arcball updating\n")
-        logger.debug("position: \(constantTransform.position.x), \(constantTransform.position.y), \(constantTransform.position.z),\trotation:\(constantTransform.rotation.x),\(constantTransform.rotation.y),\(constantTransform.rotation.z)\n")
+       
           }
     
    func calculateViewMatrix(transform: TransformComponent) -> float4x4 {
