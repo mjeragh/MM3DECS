@@ -63,7 +63,7 @@ class InputSystem: SystemProtocol {
         
             // Check if this is the first touch
         if InputManager.shared.previousTranslation == .zero {//it is began
-                selectedEntity = handleTouchOnXZPlane(at: touchLocation)
+                selectedEntity = handleTouchOnXZPlaneParallel(at: touchLocation)
                 if let selected = selectedEntity {
                     // An object was touched, mark it as selected
                     var selectionComponent = SceneManager.entityManager.getComponent(type: SelectionComponent.self, for: selected)!
@@ -107,7 +107,67 @@ class InputSystem: SystemProtocol {
         selectedEntity = nil
     }
     
-    
+    private func handleTouchOnXZPlaneParallel(at point: CGPoint) -> Entity? {
+        os_signpost(.begin, log: log, name: "handleTouchesonXZPlane")
+        defer {
+            os_signpost(.end, log: log, name: "handleTouchesonXZPlane")
+        }
+        let cameraTransform = SceneManager.cameraManager.getActiveTransformComponent()
+        
+        logger.debug("in function handleTouchOnXZPlane Picking at \(point.x), \(point.y)")
+        logger.debug("in function handleTouchOnXZPlane Camera position: \(cameraTransform.position)")
+        
+        let ndc = touchToNDC(touchPoint: point)
+        let viewMatrix = SceneManager.getViewMatrix()!
+        let projectionMatrix = SceneManager.getProjectionMatrix()
+        let rayDirection = calculateRayDirection(ndc: ndc, projectionMatrix: projectionMatrix!, viewMatrix: viewMatrix)
+        let rayOrigin = cameraTransform.position
+        
+        logger.debug("ndc: \(ndc), rayOrigin: \(rayOrigin), rayDirection: \(rayDirection)")
+        
+        var closestEntity: Entity? = nil
+        var minDistance: Float = Float.greatestFiniteMagnitude
+        let entities = SceneManager.getEntitesToBeSelected()
+        
+        // Create a concurrent queue
+        let queue = DispatchQueue(label: "com.yourapp.handleTouchOnXZPlane", attributes: .concurrent)
+        
+        // Use a dispatch group to synchronize the parallel tasks
+        let dispatchGroup = DispatchGroup()
+        
+        // Use a concurrentPerform to iterate over the entities
+        DispatchQueue.concurrentPerform(iterations: entities.count) { index in
+            let entity = entities[index]
+            
+            if let boundingBox = SceneManager.entityManager.getComponent(type: RenderableComponent.self, for: entity)?.boundingBox,
+               let transform = SceneManager.entityManager.getComponent(type: TransformComponent.self, for: entity) {
+                let modelMatrix = transform.modelMatrix
+                let modelMatrixInverse = modelMatrix.inverse
+                
+                let localRayOrigin = (modelMatrixInverse * float4(rayOrigin, 1.0)).xyz
+                let localRayDirection = (modelMatrixInverse * float4(rayDirection, 0.0)).xyz
+                
+                let ray = Ray(origin: localRayOrigin, direction: localRayDirection)
+                
+                let bounds = [boundingBox.minBounds, boundingBox.maxBounds]
+                if ray.intersects(with: bounds) {
+                    let distance = length(transform.position - rayOrigin)
+                    
+                    queue.sync {
+                        if distance < minDistance {
+                            minDistance = distance
+                            closestEntity = entity
+                            logger.debug("Hit: \(entity.name)")
+                        }
+                    }
+                } else {
+                    logger.debug("\(entity.name) miss")
+                }
+            }
+        }
+        
+        return closestEntity
+    }
     
     func handleTouchOnXZPlane(at point: CGPoint) -> Entity? {
         os_signpost(.begin, log: log, name: "handleTouchesonXZPlane")
