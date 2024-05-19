@@ -12,6 +12,16 @@
 #import "stdbool.h"
 
 
+typedef struct {
+  matrix_float4x4 viewMatrix;
+  matrix_float4x4 projectionMatrix;
+  matrix_float4x4 shadowProjectionMatrix;
+  matrix_float4x4 shadowViewMatrix;
+//the following was in a modeltransform struct
+    matrix_float4x4 modelMatrix;
+    matrix_float3x3 normalMatrix;
+} Uniforms;
+
 typedef enum {
   VertexBuffer = 0,
   UVBuffer = 1,
@@ -89,7 +99,17 @@ typedef struct {
     Gradient gradient;
 } Material;
 
-
+typedef struct {
+  uint width;
+  uint height;
+  uint tiling;
+  uint lightCount;
+  vector_float3 cameraPosition;
+  float scaleFactor;
+  bool alphaTesting;
+  bool alphaBlending;
+  bool transparency;
+} Params;
 
 typedef enum {
    RenderTargetAlbedo = 1,

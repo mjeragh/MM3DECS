@@ -141,7 +141,7 @@ extension Renderer{
         renderEncoder.setFragmentBytes(
             &Renderer.params,
             length: MemoryLayout<Params>.stride,
-            index: 12)
+            index: ParamsBuffer.index)
         renderEncoder.setRenderPipelineState(forwardPassPipelineState)
         
         let deltaTime = 1 / Float(view.preferredFramesPerSecond)

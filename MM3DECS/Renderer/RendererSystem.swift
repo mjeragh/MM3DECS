@@ -41,7 +41,7 @@ class RenderSystem: SystemProtocol {
         renderEncoder.setVertexBytes(
             &uniforms,
           length: MemoryLayout<Uniforms>.stride,
-          index: 11)
+            index: UniformsBuffer.index)
 
         renderable.render(encoder: renderEncoder)
         }
