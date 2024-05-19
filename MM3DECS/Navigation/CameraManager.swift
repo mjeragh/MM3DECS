@@ -163,14 +163,14 @@ class CameraManager {
             return
         }
         
-        let maxRotationX: CGFloat = 0.27 // don't rotate below the horizon
+        let maxRotationX: Float = 0.27 // don't rotate below the horizon
         let input = InputManager.shared
     
-        let touchDeltaPoint = CGPoint(x: CGFloat(input.touchDelta!.width), y: CGFloat(input.touchDelta!.height))
+        let touchDeltaPoint = float2(x: Float(input.touchDelta!.x), y: Float(input.touchDelta!.y))
         let sensitivity = Settings.mousePanSensitivity
-        let testRotation = CGFloat(transform.rotation.x) + touchDeltaPoint.y * CGFloat(sensitivity)
+        let testRotation = Float(transform.rotation.x) + touchDeltaPoint.y * Float(sensitivity)
         if testRotation < maxRotationX {
-              transform.rotation.x += Float(touchDeltaPoint.y * CGFloat(sensitivity))
+              transform.rotation.x += Float(touchDeltaPoint.y * Float(sensitivity))
               transform.rotation.x = max(-.pi / 2, min(transform.rotation.x, .pi / 2))
           }
         transform.rotation.y += Float(touchDeltaPoint.x) * sensitivity

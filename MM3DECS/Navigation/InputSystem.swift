@@ -52,7 +52,7 @@ class InputSystem: SystemProtocol {
     // Other methods...
     
     
-    func touchMovedOrBegan(location: CGPoint, deltaTime: Float) {
+    func touchMovedOrBegan(location: float2, deltaTime: Float) {
         os_signpost(.begin, log: log, name: "begin touches")
         defer {
             os_signpost(.end, log: log, name: "begin touches")
@@ -63,7 +63,7 @@ class InputSystem: SystemProtocol {
         
             // Check if this is the first touch
         if InputManager.shared.previousTranslation == .zero {//it is began
-                selectedEntity = handleTouchOnXZPlaneParallel(at: touchLocation)
+                selectedEntity = handleTouchOnXZPlane(at: touchLocation)
                 if let selected = selectedEntity {
                     // An object was touched, mark it as selected
                     var selectionComponent = SceneManager.entityManager.getComponent(type: SelectionComponent.self, for: selected)!
@@ -107,10 +107,10 @@ class InputSystem: SystemProtocol {
         selectedEntity = nil
     }
     
-    private func handleTouchOnXZPlaneParallel(at point: CGPoint) -> Entity? {
-        os_signpost(.begin, log: log, name: "handleTouchesonXZPlane")
+    private func handleTouchOnXZPlaneParallel(at point: float2) -> Entity? {
+        os_signpost(.begin, log: log, name: "handleTouchesonXZPlaneParallel")
         defer {
-            os_signpost(.end, log: log, name: "handleTouchesonXZPlane")
+            os_signpost(.end, log: log, name: "handleTouchesonXZPlaneParallel")
         }
         let cameraTransform = SceneManager.cameraManager.getActiveTransformComponent()
         
@@ -169,7 +169,7 @@ class InputSystem: SystemProtocol {
         return closestEntity
     }
     
-    func handleTouchOnXZPlane(at point: CGPoint) -> Entity? {
+    func handleTouchOnXZPlane(at point: float2) -> Entity? {
         os_signpost(.begin, log: log, name: "handleTouchesonXZPlane")
         defer {
             os_signpost(.end, log: log, name: "handleTouchesonXZPlane")
@@ -223,7 +223,7 @@ class InputSystem: SystemProtocol {
     }
     
   
-    func touchToNDC(touchPoint: CGPoint) -> float3 {
+    func touchToNDC(touchPoint: float2) -> float3 {
         let clipX = (2.0 * Float(touchPoint.x) / Float(Renderer.params.width)) - 1.0
         let clipY = 1.0 - (2.0 * Float(touchPoint.y) / Float(Renderer.params.height))
         return float3(x: clipX, y: clipY, z: 0.0)  // Assume clip space is hemicube, -Z is into the screen
@@ -244,7 +244,7 @@ class InputSystem: SystemProtocol {
         return worldRayDir
     }
     
-    func moveEntityOnXZPlane(touchLocation: CGPoint) {
+    func moveEntityOnXZPlane(touchLocation: float2) {
             guard let entity = selectedEntity,
                   var transform = SceneManager.entityManager.getComponent(type: TransformComponent.self, for: entity)
             else {

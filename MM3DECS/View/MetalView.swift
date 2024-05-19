@@ -29,8 +29,8 @@ struct MetalView: View {
         }).gesture(MagnificationGesture()
             .onChanged { value in
               let scroll = value - previousScroll
-              InputManager.shared.mouseScroll.x = CGFloat(scroll)
-                * CGFloat(Settings.touchZoomSensitivity)
+              InputManager.shared.mouseScroll.x = Float(scroll)
+                * Float(Settings.touchZoomSensitivity)
               previousScroll = value
             }
             .onEnded {_ in

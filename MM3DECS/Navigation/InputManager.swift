@@ -20,16 +20,16 @@ class InputManager {
     // Input States
     var keysPressed: Set<GCKeyCode> = []
     var leftMouseDown: Bool = false
-    var mouseScroll: CGPoint = .zero
-    var previousTranslation : CGSize = .zero
+    var mouseScroll: float2 = .zero
+    var previousTranslation : float2 = .zero
     
     var touchState = false
 
     var logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "InputManager")
     
     // Touch input properties for SwiftUI binding
-    var touchLocation: CGPoint?
-    var touchDelta: CGSize? 
+    var touchLocation: float2?
+    var touchDelta: float2?
 
     private init() {
         setupGameControllerObservers()
@@ -54,15 +54,15 @@ class InputManager {
 }
 extension InputManager {
     func updateTouchLocation(_ location: CGPoint) {//Begin
-            touchLocation = location
+        touchLocation = float2(Float(location.x),Float(location.y))
             touchState = true
         }
     func updateTouchDelta(_ translation: CGSize){
         //Move
-        touchDelta = CGSize(width: translation.width - previousTranslation.width,
-                            height: translation.height - previousTranslation.height)
-        touchDelta?.height *= -1
-        previousTranslation = translation
+        let newTranslation = float2(Float(translation.width), Float(translation.height))
+        touchDelta = newTranslation - previousTranslation
+        touchDelta?.y *= -1
+        previousTranslation = newTranslation
         
         leftMouseDown = touchDelta != nil
         
