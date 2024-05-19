@@ -89,49 +89,7 @@ typedef struct {
     Gradient gradient;
 } Material;
 
-typedef enum {
-    VertexBuffer = 0,
-    UVBuffer = 1,
-    ColorBuffer = 2,
-    TangentBuffer = 3,
-    BitangentBuffer = 4,
-    UniformsBuffer = 11,
-    ParamsBuffer = 12,
-    LightBuffer = 13,
-    MaterialBuffer = 14
-} BufferIndices;
 
-typedef enum {
-  Position = 0,
-  Normal = 1,
-  UV = 2,
-  Tangent = 3,
-  Bitangent = 4,
-  Color = 5,
-  Joints = 6,
-  Weights = 7
-} Attributes;
-
-typedef struct {
-    vector_float3 minBounds;
-    vector_float3 maxBounds;
-} BoundingBox;
-
-typedef struct{
-    LocalRay localRay;
-    BoundingBox boundingBox;
-    float parameter;
-    matrix_float4x4 modelMatrix;
-    int debug;
-} NodeGPU;
-
-typedef struct {
-    matrix_float4x4 modelMatrix;
-    matrix_float3x3 normalMatrix;
-    vector_float3 origin;
-    vector_float3 direction;
-    NodeGPU nodeGPU;
-} Instances;
 
 typedef enum {
    RenderTargetAlbedo = 1,
