@@ -1,0 +1,2 @@
+# Ignore directories ending with .trace
+*.trace/
