@@ -46,15 +46,18 @@ extension MDLVertexDescriptor {
       name: MDLVertexAttributePosition,
       format: .float3,
       offset: 0,
-      bufferIndex: 0)
+      bufferIndex: VertexBuffer.index)
     offset += MemoryLayout<float3>.stride
+      
     vertexDescriptor.attributes[1] = MDLVertexAttribute(
       name: MDLVertexAttributeNormal,
       format: .float3,
       offset: offset,
-      bufferIndex: 0)
+      bufferIndex: VertexBuffer.index)
     offset += MemoryLayout<float3>.stride
-
+      
+      vertexDescriptor.attributes[2] = MDLVertexAttribute(name: MDLVertexAttributeTextureCoordinate, format: .float2, offset: offset, bufferIndex: VertexBuffer.index)
+      offset += MemoryLayout<float2>.stride
     vertexDescriptor.layouts[0] = MDLVertexBufferLayout(stride: offset)
     return vertexDescriptor
   }

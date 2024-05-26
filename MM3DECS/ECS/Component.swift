@@ -72,48 +72,43 @@ struct TransformComponent: Component {
 
 struct RenderableComponent: Component {
     var mesh: MTKMesh
-    var texture: MTLTexture?
+    var textureName: String?
     let name: String
     let boundingBox: MDLAxisAlignedBoundingBox
-    // Other rendering-related properties such as materials, shaders, etc.
-    // Initialize the RenderableComponent with a mesh loaded from the given asset name.
-        init(device: MTLDevice, name: String) {
-            guard let assetURL = Bundle.main.url(forResource: name, withExtension: nil) else {
-                fatalError("Model: \(name) not found")
-            }
 
-            let allocator = MTKMeshBufferAllocator(device: device)
-            let asset = MDLAsset(url: assetURL, vertexDescriptor: .defaultLayout, bufferAllocator: allocator)
-            guard let mdlMesh = asset.childObjects(of: MDLMesh.self).first as? MDLMesh else {
-                fatalError("No mesh available")
-            }
-
-            do {
-                self.mesh = try MTKMesh(mesh: mdlMesh, device: device)
-            } catch {
-                fatalError("Failed to load mesh: \(error)")
-            }
-            self.name = name
-            self.boundingBox = asset.boundingBox
+    init(device: MTLDevice, name: String, textureName: String? = nil) {
+        guard let assetURL = Bundle.main.url(forResource: name, withExtension: nil) else {
+            fatalError("Model: \(name) not found")
         }
+
+        let allocator = MTKMeshBufferAllocator(device: device)
+        let asset = MDLAsset(url: assetURL, vertexDescriptor: .defaultLayout, bufferAllocator: allocator)
+        guard let mdlMesh = asset.childObjects(of: MDLMesh.self).first as? MDLMesh else {
+            fatalError("No mesh available")
+        }
+
+        do {
+            self.mesh = try MTKMesh(mesh: mdlMesh, device: device)
+        } catch {
+            fatalError("Failed to load mesh: \(error)")
+        }
+        self.name = name
+        self.textureName = textureName
+        self.boundingBox = asset.boundingBox
+    }
 }
 
-extension RenderableComponent{
+extension RenderableComponent {
     func render(encoder: MTLRenderCommandEncoder) {
-      encoder.setVertexBuffer(
-        mesh.vertexBuffers[0].buffer,
-        offset: 0,
-        index: 0)
+        encoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: 0)
+        
+        if let textureName = textureName, let texture = TextureController.shared.getTexture(name: textureName) {
+            encoder.setFragmentTexture(texture, index: 0)
+        }
 
-      for submesh in mesh.submeshes {
-        encoder.drawIndexedPrimitives(
-          type: .triangle,
-          indexCount: submesh.indexCount,
-          indexType: submesh.indexType,
-          indexBuffer: submesh.indexBuffer.buffer,
-          indexBufferOffset: submesh.indexBuffer.offset
-        )
-      }
+        for submesh in mesh.submeshes {
+            encoder.drawIndexedPrimitives(type: .triangle, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset)
+        }
     }
 }
 

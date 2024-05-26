@@ -73,10 +73,12 @@ class SceneManager {
         }
     
     static func getEntitesToRender() -> [Entity]{
-        return entityManager.entitiesWithComponents([RenderableComponent.self, TransformComponent.self])
+        ///any entity to render must have a transpose component
+        return entityManager.entitiesWithComponents([RenderableComponent.self])
     }
     static func getEntitesToBeSelected() -> [Entity]{
-        return entityManager.entitiesWithComponents([RenderableComponent.self, TransformComponent.self, SelectionComponent.self])
+        ///any entity to be selected must have a renserable component
+        return entityManager.entitiesWithComponents([SelectionComponent.self])
     }
     static func moveActiveCamera(transform: TransformComponent){
         cameraManager.moveActiveCamera(to: transform)

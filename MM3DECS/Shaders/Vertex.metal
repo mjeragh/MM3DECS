@@ -33,25 +33,20 @@
 #include <metal_stdlib>
 using namespace metal;
 #import "Vertex.h"
-//
-//struct VertexIn {
-//  float4 position [[attribute(0)]];
-//  float3 normal [[attribute(1)]];
-//};
 
 vertex VertexOut vertex_main(
-  VertexIn in [[stage_in]],
-  constant Uniforms &uniforms [[buffer(11)]])
+    VertexIn in [[stage_in]],
+    constant Uniforms &uniforms [[buffer(UniformsBuffer)]])
 {
-  float4 position =
-    uniforms.projectionMatrix * uniforms.viewMatrix
-    * uniforms.modelMatrix * in.position;
-  float3 normal = in.normal;
-  VertexOut out {
-    .position = position,
-    .worldNormal = normal
-  };
-  return out;
+    float4 position =
+        uniforms.projectionMatrix * uniforms.viewMatrix
+        * uniforms.modelMatrix * in.position;
+    float3 normal = in.normal;
+    VertexOut out {
+        .position = position,
+        .worldNormal = normal,
+        .uv = in.uv // Assuming you have a texcoord attribute in VertexIn
+    };
+    return out;
 }
-
 
