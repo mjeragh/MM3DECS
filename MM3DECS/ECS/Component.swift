@@ -100,14 +100,19 @@ struct RenderableComponent: Component {
 
 extension RenderableComponent {
     func render(encoder: MTLRenderCommandEncoder) {
-        encoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: 0)
+        encoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: VertexBuffer.index)
         
         if let textureName = textureName, let texture = TextureController.shared.getTexture(name: textureName) {
-            encoder.setFragmentTexture(texture, index: 0)
+            encoder.setFragmentTexture(texture, index: BaseColor.index)
         }
 
         for submesh in mesh.submeshes {
-            encoder.drawIndexedPrimitives(type: .triangle, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset)
+            encoder.drawIndexedPrimitives(
+                type: .triangle,
+                indexCount: submesh.indexCount,
+                indexType: submesh.indexType,
+                indexBuffer: submesh.indexBuffer.buffer,
+                indexBufferOffset: submesh.indexBuffer.offset)
         }
     }
 }
