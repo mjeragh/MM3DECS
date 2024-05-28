@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B22D8DDF2BE54A15005EE7D9 /* DebugBoundingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = B22D8DDD2BE54A15005EE7D9 /* DebugBoundingBox.swift */; };
 		B22D8DE02BE54A15005EE7D9 /* DebugBoundingBox.metal in Sources */ = {isa = PBXBuildFile; fileRef = B22D8DDE2BE54A15005EE7D9 /* DebugBoundingBox.metal */; };
+		B240EDD02C04A38B001DAFEB /* traina.usda in Resources */ = {isa = PBXBuildFile; fileRef = B240EDCF2C04A38B001DAFEB /* traina.usda */; };
 		B249134F2BDAB7DB00A31CCA /* peg.usda in Resources */ = {isa = PBXBuildFile; fileRef = B249134E2BDAB7DB00A31CCA /* peg.usda */; };
 		B24913512BDAB7E700A31CCA /* plane1000.usda in Resources */ = {isa = PBXBuildFile; fileRef = B24913502BDAB7E700A31CCA /* plane1000.usda */; };
 		B24913552BDD6E0E00A31CCA /* Ray.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24913542BDD6E0E00A31CCA /* Ray.swift */; };
@@ -30,6 +31,7 @@
 		B259C2972BAADE760049BA2C /* EntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2962BAADE760049BA2C /* EntityManager.swift */; };
 		B259C29A2BAADF2A0049BA2C /* RendererSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B259C2992BAADF2A0049BA2C /* RendererSystem.swift */; };
 		B262E28C2BF007B900B6FC38 /* InputManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B262E28B2BF007B900B6FC38 /* InputManager.swift */; };
+		B26654762C05E7C100EB7A20 /* pegTexture.usda in Resources */ = {isa = PBXBuildFile; fileRef = B26654752C05E7C100EB7A20 /* pegTexture.usda */; };
 		B269F14B2BECDD1E00A3C801 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B269F14A2BECDD1E00A3C801 /* CameraManager.swift */; };
 		B28FD96C2BE160A00057B63E /* RayDebug.metal in Sources */ = {isa = PBXBuildFile; fileRef = B28FD96B2BE160A00057B63E /* RayDebug.metal */; };
 		B28FD96E2BE165290057B63E /* RayDebugSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28FD96D2BE165290057B63E /* RayDebugSystem.swift */; };
@@ -45,6 +47,7 @@
 /* Begin PBXFileReference section */
 		B22D8DDD2BE54A15005EE7D9 /* DebugBoundingBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugBoundingBox.swift; sourceTree = "<group>"; };
 		B22D8DDE2BE54A15005EE7D9 /* DebugBoundingBox.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = DebugBoundingBox.metal; sourceTree = "<group>"; };
+		B240EDCF2C04A38B001DAFEB /* traina.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = traina.usda; sourceTree = "<group>"; };
 		B249134E2BDAB7DB00A31CCA /* peg.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = peg.usda; sourceTree = "<group>"; };
 		B24913502BDAB7E700A31CCA /* plane1000.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = plane1000.usda; sourceTree = "<group>"; };
 		B24913542BDD6E0E00A31CCA /* Ray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ray.swift; sourceTree = "<group>"; };
@@ -71,6 +74,7 @@
 		B259C2962BAADE760049BA2C /* EntityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityManager.swift; sourceTree = "<group>"; };
 		B259C2992BAADF2A0049BA2C /* RendererSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererSystem.swift; sourceTree = "<group>"; };
 		B262E28B2BF007B900B6FC38 /* InputManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputManager.swift; sourceTree = "<group>"; };
+		B26654752C05E7C100EB7A20 /* pegTexture.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = pegTexture.usda; sourceTree = "<group>"; };
 		B269F14A2BECDD1E00A3C801 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		B28FD96B2BE160A00057B63E /* RayDebug.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = RayDebug.metal; sourceTree = "<group>"; };
 		B28FD96D2BE165290057B63E /* RayDebugSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RayDebugSystem.swift; sourceTree = "<group>"; };
@@ -165,6 +169,8 @@
 		B259C28C2BA304690049BA2C /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				B26654752C05E7C100EB7A20 /* pegTexture.usda */,
+				B240EDCF2C04A38B001DAFEB /* traina.usda */,
 				B259C28B2BA304690049BA2C /* train.usd */,
 				B24913502BDAB7E700A31CCA /* plane1000.usda */,
 				B249134E2BDAB7DB00A31CCA /* peg.usda */,
@@ -293,8 +299,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				B24913512BDAB7E700A31CCA /* plane1000.usda in Resources */,
+				B240EDD02C04A38B001DAFEB /* traina.usda in Resources */,
 				B259C26D2BA2FABF0049BA2C /* Preview Assets.xcassets in Resources */,
 				B259C26A2BA2FABF0049BA2C /* Assets.xcassets in Resources */,
+				B26654762C05E7C100EB7A20 /* pegTexture.usda in Resources */,
 				B259C28D2BA304690049BA2C /* train.usd in Resources */,
 				B249134F2BDAB7DB00A31CCA /* peg.usda in Resources */,
 			);
