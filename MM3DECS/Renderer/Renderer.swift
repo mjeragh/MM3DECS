@@ -121,14 +121,8 @@ class Renderer: NSObject {
     }
 }
 
-extension Renderer{
-    //This use to be inherting MTKViewDelegate and the resize function was here
-    //but now it is with the engine
-    
-    
+extension Renderer {
     func draw(in view: MTKView) {
-       //The engine is the real delegate, but in the future when handling multple passes and other GPU
-        //code it will be handled here
         guard
             let commandBuffer = Renderer.commandQueue.makeCommandBuffer(),
             let descriptor = view.currentRenderPassDescriptor,
@@ -137,6 +131,7 @@ extension Renderer{
                     descriptor: descriptor) else {
             return
         }
+
         renderEncoder.setDepthStencilState(depthStencilState)
         renderEncoder.setFragmentBytes(
             &Renderer.params,
@@ -147,8 +142,8 @@ extension Renderer{
         let deltaTime = 1 / Float(view.preferredFramesPerSecond)
         delegate?.updateSceneSystems(deltaTime: deltaTime, renderEncoder: renderEncoder)
         
-       
         renderEncoder.endEncoding()
+        
         guard let drawable = view.currentDrawable else {
             return
         }

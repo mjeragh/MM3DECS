@@ -70,103 +70,10 @@ struct TransformComponent: Component {
 }
 
 
-struct RenderableComponent: Component {
-    var mesh: MTKMesh
-    var texture: MTLTexture?
-    let name: String
-    let boundingBox: MDLAxisAlignedBoundingBox
-    let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "RenderableComponent")
 
-    init(device: MTLDevice, name: String, textureName: String? = nil) {
-        guard let assetURL = Bundle.main.url(forResource: name, withExtension: nil) else {
-            fatalError("Model: \(name) not found")
-        }
 
-        let allocator = MTKMeshBufferAllocator(device: device)
-        let asset = MDLAsset(url: assetURL, vertexDescriptor: .defaultLayout, bufferAllocator: allocator)
-        
-        // Load textures
-        asset.loadTextures()
-        
-        guard let mdlMesh = asset.childObjects(of: MDLMesh.self).first as? MDLMesh else {
-            fatalError("No mesh available")
-        }
 
-        do {
-            self.mesh = try MTKMesh(mesh: mdlMesh, device: device)
-        } catch {
-            fatalError("Failed to load mesh: \(error)")
-        }
-        self.name = name
-        self.boundingBox = asset.boundingBox
 
-        // Debugging: Print all materials and their properties
-        for submesh in mdlMesh.submeshes as? [MDLSubmesh] ?? [] {
-            if let material = submesh.material {
-                logger.debug("Found material for submesh: \(material.name)")
-                
-                // Iterate over all possible material semantics
-                let semantics: [MDLMaterialSemantic] = [
-                    .baseColor, .specular, .metallic, .roughness, .emission, .opacity,
-                    .displacement, .ambientOcclusion, .anisotropic,
-                    .clearcoatGloss, .sheen, .bump, .ambientOcclusionScale
-                    // Add other semantics as needed
-                ]
-                
-                for semantic in semantics {
-                    if let property = material.property(with: semantic) {
-                        logger.debug("Material property: \(property.name) of type \(property.type.rawValue)")
-                    }
-                }
-            } else {
-                logger.error("Submesh does not have a material")
-            }
-        }
-
-        // Load texture from USD file
-        if let mdlSubmeshes = mdlMesh.submeshes as? [MDLSubmesh], let material = mdlSubmeshes.first?.material {
-            if let baseColorProperty = material.property(with: .baseColor), baseColorProperty.type == .texture,
-               let mdlTexture = baseColorProperty.textureSamplerValue?.texture {
-                
-                let textureLoader = MTKTextureLoader(device: device)
-                do {
-                    self.texture = try textureLoader.newTexture(texture: mdlTexture, options: nil)
-                    logger.debug("Loaded texture successfully for \(name)")
-                } catch {
-                    logger.error("Failed to load texture: \(error.localizedDescription)")
-                    self.texture = nil
-                }
-            } else {
-                logger.error("No base color texture property found or it is not of type texture for \(name)")
-                self.texture = nil
-            }
-        } else {
-            logger.error("No material found in submeshes for \(name)")
-            self.texture = nil
-        }
-    }
-}
-
-extension RenderableComponent {
-    func render(encoder: MTLRenderCommandEncoder) {
-        encoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: VertexBuffer.index)
-        
-        if let texture = texture {
-            encoder.setFragmentTexture(texture, index: BaseColor.index)
-        } else {
-            logger.error("No texture set for \(name)")
-        }
-
-        for submesh in mesh.submeshes {
-            encoder.drawIndexedPrimitives(
-                type: .triangle,
-                indexCount: submesh.indexCount,
-                indexType: submesh.indexType,
-                indexBuffer: submesh.indexBuffer.buffer,
-                indexBufferOffset: submesh.indexBuffer.offset)
-        }
-    }
-}
 struct UniformsComponent: Component {
     var uniforms: Uniforms  // Uniforms is defined in your Common.h
 }

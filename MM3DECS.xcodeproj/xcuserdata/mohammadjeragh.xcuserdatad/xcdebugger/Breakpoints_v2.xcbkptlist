@@ -55,16 +55,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "020C096C-D99A-43E8-9224-20DC94362E78"
+            uuid = "4B1DAC17-AD06-49B8-BA4F-C38AC235CBC8"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MM3DECS/Textures/TextureController.swift"
+            filePath = "MM3DECS/Renderer/RenderableComponent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "18"
-            endingLineNumber = "18"
-            landmarkName = "loadTexture(device:name:)"
+            startingLineNumber = "24"
+            endingLineNumber = "24"
+            landmarkName = "init(device:name:textureName:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

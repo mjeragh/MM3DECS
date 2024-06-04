@@ -8,32 +8,47 @@
 import Foundation
 import MetalKit
 
-class TextureController {
-    static let shared = TextureController()
-    private var textures: [String: MTLTexture] = [:]
-    
-    private init() {}
-    
-    func loadTexture(device: MTLDevice, name: String) -> MTLTexture? {
-        if let texture = textures[name] {
-            return texture
-        }
-        
-        guard let url = Bundle.main.url(forResource: name, withExtension: nil) else {
-            fatalError("Failed to load texture \(name)")
-        }
-        
-        let textureLoader = MTKTextureLoader(device: device)
-        do {
-            let texture = try textureLoader.newTexture(URL: url, options: nil)
-            textures[name] = texture
-            return texture
-        } catch {
-            fatalError("Failed to load texture \(name): \(error.localizedDescription)")
-        }
+enum TextureController {
+  static var textures: [String: MTLTexture] = [:]
+
+  static func loadTexture(texture: MDLTexture, name: String) -> MTLTexture? {
+    if let texture = textures[name] {
+      return texture
     }
-    
-    func getTexture(name: String) -> MTLTexture? {
-        return textures[name]
+    let textureLoader = MTKTextureLoader(device: Renderer.device)
+    let textureLoaderOptions: [MTKTextureLoader.Option: Any] = [
+      .origin: MTKTextureLoader.Origin.bottomLeft,
+      .generateMipmaps: true
+    ]
+    let texture = try? textureLoader.newTexture(
+      texture: texture,
+      options: textureLoaderOptions)
+    if texture != nil {
+      print("Loaded texture from USD file: \(name)")
+      textures[name] = texture
+    } else {
+      print("Failed to load texture from USD file: \(name)")
     }
+    return texture
+  }
+
+  static func loadTexture(name: String) -> MTLTexture? {
+    if let texture = textures[name] {
+      return texture
+    }
+    let textureLoader = MTKTextureLoader(device: Renderer.device)
+    let texture: MTLTexture?
+    texture = try? textureLoader.newTexture(
+      name: name,
+      scaleFactor: 1.0,
+      bundle: Bundle.main,
+      options: nil)
+    if texture != nil {
+      print("Loaded texture: \(name)")
+      textures[name] = texture
+    } else {
+      print("Failed to load texture: \(name)")
+    }
+    return texture
+  }
 }
