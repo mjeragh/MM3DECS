@@ -73,9 +73,14 @@ class Renderer: NSObject {
         let library = device.makeDefaultLibrary()
         Self.library = library
         let forwardPassVertexFunction = library?.makeFunction(name: "vertex_main")
-        let fragmentFunction =
-        library?.makeFunction(name: "fragment_main")
         
+        
+        let functionConstantValues = MTLFunctionConstantValues()
+        var hasTexture = false
+        functionConstantValues.setConstantValue(&hasTexture, type: .bool, index: 0)
+        
+        let fragmentFunction = try! library?.makeFunction(name: "fragment_main", constantValues: functionConstantValues)
+         
         // Create the model pipeline state object
         let forwardPassPipelineDescriptor = MTLRenderPipelineDescriptor()
         forwardPassPipelineDescriptor.vertexFunction = forwardPassVertexFunction

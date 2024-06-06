@@ -20,7 +20,9 @@ class RenderSystem: SystemProtocol {
                   let transform = SceneManager.entityManager.getComponent(type: TransformComponent.self, for: entity) else {
                 continue
             }
+            renderEncoder.pushDebugGroup(entity.name)
             render(with: renderable, transformConstant: transform, viewMatrix: SceneManager.getViewMatrix()!, projectionMatrix: SceneManager.getProjectionMatrix()!, renderEncoder: renderEncoder)
+            renderEncoder.popDebugGroup()
         }
     }
 

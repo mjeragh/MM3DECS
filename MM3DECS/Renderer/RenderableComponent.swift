@@ -7,12 +7,8 @@
 
 import Foundation
 import MetalKit
+import OSLog
 // Example components
-import simd
-import os.log
-
-
-
 struct RenderableComponent: Component {
     var mesh: MTKMesh
     var texture: MTLTexture?
@@ -21,7 +17,7 @@ struct RenderableComponent: Component {
     let boundingBox: MDLAxisAlignedBoundingBox
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "RenderableComponent")
 
-    init(device: MTLDevice, name: String, textureName: String? = nil) {
+    init(device: MTLDevice, name: String) {
         guard let assetURL = Bundle.main.url(forResource: name, withExtension: nil) else {
             fatalError("Model: \(name) not found")
         }
@@ -44,62 +40,55 @@ struct RenderableComponent: Component {
         self.name = name
         self.boundingBox = asset.boundingBox
 
-        // Debugging: Print all materials and their properties
+        var foundTexture = false
         for submesh in mdlMesh.submeshes as? [MDLSubmesh] ?? [] {
             if let material = submesh.material {
-                logger.debug("Found material for submesh: \(material.name)")
-                
-                // Iterate over all possible material semantics
                 let semantics: [MDLMaterialSemantic] = [
                     .baseColor, .specular, .metallic, .roughness, .emission, .opacity,
                     .displacement, .ambientOcclusion, .anisotropic,
                     .clearcoatGloss, .sheen, .bump, .ambientOcclusionScale
-                    // Add other semantics as needed
                 ]
-                
-                var foundTexture = false
                 for semantic in semantics {
                     if let property = material.property(with: semantic) {
-                        logger.debug("Material property: \(property.name) of type \(property.type.rawValue) with semantic \(semantic.rawValue)")
                         if property.type == .texture, let mdlTexture = property.textureSamplerValue?.texture {
                             self.texture = TextureController.loadTexture(texture: mdlTexture, name: name)
-                            if self.texture != nil {
-                                logger.debug("Loaded texture successfully for \(name) with semantic \(semantic.rawValue)")
-                                foundTexture = true
-                                break
-                            } else {
-                                logger.error("Failed to load texture for \(name) with semantic \(semantic.rawValue)")
-                            }
+                            foundTexture = true
+                            logger.debug("Loaded texture successfully for \(name) with semantic \(semantic.rawValue)")
+                            break
                         } else if property.type == .float3 || property.type == .float4 {
-                            // Handle color properties (baseColor)
-                            let color = property.float4Value
-                            self.baseColor = color
-                            logger.debug("Loaded base color successfully for \(name): \(color)")
+                           let color = property.float4Value 
+                                self.baseColor = color
+                                foundTexture = true
+                                logger.debug("Loaded base color successfully for \(name): \(color)")
+                                break
+                            
                         }
                     }
                 }
-                if !foundTexture {
-                    logger.error("No valid texture found for \(name)")
+                if foundTexture {
+                    break
                 }
-            } else {
-                logger.error("Submesh does not have a material")
             }
         }
+        if !foundTexture {
+            logger.error("No valid texture or color found for \(name)")
+        }
     }
-}
 
-extension RenderableComponent {
     func render(encoder: MTLRenderCommandEncoder) {
         encoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: VertexBuffer.index)
         
         if let texture = texture {
             encoder.setFragmentTexture(texture, index: BaseColor.index)
-        } else if let baseColor = baseColor {
-            var color = baseColor
-            encoder.setFragmentBytes(&color, length: MemoryLayout<SIMD4<Float>>.stride, index: BaseColor.index)
-            logger.debug("Using base color for \(name)")
+            var hasTexture = true
+            encoder.setFragmentBytes(&hasTexture, length: MemoryLayout<Bool>.stride, index: 0)
         } else {
-            logger.error("No texture or base color set for \(name)")
+            var hasTexture = false
+            encoder.setFragmentBytes(&hasTexture, length: MemoryLayout<Bool>.stride, index: 0)
+        }
+
+        if var baseColor = baseColor {
+            encoder.setFragmentBytes(&baseColor, length: MemoryLayout<SIMD4<Float>>.stride, index: BaseColor.index)
         }
 
         for submesh in mesh.submeshes {
