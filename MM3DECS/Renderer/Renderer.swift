@@ -53,10 +53,6 @@ class Renderer: NSObject {
 //    var isReadyToRender = false
     static var params = Params()
     
-//    func startRendering() {
-//        self.isReadyToRender = true
-//    }
-    
     init(metalView: MTKView) {
         guard
             let device = MTLCreateSystemDefaultDevice(),
@@ -66,8 +62,6 @@ class Renderer: NSObject {
         Renderer.device = device
         Renderer.commandQueue = commandQueue
         metalView.device = device
-        
-        //Scene Managment and entity init
         
         // create the shader function library
         let library = device.makeDefaultLibrary()
@@ -91,14 +85,11 @@ class Renderer: NSObject {
         
         do {
             forwardPassPipelineState = try device.makeRenderPipelineState(descriptor: forwardPassPipelineDescriptor)
-            //Renderer.defaultPipelinestate = forwardPassPipelineState//Was there for RayDebug
         } catch let error {
             fatalError("Failed to create model pipeline state, error: \(error)")
         }
         
         depthStencilState = Renderer.buildDepthStencilState()
-        //This code is marked as the beginning of the refactoring
-       
         super.init()
         metalView.clearColor = MTLClearColor(
             red: 0.0,
@@ -106,20 +97,11 @@ class Renderer: NSObject {
             blue: 0.19,
             alpha: 1.0)
         metalView.depthStencilPixelFormat = .depth32Float
-//        metalView.delegate = self
-//        mtkView(metalView, drawableSizeWillChange: metalView.bounds.size)
-        
-        
-    }//Init
-    
-    
+    }
     
     static func buildDepthStencilState() -> MTLDepthStencilState? {
-        // 1
         let descriptor = MTLDepthStencilDescriptor()
-        // 2
         descriptor.depthCompareFunction = .less
-        // 3
         descriptor.isDepthWriteEnabled = true
         return Renderer.device.makeDepthStencilState(
             descriptor: descriptor)

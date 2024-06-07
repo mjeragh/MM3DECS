@@ -5,11 +5,10 @@ using namespace metal;
 constant bool hasColorTexture [[function_constant(0)]];
 
 fragment float4 fragment_main(
-  constant Params &params [[buffer(ParamsBuffer)]],
-  VertexOut in [[stage_in]],
-  texture2d<float> baseColorTexture [[texture(BaseColor)]],
-  constant float4 &baseColor [[buffer(BaseColor)]],
-  constant bool &hasTexture [[function_constant(hasColorTexture)]])
+    constant Params &params [[buffer(ParamsBuffer)]],
+    VertexOut in [[stage_in]],
+    texture2d<float> baseColorTexture [[texture(BaseColor), function_constant(hasColorTexture)]],
+    constant float4 &baseColor [[buffer(BaseColor)]])
 {
     constexpr sampler textureSampler(
         filter::linear,
@@ -18,8 +17,8 @@ fragment float4 fragment_main(
         address::repeat);
 
     float3 color;
-    if (hasTexture) {
-        color = baseColorTexture.sample(textureSampler, in.uv * params.tiling).rgb;
+    if (hasColorTexture) {
+        color = float3(0.4,0.1,0.1);//baseColorTexture.sample(textureSampler, in.uv * params.tiling).rgb;
     } else {
         color = baseColor.rgb;
     }

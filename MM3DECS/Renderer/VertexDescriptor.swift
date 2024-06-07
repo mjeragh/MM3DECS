@@ -48,21 +48,60 @@ extension MDLVertexDescriptor {
       offset: 0,
       bufferIndex: VertexBuffer.index)
     offset += MemoryLayout<float3>.stride
-      
+
     vertexDescriptor.attributes[1] = MDLVertexAttribute(
       name: MDLVertexAttributeNormal,
       format: .float3,
       offset: offset,
       bufferIndex: VertexBuffer.index)
     offset += MemoryLayout<float3>.stride
-      
-      vertexDescriptor.attributes[2] = MDLVertexAttribute(name: MDLVertexAttributeTextureCoordinate, format: .float2, offset: offset, bufferIndex: VertexBuffer.index)
-      offset += MemoryLayout<float2>.stride
+
+    vertexDescriptor.attributes[2] = MDLVertexAttribute(
+      name: MDLVertexAttributeTextureCoordinate,
+      format: .float2,
+      offset: offset,
+      bufferIndex: VertexBuffer.index)
+    offset += MemoryLayout<float2>.stride
+
+    vertexDescriptor.attributes[3] = MDLVertexAttribute(
+      name: MDLVertexAttributeColor,
+      format: .float3,
+      offset: offset,
+      bufferIndex: VertexBuffer.index)
+    offset += MemoryLayout<float3>.stride
+
+    vertexDescriptor.attributes[4] = MDLVertexAttribute(
+      name: MDLVertexAttributeTangent,
+      format: .float3,
+      offset: offset,
+      bufferIndex: VertexBuffer.index)
+    offset += MemoryLayout<float3>.stride
+
+    vertexDescriptor.attributes[5] = MDLVertexAttribute(
+      name: MDLVertexAttributeBitangent,
+      format: .float3,
+      offset: offset,
+      bufferIndex: VertexBuffer.index)
+    offset += MemoryLayout<float3>.stride
+
+    vertexDescriptor.attributes[6] = MDLVertexAttribute(
+      name: MDLVertexAttributeJointIndices,
+      format: .uShort4,
+      offset: offset,
+      bufferIndex: VertexBuffer.index)
+    offset += MemoryLayout<ushort>.stride * 4
+
+    vertexDescriptor.attributes[7] = MDLVertexAttribute(
+      name: MDLVertexAttributeJointWeights,
+      format: .float4,
+      offset: offset,
+      bufferIndex: VertexBuffer.index)
+    offset += MemoryLayout<float4>.stride
+
     vertexDescriptor.layouts[0] = MDLVertexBufferLayout(stride: offset)
     return vertexDescriptor
   }
 }
-
 
 extension Attributes {
   var index: Int {
@@ -81,4 +120,3 @@ extension TextureIndices {
     return Int(self.rawValue)
   }
 }
-

@@ -1,14 +1,7 @@
-//
-//  RenderableComponent.swift
-//  MM3DECS
-//
-//  Created by Mohammad Jeragh on 04/06/2024.
-//
-
 import Foundation
 import MetalKit
 import OSLog
-// Example components
+
 struct RenderableComponent: Component {
     var mesh: MTKMesh
     var texture: MTLTexture?
@@ -56,12 +49,10 @@ struct RenderableComponent: Component {
                             logger.debug("Loaded texture successfully for \(name) with semantic \(semantic.rawValue)")
                             break
                         } else if property.type == .float3 || property.type == .float4 {
-                           let color = property.float4Value 
-                                self.baseColor = color
-                                foundTexture = true
-                                logger.debug("Loaded base color successfully for \(name): \(color)")
-                                break
-                            
+                            self.baseColor = property.float4Value
+                            foundTexture = true
+                            logger.debug("Loaded base color successfully for \(name): \(property.float4Value)")
+                            break
                         }
                     }
                 }
@@ -80,14 +71,12 @@ struct RenderableComponent: Component {
         
         if let texture = texture {
             encoder.setFragmentTexture(texture, index: BaseColor.index)
-            var hasTexture = true
-            encoder.setFragmentBytes(&hasTexture, length: MemoryLayout<Bool>.stride, index: 0)
-        } else {
-            var hasTexture = false
-            encoder.setFragmentBytes(&hasTexture, length: MemoryLayout<Bool>.stride, index: 0)
         }
 
         if var baseColor = baseColor {
+            encoder.setFragmentBytes(&baseColor, length: MemoryLayout<SIMD4<Float>>.stride, index: BaseColor.index)
+        } else {
+            var baseColor = float4(0.1,0.1,0.4,1)
             encoder.setFragmentBytes(&baseColor, length: MemoryLayout<SIMD4<Float>>.stride, index: BaseColor.index)
         }
 

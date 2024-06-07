@@ -38,15 +38,19 @@ vertex VertexOut vertex_main(
     VertexIn in [[stage_in]],
     constant Uniforms &uniforms [[buffer(UniformsBuffer)]])
 {
-    float4 position =
-        uniforms.projectionMatrix * uniforms.viewMatrix
-        * uniforms.modelMatrix * in.position;
-    float3 normal = in.normal;
-    VertexOut out {
-        .position = position,
-        .worldNormal = normal,
-        .uv = in.uv // Assuming you have a texcoord attribute in VertexIn
-    };
+    VertexOut out;
+
+    // Transform the vertex position
+    float4 worldPosition = uniforms.modelMatrix * in.position;
+    out.position = uniforms.projectionMatrix * uniforms.viewMatrix * worldPosition;
+
+    out.worldPosition = worldPosition.xyz;
+    out.worldNormal = (uniforms.normalMatrix * in.normal).xyz;
+    out.worldTangent = (uniforms.normalMatrix * in.tangent).xyz;
+    out.worldBitangent = (uniforms.normalMatrix * in.bitangent).xyz;
+    out.uv = in.uv;
+    out.color = in.color;
+    out.shadowPosition = uniforms.shadowProjectionMatrix * uniforms.shadowViewMatrix * worldPosition;
+
     return out;
 }
-
