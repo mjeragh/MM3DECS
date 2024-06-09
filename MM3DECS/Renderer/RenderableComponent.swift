@@ -6,6 +6,7 @@ struct RenderableComponent: Component {
     var mesh: MTKMesh
     var texture: MTLTexture?
     var baseColor: SIMD4<Float>?
+    var argumentBuffer: MTLBuffer?
     let name: String
     let boundingBox: MDLAxisAlignedBoundingBox
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "RenderableComponent")
@@ -64,29 +65,36 @@ struct RenderableComponent: Component {
         if !foundTexture {
             logger.error("No valid texture or color found for \(name)")
         }
-    }
+        
+        //create Argument Buffer
+        let argumentEncoder = Renderer.library.device.makeArgumentEncoder(arguments: Arguments.self)
+        let argumentBufferSize = argumentEncoder?.encodedLength
+        argumentBuffer = device.makeBuffer(length: argumentBufferSize, options: [])
+        argumentBuffer?.label = "ArgumentBuffer"
+        argumentEncoder?.setArgumentBuffer(argumentBuffer, offset: 0)
+        if let texture = texture {
+                  argumentEncoder.setTexture(texture, index: 0)
+              }
+              
+              if var baseColor = baseColor {
+                  argumentEncoder.setBytes(&baseColor, length: MemoryLayout<SIMD4<Float>>.stride, index: 1)
+              }
+
+              var hasTexture = texture != nil
+              argumentEncoder.setBytes(&hasTexture, length: MemoryLayout<Bool>.stride, index: 2)
+          }
 
     func render(encoder: MTLRenderCommandEncoder) {
-        encoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: VertexBuffer.index)
-        
-        if let texture = texture {
-            encoder.setFragmentTexture(texture, index: BaseColor.index)
-        }
+              encoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: VertexBuffer.index)
+              encoder.setFragmentBuffer(argumentBuffer, offset: 0, index: 0)
 
-        if var baseColor = baseColor {
-            encoder.setFragmentBytes(&baseColor, length: MemoryLayout<SIMD4<Float>>.stride, index: BaseColor.index)
-        } else {
-            var baseColor = float4(0.1,0.1,0.4,1)
-            encoder.setFragmentBytes(&baseColor, length: MemoryLayout<SIMD4<Float>>.stride, index: BaseColor.index)
-        }
-
-        for submesh in mesh.submeshes {
-            encoder.drawIndexedPrimitives(
-                type: .triangle,
-                indexCount: submesh.indexCount,
-                indexType: submesh.indexType,
-                indexBuffer: submesh.indexBuffer.buffer,
-                indexBufferOffset: submesh.indexBuffer.offset)
-        }
-    }
-}
+              for submesh in mesh.submeshes {
+                  encoder.drawIndexedPrimitives(
+                      type: .triangle,
+                      indexCount: submesh.indexCount,
+                      indexType: submesh.indexType,
+                      indexBuffer: submesh.indexBuffer.buffer,
+                      indexBufferOffset: submesh.indexBuffer.offset)
+              }
+          }
+      }

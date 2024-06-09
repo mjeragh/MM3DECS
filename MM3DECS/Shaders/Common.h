@@ -34,6 +34,7 @@ typedef enum {
   JointBuffer = 15,
   ModelTransformBuffer = 16,
   InstancesBuffer = 17,
+    ArgumentsBuffer = 18
 } BufferIndices;
 
 typedef enum {
@@ -117,5 +118,12 @@ typedef enum {
    RenderTargetNormal = 2,
    RenderTargetPosition = 3
 } RenderTargetIndecies;
+
+
+struct Arguments {
+    constant float4 &baseColor;
+    texture2d<float> baseColorTexture;
+    bool hasTexture;
+};
 
 #endif /* Common_h */
