@@ -1,4 +1,3 @@
-import Foundation
 import MetalKit
 import OSLog
 
@@ -66,35 +65,62 @@ struct RenderableComponent: Component {
             logger.error("No valid texture or color found for \(name)")
         }
         
-        //create Argument Buffer
-        let argumentEncoder = Renderer.library.device.makeArgumentEncoder(arguments: Arguments.self)
-        let argumentBufferSize = argumentEncoder?.encodedLength
+        // Define Argument Descriptors
+        let baseColorDescriptor = MTLArgumentDescriptor()
+        baseColorDescriptor.dataType = .float4
+        baseColorDescriptor.index = 1
+        baseColorDescriptor.access = .readOnly
+
+        let textureDescriptor = MTLArgumentDescriptor()
+        textureDescriptor.dataType = .texture
+        textureDescriptor.index = 0
+        textureDescriptor.access = .readOnly
+
+        let hasTextureDescriptor = MTLArgumentDescriptor()
+        hasTextureDescriptor.dataType = .bool
+        hasTextureDescriptor.index = 2
+        hasTextureDescriptor.access = .readOnly
+
+        let argumentDescriptors = [textureDescriptor, baseColorDescriptor, hasTextureDescriptor]
+        
+        // Create Argument Encoder
+        guard let argumentEncoder = Renderer.device.makeArgumentEncoder(arguments: argumentDescriptors) else {
+            fatalError("Failed to create argument encoder")
+        }
+        
+        // Create Argument Buffer
+        let argumentBufferSize = argumentEncoder.encodedLength
         argumentBuffer = device.makeBuffer(length: argumentBufferSize, options: [])
         argumentBuffer?.label = "ArgumentBuffer"
-        argumentEncoder?.setArgumentBuffer(argumentBuffer, offset: 0)
+        argumentEncoder.setArgumentBuffer(argumentBuffer, offset: 0)
+        
+        // Set Arguments
         if let texture = texture {
-                  argumentEncoder.setTexture(texture, index: 0)
-              }
-              
-              if var baseColor = baseColor {
-                  argumentEncoder.setBytes(&baseColor, length: MemoryLayout<SIMD4<Float>>.stride, index: 1)
-              }
-
-              var hasTexture = texture != nil
-              argumentEncoder.setBytes(&hasTexture, length: MemoryLayout<Bool>.stride, index: 2)
-          }
+            argumentEncoder.setTexture(texture, index: 0)
+        }
+        
+        if let baseColor = baseColor {
+            var color = baseColor
+            let buffer = device.makeBuffer(bytes: &color, length: MemoryLayout<SIMD4<Float>>.stride, options: [])
+            argumentEncoder.setBuffer(buffer, offset: 0, index: 1)
+        }
+        
+        var hasTexture = texture != nil
+        let hasTextureBuffer = device.makeBuffer(bytes: &hasTexture, length: MemoryLayout<Bool>.stride, options: [])
+        argumentEncoder.setBuffer(hasTextureBuffer, offset: 0, index: 2)
+    }
 
     func render(encoder: MTLRenderCommandEncoder) {
-              encoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: VertexBuffer.index)
-              encoder.setFragmentBuffer(argumentBuffer, offset: 0, index: 0)
+        encoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: VertexBuffer.index)
+        encoder.setFragmentBuffer(argumentBuffer, offset: 0, index: ArgumentsBuffer.index)
 
-              for submesh in mesh.submeshes {
-                  encoder.drawIndexedPrimitives(
-                      type: .triangle,
-                      indexCount: submesh.indexCount,
-                      indexType: submesh.indexType,
-                      indexBuffer: submesh.indexBuffer.buffer,
-                      indexBufferOffset: submesh.indexBuffer.offset)
-              }
-          }
-      }
+        for submesh in mesh.submeshes {
+            encoder.drawIndexedPrimitives(
+                type: .triangle,
+                indexCount: submesh.indexCount,
+                indexType: submesh.indexType,
+                indexBuffer: submesh.indexBuffer.buffer,
+                indexBufferOffset: submesh.indexBuffer.offset)
+        }
+    }
+}

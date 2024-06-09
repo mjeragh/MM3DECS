@@ -4,6 +4,15 @@ using namespace metal;
 
 constant bool hasColorTexture [[function_constant(0)]];
 
+
+
+struct Arguments {
+    constant float4 &baseColor;
+    texture2d<float> baseColorTexture;
+    bool hasTexture;
+};
+
+
 fragment float4 fragment_main(
     constant Params &params [[buffer(ParamsBuffer)]],
     VertexOut in [[stage_in]],

@@ -119,11 +119,4 @@ typedef enum {
    RenderTargetPosition = 3
 } RenderTargetIndecies;
 
-
-struct Arguments {
-    constant float4 &baseColor;
-    texture2d<float> baseColorTexture;
-    bool hasTexture;
-};
-
 #endif /* Common_h */
