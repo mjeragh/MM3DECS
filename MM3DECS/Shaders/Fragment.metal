@@ -4,14 +4,11 @@ using namespace metal;
 
 constant bool hasColorTexture [[function_constant(0)]];
 
-
-
 struct Arguments {
-    constant float4 &baseColor;
+    float4 baseColor;
     texture2d<float> baseColorTexture;
-    bool hasTexture;
+    uint hasTexture;
 };
-
 
 fragment float4 fragment_main(
     constant Params &params [[buffer(ParamsBuffer)]],
@@ -25,7 +22,7 @@ fragment float4 fragment_main(
         address::repeat);
 
     float3 color;
-    if (args.hasTexture) {
+    if (args.hasTexture == 1) {
         color = args.baseColorTexture.sample(textureSampler, in.uv * params.tiling).rgb;
     } else {
         color = args.baseColor.rgb;

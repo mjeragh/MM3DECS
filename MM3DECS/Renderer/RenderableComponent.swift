@@ -63,30 +63,15 @@ struct RenderableComponent: Component {
         }
         if !foundTexture {
             logger.error("No valid texture or color found for \(name)")
+            self.texture = TextureController.loadTexture(name: name)
         }
         
-        // Define Argument Descriptors
-        let baseColorDescriptor = MTLArgumentDescriptor()
-        baseColorDescriptor.dataType = .float4
-        baseColorDescriptor.index = 1
-        baseColorDescriptor.access = .readOnly
-
-        let textureDescriptor = MTLArgumentDescriptor()
-        textureDescriptor.dataType = .texture
-        textureDescriptor.index = 0
-        textureDescriptor.access = .readOnly
-
-        let hasTextureDescriptor = MTLArgumentDescriptor()
-        hasTextureDescriptor.dataType = .bool
-        hasTextureDescriptor.index = 2
-        hasTextureDescriptor.access = .readOnly
-
-        let argumentDescriptors = [textureDescriptor, baseColorDescriptor, hasTextureDescriptor]
-        
-        // Create Argument Encoder
-        guard let argumentEncoder = Renderer.device.makeArgumentEncoder(arguments: argumentDescriptors) else {
-            fatalError("Failed to create argument encoder")
+        // Create Argument Encoder from the fragment function
+        guard let fragmentFunction = Renderer.library.makeFunction(name: "fragment_main") else {
+            fatalError("Fragment function not found")
         }
+
+        let argumentEncoder = fragmentFunction.makeArgumentEncoder(bufferIndex: ArgumentsBuffer.index)
         
         // Create Argument Buffer
         let argumentBufferSize = argumentEncoder.encodedLength
@@ -96,18 +81,20 @@ struct RenderableComponent: Component {
         
         // Set Arguments
         if let texture = texture {
-            argumentEncoder.setTexture(texture, index: 0)
+            argumentEncoder.setTexture(texture, index: 1)
+            logger.debug("texture loaded")
         }
         
-        if let baseColor = baseColor {
-            var color = baseColor
-            let buffer = device.makeBuffer(bytes: &color, length: MemoryLayout<SIMD4<Float>>.stride, options: [])
-            argumentEncoder.setBuffer(buffer, offset: 0, index: 1)
+        if var baseColor = baseColor {
+            let bufferPointer = argumentEncoder.constantData(at: 0)
+            bufferPointer.copyMemory(from: &baseColor, byteCount: MemoryLayout<SIMD4<Float>>.size)
+            logger.debug("baseColor: \(baseColor)")
         }
         
-        var hasTexture = texture != nil
-        let hasTextureBuffer = device.makeBuffer(bytes: &hasTexture, length: MemoryLayout<Bool>.stride, options: [])
-        argumentEncoder.setBuffer(hasTextureBuffer, offset: 0, index: 2)
+        var hasTexture: UInt = texture != nil ? 1 : 0
+        logger.debug("hasTexture: \(hasTexture)")
+        let hasTexturePointer = argumentEncoder.constantData(at: 2)
+        hasTexturePointer.copyMemory(from: &hasTexture, byteCount: MemoryLayout<UInt>.size)
     }
 
     func render(encoder: MTLRenderCommandEncoder) {
