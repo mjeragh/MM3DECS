@@ -102,10 +102,10 @@ typedef struct {
 } Material;
 
 typedef struct {
-  uint width;
-  uint height;
-  uint tiling;
-  uint lightCount;
+  unsigned int width;
+  unsigned int height;
+  unsigned int tiling;
+  unsigned int lightCount;
   vector_float3 cameraPosition;
   float scaleFactor;
   bool alphaTesting;

@@ -156,7 +156,7 @@ class CameraManager {
     func updateCameraTransformFromInputManager() {
         
         guard let camera = getActiveCameraEntity(),
-        var archballCamera = entityManager.getComponent(type: ArcballCameraComponent.self, for: camera),
+        let archballCamera = entityManager.getComponent(type: ArcballCameraComponent.self, for: camera),
         var transform = entityManager.getComponent(type: TransformComponent.self, for: camera)
             else {
             logger.warning("Updating non archball camera!!!!")

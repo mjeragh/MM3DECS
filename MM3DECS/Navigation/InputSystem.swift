@@ -66,7 +66,7 @@ class InputSystem: SystemProtocol {
                 selectedEntity = handleTouchOnXZPlane(at: touchLocation)
                 if let selected = selectedEntity {
                     // An object was touched, mark it as selected
-                    var selectionComponent = SceneManager.entityManager.getComponent(type: SelectionComponent.self, for: selected)!
+                    let selectionComponent = SceneManager.entityManager.getComponent(type: SelectionComponent.self, for: selected)!
                     SceneManager.entityManager.addComponent(component: selectionComponent, to: selected)
                     logger.debug("Object:\(selected.name) has been selected")
                 } else {

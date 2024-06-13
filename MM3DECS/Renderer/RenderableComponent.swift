@@ -44,7 +44,7 @@ struct RenderableComponent: Component {
                 for semantic in semantics {
                     if let property = material.property(with: semantic) {
                         if property.type == .texture, let mdlTexture = property.textureSamplerValue?.texture {
-                            self.texture = TextureController.loadTexture(texture: mdlTexture, name: name)
+                            self.texture = TextureController.shared.loadTexture(texture: mdlTexture, name: name) //TextureController.loadTexture(texture: mdlTexture, name: name)
                             foundTexture = true
                             logger.debug("Loaded texture successfully for \(name) with semantic \(semantic.rawValue)")
                             break
@@ -63,7 +63,7 @@ struct RenderableComponent: Component {
         }
         if !foundTexture {
             logger.error("No valid texture or color found for \(name)")
-            self.texture = TextureController.loadTexture(name: name)
+            self.texture = TextureController.shared.loadTexture(name: name)
         }
         
         // Create Argument Encoder from the fragment function

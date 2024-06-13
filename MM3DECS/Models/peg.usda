@@ -8,6 +8,6 @@ def Sphere "Peg"
 {
     double3 xformOp:translate = (0, 0, 0)
     uniform token[] xformOpOrder = ["xformOp:translate"]
-    color3f[] primvars:displayColor = [(1, 0, 0)]  # Red color
+    color3f[] primvars:displayColor = [(1, 0, 1)]  # Purple color
     double radius = 5
 }

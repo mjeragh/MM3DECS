@@ -65,7 +65,7 @@ class DebugBoundingBox : SystemProtocol {
   }
   
     func update(deltaTime: Float, renderEncoder: any MTLRenderCommandEncoder) {
-        var uniforms = Uniforms()
+        let uniforms = Uniforms()
         render(renderEncoder: renderEncoder,  uniforms: uniforms)
     }
     
