@@ -83,10 +83,9 @@ def Xform "Cube" (
         }
     }
 
-    def Mesh "Cube" (
-        extent = [(-0.5, -0.5, -0.5), (0.5, 0.5, 0.5)]
-    )
+    def Mesh "Cube"
     {
+        float3[] extent = [(-0.5, -0.5, -0.5), (0.5, 0.5, 0.5)]
         int[] faceVertexCounts = [4, 4, 4, 4, 4, 4]
         int[] faceVertexIndices = [0, 1, 2, 3, 4, 5, 6, 7, 0, 4, 7, 3, 1, 5, 6, 2, 0, 3, 7, 4, 1, 2, 6, 5]
         point3f[] points = [
@@ -100,18 +99,15 @@ def Xform "Cube" (
             (-0.5,  0.5,  0.5)
         ]
 
-        int[] faceMaterialIndices = [0, 1, 2, 3, 4, 5]
-
-        rel material:binding = </Cube/Materials/Red>
         uniform token subdivisionScheme = "none"
-        rel primvars:displayColor:indices = [0, 1, 2, 3, 4, 5]
-        color3f[] primvars:displayColor = [
-            (1.0, 0.0, 0.0),
-            (0.0, 1.0, 0.0),
-            (0.0, 0.0, 1.0),
-            (1.0, 1.0, 0.0),
-            (0.0, 1.0, 1.0),
-            (1.0, 0.0, 1.0)
+
+        rel material:binding = [
+            </Cube/Materials/Red>,
+            </Cube/Materials/Green>,
+            </Cube/Materials/Blue>,
+            </Cube/Materials/Yellow>,
+            </Cube/Materials/Cyan>,
+            </Cube/Materials/Magenta>
         ]
     }
 }

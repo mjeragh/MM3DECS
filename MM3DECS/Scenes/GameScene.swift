@@ -50,7 +50,7 @@ class GameScene: SceneProtocol {
         let scale = Float(0.1)
         delegate?.addEntityToScene(name: "Sun", with: RenderableComponent(device: Renderer.device, name: "peg.usda"), with: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), withInputComponent: true, withSelectionComponent: true)
         delegate?.addEntityToScene(name: "Moon", with: RenderableComponent(device: Renderer.device, name: "peg.usda"), with: TransformComponent(position: float3(-10,0,3), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), withInputComponent: true, withSelectionComponent: true)
-        delegate?.addEntityToScene(name: "blacksmith", with: RenderableComponent(device: Renderer.device, name: "blacksmith.usdz"), with: TransformComponent(position: float3(10, 0, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), withInputComponent: true, withSelectionComponent: true)
+        delegate?.addEntityToScene(name: "colored_cube", with: RenderableComponent(device: Renderer.device, name: "colored_cube.usda"), with: TransformComponent(position: float3(10, 0, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), withInputComponent: true, withSelectionComponent: true)
                // Add other entities and components as needed
        
         
