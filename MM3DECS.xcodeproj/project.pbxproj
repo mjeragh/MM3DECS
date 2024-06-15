@@ -33,13 +33,13 @@
 		B262E28C2BF007B900B6FC38 /* InputManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B262E28B2BF007B900B6FC38 /* InputManager.swift */; };
 		B26654762C05E7C100EB7A20 /* pegTexture.usda in Resources */ = {isa = PBXBuildFile; fileRef = B26654752C05E7C100EB7A20 /* pegTexture.usda */; };
 		B269F14B2BECDD1E00A3C801 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B269F14A2BECDD1E00A3C801 /* CameraManager.swift */; };
+		B26FB56C2C1E202700DC6842 /* colored_cube.usda in Resources */ = {isa = PBXBuildFile; fileRef = B26FB56B2C1E202700DC6842 /* colored_cube.usda */; };
 		B28FD96C2BE160A00057B63E /* RayDebug.metal in Sources */ = {isa = PBXBuildFile; fileRef = B28FD96B2BE160A00057B63E /* RayDebug.metal */; };
 		B28FD96E2BE165290057B63E /* RayDebugSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28FD96D2BE165290057B63E /* RayDebugSystem.swift */; };
 		B294EDEC2BD3E88B008E6F2E /* InputSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDEB2BD3E88B008E6F2E /* InputSystem.swift */; };
 		B294EDEE2BD3E90F008E6F2E /* InputComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDED2BD3E90F008E6F2E /* InputComponent.swift */; };
 		B294EDF22BD4F863008E6F2E /* SelectionComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDF12BD4F863008E6F2E /* SelectionComponent.swift */; };
 		B2A6D86A2C03484A00DF548D /* TextureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A6D8692C03484A00DF548D /* TextureController.swift */; };
-		B2DFB85B2C1E1A9500AB0A6E /* colored_cube.usda in Resources */ = {isa = PBXBuildFile; fileRef = B2DFB85A2C1E1A7F00AB0A6E /* colored_cube.usda */; };
 		B2DFFD552C0F99F50072082F /* RenderableComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2DFFD542C0F99F50072082F /* RenderableComponent.swift */; };
 		B2DFFD572C1361E30072082F /* barrel.usdz in Resources */ = {isa = PBXBuildFile; fileRef = B2DFFD562C1361E30072082F /* barrel.usdz */; };
 		B2DFFD592C1362B00072082F /* walker.usda in Resources */ = {isa = PBXBuildFile; fileRef = B2DFFD582C1362B00072082F /* walker.usda */; };
@@ -85,13 +85,13 @@
 		B262E28B2BF007B900B6FC38 /* InputManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputManager.swift; sourceTree = "<group>"; };
 		B26654752C05E7C100EB7A20 /* pegTexture.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = pegTexture.usda; sourceTree = "<group>"; };
 		B269F14A2BECDD1E00A3C801 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
+		B26FB56B2C1E202700DC6842 /* colored_cube.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = colored_cube.usda; sourceTree = "<group>"; };
 		B28FD96B2BE160A00057B63E /* RayDebug.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = RayDebug.metal; sourceTree = "<group>"; };
 		B28FD96D2BE165290057B63E /* RayDebugSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RayDebugSystem.swift; sourceTree = "<group>"; };
 		B294EDEB2BD3E88B008E6F2E /* InputSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputSystem.swift; sourceTree = "<group>"; };
 		B294EDED2BD3E90F008E6F2E /* InputComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputComponent.swift; sourceTree = "<group>"; };
 		B294EDF12BD4F863008E6F2E /* SelectionComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionComponent.swift; sourceTree = "<group>"; };
 		B2A6D8692C03484A00DF548D /* TextureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureController.swift; sourceTree = "<group>"; };
-		B2DFB85A2C1E1A7F00AB0A6E /* colored_cube.usda */ = {isa = PBXFileReference; lastKnownFileType = text; path = colored_cube.usda; sourceTree = "<group>"; };
 		B2DFFD542C0F99F50072082F /* RenderableComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderableComponent.swift; sourceTree = "<group>"; };
 		B2DFFD562C1361E30072082F /* barrel.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = barrel.usdz; sourceTree = "<group>"; };
 		B2DFFD582C1362B00072082F /* walker.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = walker.usda; sourceTree = "<group>"; };
@@ -187,7 +187,7 @@
 		B259C28C2BA304690049BA2C /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				B2DFB85A2C1E1A7F00AB0A6E /* colored_cube.usda */,
+				B26FB56B2C1E202700DC6842 /* colored_cube.usda */,
 				B2DFFD562C1361E30072082F /* barrel.usdz */,
 				B2DFFD5A2C1362B60072082F /* pine-5.usdz */,
 				B2DFFD582C1362B00072082F /* walker.usda */,
@@ -336,7 +336,7 @@
 				B259C28D2BA304690049BA2C /* train.usd in Resources */,
 				B2DFFD632C1362C90072082F /* blacksmith.usdz in Resources */,
 				B2DFFD622C1362C90072082F /* bell-tower.usdz in Resources */,
-				B2DFB85B2C1E1A9500AB0A6E /* colored_cube.usda in Resources */,
+				B26FB56C2C1E202700DC6842 /* colored_cube.usda in Resources */,
 				B2DFFD5B2C1362B60072082F /* pine-5.usdz in Resources */,
 				B249134F2BDAB7DB00A31CCA /* peg.usda in Resources */,
 				B2DFFD572C1361E30072082F /* barrel.usdz in Resources */,
