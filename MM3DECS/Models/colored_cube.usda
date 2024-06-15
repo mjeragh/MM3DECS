@@ -4,110 +4,130 @@
     upAxis = "Y"
 )
 
+def Scope "Materials"
+{
+    def Material "Red"
+    {
+        token outputs:surface.connect = </Materials/Red/surfaceShader.outputs:surface>
+
+        def Shader "surfaceShader"
+        {
+            uniform token info:id = "UsdPreviewSurface"
+            color3f inputs:diffuseColor = (1.0, 0.0, 0.0)
+            token outputs:surface
+        }
+    }
+
+    def Material "Green"
+    {
+        token outputs:surface.connect = </Materials/Green/surfaceShader.outputs:surface>
+
+        def Shader "surfaceShader"
+        {
+            uniform token info:id = "UsdPreviewSurface"
+            color3f inputs:diffuseColor = (0.0, 1.0, 0.0)
+            token outputs:surface
+        }
+    }
+
+    def Material "Blue"
+    {
+        token outputs:surface.connect = </Materials/Blue/surfaceShader.outputs:surface>
+
+        def Shader "surfaceShader"
+        {
+            uniform token info:id = "UsdPreviewSurface"
+            color3f inputs:diffuseColor = (0.0, 0.0, 1.0)
+            token outputs:surface
+        }
+    }
+
+    def Material "Yellow"
+    {
+        token outputs:surface.connect = </Materials/Yellow/surfaceShader.outputs:surface>
+
+        def Shader "surfaceShader"
+        {
+            uniform token info:id = "UsdPreviewSurface"
+            color3f inputs:diffuseColor = (1.0, 1.0, 0.0)
+            token outputs:surface
+        }
+    }
+
+    def Material "Cyan"
+    {
+        token outputs:surface.connect = </Materials/Cyan/surfaceShader.outputs:surface>
+
+        def Shader "surfaceShader"
+        {
+            uniform token info:id = "UsdPreviewSurface"
+            color3f inputs:diffuseColor = (0.0, 1.0, 1.0)
+            token outputs:surface
+        }
+    }
+
+    def Material "Magenta"
+    {
+        token outputs:surface.connect = </Materials/Magenta/surfaceShader.outputs:surface>
+
+        def Shader "surfaceShader"
+        {
+            uniform token info:id = "UsdPreviewSurface"
+            color3f inputs:diffuseColor = (1.0, 0.0, 1.0)
+            token outputs:surface
+        }
+    }
+}
+
 def Xform "Cube" (
     kind = "component"
 )
 {
-    def Scope "Materials"
+    def Mesh "FrontFace"
     {
-        def Material "Red"
-        {
-            token outputs:surface.connect = </Cube/Materials/Red/surfaceShader.outputs:surface>
-
-            def Shader "surfaceShader"
-            {
-                uniform token info:id = "UsdPreviewSurface"
-                color3f inputs:diffuseColor = (1.0, 0.0, 0.0)
-                token outputs:surface
-            }
-        }
-
-        def Material "Green"
-        {
-            token outputs:surface.connect = </Cube/Materials/Green/surfaceShader.outputs:surface>
-
-            def Shader "surfaceShader"
-            {
-                uniform token info:id = "UsdPreviewSurface"
-                color3f inputs:diffuseColor = (0.0, 1.0, 0.0)
-                token outputs:surface
-            }
-        }
-
-        def Material "Blue"
-        {
-            token outputs:surface.connect = </Cube/Materials/Blue/surfaceShader.outputs:surface>
-
-            def Shader "surfaceShader"
-            {
-                uniform token info:id = "UsdPreviewSurface"
-                color3f inputs:diffuseColor = (0.0, 0.0, 1.0)
-                token outputs:surface
-            }
-        }
-
-        def Material "Yellow"
-        {
-            token outputs:surface.connect = </Cube/Materials/Yellow/surfaceShader.outputs:surface>
-
-            def Shader "surfaceShader"
-            {
-                uniform token info:id = "UsdPreviewSurface"
-                color3f inputs:diffuseColor = (1.0, 1.0, 0.0)
-                token outputs:surface
-            }
-        }
-
-        def Material "Cyan"
-        {
-            token outputs:surface.connect = </Cube/Materials/Cyan/surfaceShader.outputs:surface>
-
-            def Shader "surfaceShader"
-            {
-                uniform token info:id = "UsdPreviewSurface"
-                color3f inputs:diffuseColor = (0.0, 1.0, 1.0)
-                token outputs:surface
-            }
-        }
-
-        def Material "Magenta"
-        {
-            token outputs:surface.connect = </Cube/Materials/Magenta/surfaceShader.outputs:surface>
-
-            def Shader "surfaceShader"
-            {
-                uniform token info:id = "UsdPreviewSurface"
-                color3f inputs:diffuseColor = (1.0, 0.0, 1.0)
-                token outputs:surface
-            }
-        }
+        float3[] points = [(-0.5, -0.5, 0.5), (0.5, -0.5, 0.5), (0.5, 0.5, 0.5), (-0.5, 0.5, 0.5)]
+        int[] faceVertexCounts = [4]
+        int[] faceVertexIndices = [0, 1, 2, 3]
+        rel material:binding = </Materials/Green>
     }
 
-    def Mesh "Cube"
+    def Mesh "BackFace"
     {
-        float3[] extent = [(-0.5, -0.5, -0.5), (0.5, 0.5, 0.5)]
-        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4]
-        int[] faceVertexIndices = [0, 1, 2, 3, 4, 5, 6, 7, 0, 4, 7, 3, 1, 5, 6, 2, 0, 3, 7, 4, 1, 2, 6, 5]
-        point3f[] points = [
-            (-0.5, -0.5, -0.5),
-            ( 0.5, -0.5, -0.5),
-            ( 0.5,  0.5, -0.5),
-            (-0.5,  0.5, -0.5),
-            (-0.5, -0.5,  0.5),
-            ( 0.5, -0.5,  0.5),
-            ( 0.5,  0.5,  0.5),
-            (-0.5,  0.5,  0.5)
-        ]
+        float3[] points = [(0.5, -0.5, -0.5), (-0.5, -0.5, -0.5), (-0.5, 0.5, -0.5), (0.5, 0.5, -0.5)]
+        int[] faceVertexCounts = [4]
+        int[] faceVertexIndices = [0, 1, 2, 3]
+        rel material:binding = </Materials/Red>
+    }
 
-        uniform token subdivisionScheme = "none"
+    def Mesh "LeftFace"
+    {
+        float3[] points = [(-0.5, -0.5, -0.5), (-0.5, -0.5, 0.5), (-0.5, 0.5, 0.5), (-0.5, 0.5, -0.5)]
+        int[] faceVertexCounts = [4]
+        int[] faceVertexIndices = [0, 1, 2, 3]
+        rel material:binding = </Materials/Blue>
+    }
 
-        rel material:binding = [
-            </Cube/Materials/Red>,
-            </Cube/Materials/Green>,
-            </Cube/Materials/Blue>,
-            </Cube/Materials/Yellow>,
-            </Cube/Materials/Cyan>,
-            </Cube/Materials/Magenta>
-        ]
+    def Mesh "RightFace"
+    {
+        float3[] points = [(0.5, -0.5, 0.5), (0.5, -0.5, -0.5), (0.5, 0.5, -0.5), (0.5, 0.5, 0.5)]
+        int[] faceVertexCounts = [4]
+        int[] faceVertexIndices = [0, 1, 2, 3]
+        rel material:binding = </Materials/Yellow>
+    }
+
+    def Mesh "TopFace"
+    {
+        float3[] points = [(-0.5, 0.5, 0.5), (0.5, 0.5, 0.5), (0.5, 0.5, -0.5), (-0.5, 0.5, -0.5)]
+        int[] faceVertexCounts = [4]
+        int[] faceVertexIndices = [0, 1, 2, 3]
+        rel material:binding = </Materials/Cyan>
+    }
+
+    def Mesh "BottomFace"
+    {
+        float3[] points = [(-0.5, -0.5, -0.5), (0.5, -0.5, -0.5), (0.5, -0.5, 0.5), (-0.5, -0.5, 0.5)]
+        int[] faceVertexCounts = [4]
+        int[] faceVertexIndices = [0, 1, 2, 3]
+        rel material:binding = </Materials/Magenta>
     }
 }
