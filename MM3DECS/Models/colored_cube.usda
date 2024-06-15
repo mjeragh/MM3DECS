@@ -100,13 +100,18 @@ def Xform "Cube" (
             (-0.5,  0.5,  0.5)
         ]
 
-        rel material:binding = [
-            </Cube/Materials/Red>,
-            </Cube/Materials/Green>,
-            </Cube/Materials/Blue>,
-            </Cube/Materials/Yellow>,
-            </Cube/Materials/Cyan>,
-            </Cube/Materials/Magenta>
+        int[] faceMaterialIndices = [0, 1, 2, 3, 4, 5]
+
+        rel material:binding = </Cube/Materials/Red>
+        uniform token subdivisionScheme = "none"
+        rel primvars:displayColor:indices = [0, 1, 2, 3, 4, 5]
+        color3f[] primvars:displayColor = [
+            (1.0, 0.0, 0.0),
+            (0.0, 1.0, 0.0),
+            (0.0, 0.0, 1.0),
+            (1.0, 1.0, 0.0),
+            (0.0, 1.0, 1.0),
+            (1.0, 0.0, 1.0)
         ]
     }
 }
