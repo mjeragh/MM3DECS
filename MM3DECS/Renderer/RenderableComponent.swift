@@ -33,7 +33,7 @@ struct RenderableComponent: Component {
         self.name = name
         self.boundingBox = asset.boundingBox
 
-        var foundTexture = false
+        var foundTextureOrColor = false
         for submesh in mdlMesh.submeshes as? [MDLSubmesh] ?? [] {
             if let material = submesh.material {
                 let semantics: [MDLMaterialSemantic] = [
@@ -44,26 +44,31 @@ struct RenderableComponent: Component {
                 for semantic in semantics {
                     if let property = material.property(with: semantic) {
                         if property.type == .texture, let mdlTexture = property.textureSamplerValue?.texture {
-                            self.texture = TextureController.shared.loadTexture(texture: mdlTexture, name: name) //TextureController.loadTexture(texture: mdlTexture, name: name)
-                            foundTexture = true
+                            self.texture = TextureController.shared.loadTexture(texture: mdlTexture, name: name)
+                            foundTextureOrColor = true
                             logger.debug("Loaded texture successfully for \(name) with semantic \(semantic.rawValue)")
                             break
                         } else if property.type == .float3 || property.type == .float4 {
                             self.baseColor = property.float4Value
-                            foundTexture = true
+                            foundTextureOrColor = true
                             logger.debug("Loaded base color successfully for \(name): \(property.float4Value)")
                             break
                         }
                     }
                 }
-                if foundTexture {
+                if foundTextureOrColor {
                     break
                 }
             }
         }
-        if !foundTexture {
+
+        // If no texture or color is found, create a placeholder texture
+        if !foundTextureOrColor {
             logger.error("No valid texture or color found for \(name)")
             self.texture = TextureController.shared.loadTexture(name: name)
+            if let texture = self.texture {
+                logger.debug("Created placeholder texture with color for: \(name)")
+            }
         }
         
         // Create Argument Encoder from the fragment function
@@ -82,17 +87,19 @@ struct RenderableComponent: Component {
         // Set Arguments
         if let texture = texture {
             argumentEncoder.setTexture(texture, index: 1)
-            logger.debug("texture loaded")
+            logger.debug("Texture loaded for \(name)")
         }
         
         if var baseColor = baseColor {
             let bufferPointer = argumentEncoder.constantData(at: 0)
             bufferPointer.copyMemory(from: &baseColor, byteCount: MemoryLayout<SIMD4<Float>>.size)
-            logger.debug("baseColor: \(baseColor)")
+            logger.debug("BaseColor: \(baseColor)")
+        } else {
+            logger.debug("BaseColor is nil for \(name)")
         }
         
         var hasTexture: UInt = texture != nil ? 1 : 0
-        logger.debug("hasTexture: \(hasTexture)")
+        logger.debug("HasTexture: \(hasTexture) for \(name)")
         let hasTexturePointer = argumentEncoder.constantData(at: 2)
         hasTexturePointer.copyMemory(from: &hasTexture, byteCount: MemoryLayout<UInt>.size)
     }

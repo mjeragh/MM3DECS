@@ -1,10 +1,12 @@
 import Foundation
 import MetalKit
+import OSLog
+
 
 class TextureController {
     static let shared = TextureController()
     private var textures: [String: MTLTexture] = [:]
-
+    let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "TextureController")
     private init() {}
 
     func loadTexture(texture: MDLTexture, name: String) -> MTLTexture? {
@@ -17,7 +19,7 @@ class TextureController {
             .generateMipmaps: true
         ]
         guard let texture = try? textureLoader.newTexture(texture: texture, options: textureLoaderOptions) else {
-            print("Failed to load texture from USD file")
+            logger.debug("Failed to load texture from USD file")
             return nil
         }
         print("Loaded texture from USD file")
@@ -33,13 +35,23 @@ class TextureController {
         var texture: MTLTexture?
         texture = try? textureLoader.newTexture(name: name, scaleFactor: 1.0, bundle: Bundle.main, options: nil)
         if texture != nil {
-            print("Loaded texture: \(name)")
+            logger.debug("Loaded texture: \(name)")
             textures[name] = texture
         } else {
-            print("Failed to load texture: \(name), creating placeholder")
+            logger.debug("Failed to load texture: \(name), creating placeholder")
             texture = createPlaceholderTexture(device: Renderer.device, color: SIMD4<Float>(1, 0, 0, 1)) // Red color
             textures[name] = texture
         }
+        return texture
+    }
+
+    func loadTexture(color: SIMD4<Float>, name: String) -> MTLTexture? {
+        if let texture = textures[name] {
+            return texture
+        }
+        let texture = createPlaceholderTexture(device: Renderer.device, color: color)
+        textures[name] = texture
+        logger.debug("Created placeholder texture with color for: \(name)")
         return texture
     }
 
@@ -64,6 +76,7 @@ class TextureController {
         let region = MTLRegionMake2D(0, 0, 1, 1)
         texture.replace(region: region, mipmapLevel: 0, withBytes: rawData, bytesPerRow: 4)
 
+        logger.debug("Created placeholder texture with color: \(color)")
         return texture
     }
 }

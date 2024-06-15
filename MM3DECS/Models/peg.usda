@@ -8,6 +8,24 @@ def Sphere "Peg"
 {
     double3 xformOp:translate = (0, 0, 0)
     uniform token[] xformOpOrder = ["xformOp:translate"]
-    color3f[] primvars:displayColor = [(1, 0, 1)]  # Purple color
+    rel material:binding = </Materials/yellow>  # Binding to the material
+
     double radius = 5
+}
+
+def Scope "Materials"
+{
+    def Material "yellow"
+    {
+        token outputs:surface.connect = </Materials/yellow/surfaceShader.outputs:surface>
+
+        def Shader "surfaceShader"
+        {
+            uniform token info:id = "UsdPreviewSurface"
+            color3f inputs:diffuseColor = (0.9, 0.9, 0.11)  # Yellowish Color
+            float inputs:metallic = 0
+            float inputs:roughness = 0.9
+            token outputs:surface
+        }
+    }
 }
