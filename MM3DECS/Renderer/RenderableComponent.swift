@@ -3,9 +3,9 @@ import OSLog
 
 struct RenderableComponent: Component {
     var mesh: MTKMesh
-    var texture: MTLTexture?
-    var baseColor: SIMD4<Float>?
-    var argumentBuffer: MTLBuffer?
+    var textures: [MTLTexture?]
+    var baseColors: [SIMD4<Float>?]
+    var argumentBuffers: [MTLBuffer?]
     let name: String
     let boundingBox: MDLAxisAlignedBoundingBox
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "RenderableComponent")
@@ -33,8 +33,15 @@ struct RenderableComponent: Component {
         self.name = name
         self.boundingBox = asset.boundingBox
 
-        var foundTextureOrColor = false
+        self.textures = []
+        self.baseColors = []
+        self.argumentBuffers = []
+
         for submesh in mdlMesh.submeshes as? [MDLSubmesh] ?? [] {
+            var foundTextureOrColor = false
+            var texture: MTLTexture?
+            var baseColor: SIMD4<Float>?
+
             if let material = submesh.material {
                 let semantics: [MDLMaterialSemantic] = [
                     .baseColor, .specular, .metallic, .roughness, .emission, .opacity,
@@ -44,71 +51,72 @@ struct RenderableComponent: Component {
                 for semantic in semantics {
                     if let property = material.property(with: semantic) {
                         if property.type == .texture, let mdlTexture = property.textureSamplerValue?.texture {
-                            self.texture = TextureController.shared.loadTexture(texture: mdlTexture, name: name)
+                            texture = TextureController.shared.loadTexture(texture: mdlTexture, name: name)
                             foundTextureOrColor = true
                             logger.debug("Loaded texture successfully for \(name) with semantic \(semantic.rawValue)")
                             break
                         } else if property.type == .float3 || property.type == .float4 {
-                            self.baseColor = property.float4Value
+                            baseColor = property.float4Value
                             foundTextureOrColor = true
                             logger.debug("Loaded base color successfully for \(name): \(property.float4Value)")
                             break
                         }
                     }
                 }
-                if foundTextureOrColor {
-                    break
+            }
+
+            if !foundTextureOrColor {
+                logger.error("No valid texture or color found for submesh in \(name)")
+                texture = TextureController.shared.loadTexture(name: name)
+                if texture != nil {
+                    logger.debug("Created placeholder texture with color for: \(name)")
                 }
             }
-        }
 
-        // If no texture or color is found, create a placeholder texture
-        if !foundTextureOrColor {
-            logger.error("No valid texture or color found for \(name)")
-            self.texture = TextureController.shared.loadTexture(name: name)
-            if let texture = self.texture {
-                logger.debug("Created placeholder texture with color for: \(name)")
+            self.textures.append(texture)
+            self.baseColors.append(baseColor)
+
+            // Create Argument Encoder from the fragment function
+            guard let fragmentFunction = Renderer.library.makeFunction(name: "fragment_main") else {
+                fatalError("Fragment function not found")
             }
-        }
-        
-        // Create Argument Encoder from the fragment function
-        guard let fragmentFunction = Renderer.library.makeFunction(name: "fragment_main") else {
-            fatalError("Fragment function not found")
-        }
 
-        let argumentEncoder = fragmentFunction.makeArgumentEncoder(bufferIndex: ArgumentsBuffer.index)
-        
-        // Create Argument Buffer
-        let argumentBufferSize = argumentEncoder.encodedLength
-        argumentBuffer = device.makeBuffer(length: argumentBufferSize, options: [])
-        argumentBuffer?.label = "ArgumentBuffer"
-        argumentEncoder.setArgumentBuffer(argumentBuffer, offset: 0)
-        
-        // Set Arguments
-        if let texture = texture {
-            argumentEncoder.setTexture(texture, index: 1)
-            logger.debug("Texture loaded for \(name)")
+            let argumentEncoder = fragmentFunction.makeArgumentEncoder(bufferIndex: ArgumentsBuffer.index)
+            
+            // Create Argument Buffer
+            let argumentBufferSize = argumentEncoder.encodedLength
+            let argumentBuffer = device.makeBuffer(length: argumentBufferSize, options: [])
+            argumentBuffer?.label = "ArgumentBuffer"
+            argumentEncoder.setArgumentBuffer(argumentBuffer, offset: 0)
+            
+            // Set Arguments
+            if let texture = texture {
+                argumentEncoder.setTexture(texture, index: 1)
+                logger.debug("Texture loaded for submesh in \(name)")
+            }
+            
+            if var baseColor = baseColor {
+                let bufferPointer = argumentEncoder.constantData(at: 0)
+                bufferPointer.copyMemory(from: &baseColor, byteCount: MemoryLayout<SIMD4<Float>>.size)
+                logger.debug("BaseColor: \(baseColor)")
+            } else {
+                logger.debug("BaseColor is nil for submesh in \(name)")
+            }
+            
+            var hasTexture: UInt = texture != nil ? 1 : 0
+            logger.debug("HasTexture: \(hasTexture) for submesh in \(name)")
+            let hasTexturePointer = argumentEncoder.constantData(at: 2)
+            hasTexturePointer.copyMemory(from: &hasTexture, byteCount: MemoryLayout<UInt>.size)
+
+            self.argumentBuffers.append(argumentBuffer)
         }
-        
-        if var baseColor = baseColor {
-            let bufferPointer = argumentEncoder.constantData(at: 0)
-            bufferPointer.copyMemory(from: &baseColor, byteCount: MemoryLayout<SIMD4<Float>>.size)
-            logger.debug("BaseColor: \(baseColor)")
-        } else {
-            logger.debug("BaseColor is nil for \(name)")
-        }
-        
-        var hasTexture: UInt = texture != nil ? 1 : 0
-        logger.debug("HasTexture: \(hasTexture) for \(name)")
-        let hasTexturePointer = argumentEncoder.constantData(at: 2)
-        hasTexturePointer.copyMemory(from: &hasTexture, byteCount: MemoryLayout<UInt>.size)
     }
 
     func render(encoder: MTLRenderCommandEncoder) {
         encoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: VertexBuffer.index)
-        encoder.setFragmentBuffer(argumentBuffer, offset: 0, index: ArgumentsBuffer.index)
 
-        for submesh in mesh.submeshes {
+        for (index, submesh) in mesh.submeshes.enumerated() {
+            encoder.setFragmentBuffer(argumentBuffers[index], offset: 0, index: ArgumentsBuffer.index)
             encoder.drawIndexedPrimitives(
                 type: .triangle,
                 indexCount: submesh.indexCount,
