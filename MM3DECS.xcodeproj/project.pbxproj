@@ -40,6 +40,10 @@
 		B294EDEE2BD3E90F008E6F2E /* InputComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDED2BD3E90F008E6F2E /* InputComponent.swift */; };
 		B294EDF22BD4F863008E6F2E /* SelectionComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B294EDF12BD4F863008E6F2E /* SelectionComponent.swift */; };
 		B2A6D86A2C03484A00DF548D /* TextureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A6D8692C03484A00DF548D /* TextureController.swift */; };
+		B2B60A532C21DE2100DA40EB /* tent_smallOpen.obj in Resources */ = {isa = PBXBuildFile; fileRef = B2B60A522C21DE2100DA40EB /* tent_smallOpen.obj */; };
+		B2B60A542C21DE2100DA40EB /* tent_smallOpen.mtl in Resources */ = {isa = PBXBuildFile; fileRef = B2B60A512C21DE2100DA40EB /* tent_smallOpen.mtl */; };
+		B2B60A572C21DFCB00DA40EB /* tree_pineRoundC.obj in Resources */ = {isa = PBXBuildFile; fileRef = B2B60A562C21DFCB00DA40EB /* tree_pineRoundC.obj */; };
+		B2B60A582C21DFCB00DA40EB /* tree_pineRoundC.mtl in Resources */ = {isa = PBXBuildFile; fileRef = B2B60A552C21DFCB00DA40EB /* tree_pineRoundC.mtl */; };
 		B2DFFD552C0F99F50072082F /* RenderableComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2DFFD542C0F99F50072082F /* RenderableComponent.swift */; };
 		B2DFFD572C1361E30072082F /* barrel.usdz in Resources */ = {isa = PBXBuildFile; fileRef = B2DFFD562C1361E30072082F /* barrel.usdz */; };
 		B2DFFD592C1362B00072082F /* walker.usda in Resources */ = {isa = PBXBuildFile; fileRef = B2DFFD582C1362B00072082F /* walker.usda */; };
@@ -92,6 +96,10 @@
 		B294EDED2BD3E90F008E6F2E /* InputComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputComponent.swift; sourceTree = "<group>"; };
 		B294EDF12BD4F863008E6F2E /* SelectionComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionComponent.swift; sourceTree = "<group>"; };
 		B2A6D8692C03484A00DF548D /* TextureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureController.swift; sourceTree = "<group>"; };
+		B2B60A512C21DE2100DA40EB /* tent_smallOpen.mtl */ = {isa = PBXFileReference; lastKnownFileType = text; path = tent_smallOpen.mtl; sourceTree = "<group>"; };
+		B2B60A522C21DE2100DA40EB /* tent_smallOpen.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = tent_smallOpen.obj; sourceTree = "<group>"; };
+		B2B60A552C21DFCB00DA40EB /* tree_pineRoundC.mtl */ = {isa = PBXFileReference; lastKnownFileType = text; path = tree_pineRoundC.mtl; sourceTree = "<group>"; };
+		B2B60A562C21DFCB00DA40EB /* tree_pineRoundC.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = tree_pineRoundC.obj; sourceTree = "<group>"; };
 		B2DFFD542C0F99F50072082F /* RenderableComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderableComponent.swift; sourceTree = "<group>"; };
 		B2DFFD562C1361E30072082F /* barrel.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = barrel.usdz; sourceTree = "<group>"; };
 		B2DFFD582C1362B00072082F /* walker.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = walker.usda; sourceTree = "<group>"; };
@@ -187,6 +195,10 @@
 		B259C28C2BA304690049BA2C /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				B2B60A552C21DFCB00DA40EB /* tree_pineRoundC.mtl */,
+				B2B60A562C21DFCB00DA40EB /* tree_pineRoundC.obj */,
+				B2B60A512C21DE2100DA40EB /* tent_smallOpen.mtl */,
+				B2B60A522C21DE2100DA40EB /* tent_smallOpen.obj */,
 				B26FB56B2C1E202700DC6842 /* colored_cube.usda */,
 				B2DFFD562C1361E30072082F /* barrel.usdz */,
 				B2DFFD5A2C1362B60072082F /* pine-5.usdz */,
@@ -327,6 +339,8 @@
 			files = (
 				B24913512BDAB7E700A31CCA /* plane1000.usda in Resources */,
 				B2DFFD592C1362B00072082F /* walker.usda in Resources */,
+				B2B60A532C21DE2100DA40EB /* tent_smallOpen.obj in Resources */,
+				B2B60A542C21DE2100DA40EB /* tent_smallOpen.mtl in Resources */,
 				B2DFFD5D2C1362BC0072082F /* house1.usdz in Resources */,
 				B240EDD02C04A38B001DAFEB /* traina.usda in Resources */,
 				B2DFFD612C1362C90072082F /* birch-3.usdz in Resources */,
@@ -335,6 +349,8 @@
 				B26654762C05E7C100EB7A20 /* pegTexture.usda in Resources */,
 				B259C28D2BA304690049BA2C /* train.usd in Resources */,
 				B2DFFD632C1362C90072082F /* blacksmith.usdz in Resources */,
+				B2B60A572C21DFCB00DA40EB /* tree_pineRoundC.obj in Resources */,
+				B2B60A582C21DFCB00DA40EB /* tree_pineRoundC.mtl in Resources */,
 				B2DFFD622C1362C90072082F /* bell-tower.usdz in Resources */,
 				B26FB56C2C1E202700DC6842 /* colored_cube.usda in Resources */,
 				B2DFFD5B2C1362B60072082F /* pine-5.usdz in Resources */,

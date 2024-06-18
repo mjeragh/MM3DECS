@@ -47,9 +47,10 @@ class GameScene: SceneProtocol {
 
     func setupEntites() {
         delegate?.addEntityToScene(name: "land", with: RenderableComponent(device: Renderer.device, name: "plane1000.usda"), with: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(1,1,1)), withInputComponent: false, withSelectionComponent: false)
-        let scale = Float(0.1)
-        delegate?.addEntityToScene(name: "Sun", with: RenderableComponent(device: Renderer.device, name: "peg.usda"), with: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), withInputComponent: true, withSelectionComponent: true)
-        delegate?.addEntityToScene(name: "Moon", with: RenderableComponent(device: Renderer.device, name: "peg.usda"), with: TransformComponent(position: float3(-10,0,3), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), withInputComponent: true, withSelectionComponent: true)
+        delegate?.addEntityToScene(name: "tree", with: RenderableComponent(device: Renderer.device, name: "tree_pineRoundC.obj"), with: TransformComponent(position: float3(-10,0,0), rotation: float3(0,0,0), scale: float3(1,1,1)), withInputComponent: true, withSelectionComponent: true)
+//        let scale = Float(0.1)
+//        delegate?.addEntityToScene(name: "Sun", with: RenderableComponent(device: Renderer.device, name: "peg.usda"), with: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), withInputComponent: true, withSelectionComponent: true)
+//        delegate?.addEntityToScene(name: "Moon", with: RenderableComponent(device: Renderer.device, name: "peg.usda"), with: TransformComponent(position: float3(-10,0,3), rotation: float3(0,0,0), scale: float3(scale,scale,scale)), withInputComponent: true, withSelectionComponent: true)
         delegate?.addEntityToScene(name: "colored_cube", with: RenderableComponent(device: Renderer.device, name: "colored_cube.usda"), with: TransformComponent(position: float3(10, 0, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), withInputComponent: true, withSelectionComponent: true)
                // Add other entities and components as needed
        

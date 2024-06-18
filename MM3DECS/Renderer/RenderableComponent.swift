@@ -51,7 +51,7 @@ struct RenderableComponent: Component {
                 for semantic in semantics {
                     if let property = material.property(with: semantic) {
                         if property.type == .texture, let mdlTexture = property.textureSamplerValue?.texture {
-                            texture = TextureController.shared.loadTexture(texture: mdlTexture, name: name)
+                            texture = TextureController.shared.loadTexture(texture: mdlTexture, name: "\(name)-\(semantic.rawValue)")
                             foundTextureOrColor = true
                             logger.debug("Loaded texture successfully for \(name) with semantic \(semantic.rawValue)")
                             break
@@ -67,7 +67,7 @@ struct RenderableComponent: Component {
 
             if !foundTextureOrColor {
                 logger.error("No valid texture or color found for submesh in \(name)")
-                texture = TextureController.shared.loadTexture(name: name)
+                texture = TextureController.shared.loadTexture(name: "\(name)-placeholder")
                 if texture != nil {
                     logger.debug("Created placeholder texture with color for: \(name)")
                 }
