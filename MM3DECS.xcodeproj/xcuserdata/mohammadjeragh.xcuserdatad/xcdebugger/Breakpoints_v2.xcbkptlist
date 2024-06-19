@@ -72,7 +72,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "F214F460-1AF8-4B55-BD7E-A7A1FCEDE7B5"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MM3DECS/Renderer/RenderableComponent.swift"

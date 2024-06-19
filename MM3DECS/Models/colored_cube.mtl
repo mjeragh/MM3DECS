@@ -1,0 +1,19 @@
+# Colored Cube Materials
+
+newmtl red
+Kd 1.0 0.0 0.0
+
+newmtl green
+Kd 0.0 1.0 0.0
+
+newmtl blue
+Kd 0.0 0.0 1.0
+
+newmtl yellow
+Kd 1.0 1.0 0.0
+
+newmtl cyan
+Kd 0.0 1.0 1.0
+
+newmtl magenta
+Kd 1.0 0.0 1.0

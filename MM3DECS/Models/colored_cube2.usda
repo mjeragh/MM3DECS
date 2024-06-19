@@ -1,0 +1,153 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "usdzconvert preview 0.66"
+    }
+    defaultPrim = "colored_cube"
+    metersPerUnit = 0.01
+    upAxis = "Y"
+)
+
+def Xform "colored_cube" (
+    assetInfo = {
+        string name = "colored_cube"
+    }
+    kind = "component"
+)
+{
+    def Scope "Materials"
+    {
+        def Material "red"
+        {
+            token outputs:surface.connect = </colored_cube/Materials/red/surfaceShader.outputs:surface>
+
+            def Shader "surfaceShader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (1, 0, 0)
+                token outputs:surface
+            }
+        }
+
+        def Material "green"
+        {
+            token outputs:surface.connect = </colored_cube/Materials/green/surfaceShader.outputs:surface>
+
+            def Shader "surfaceShader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0, 1, 0)
+                token outputs:surface
+            }
+        }
+
+        def Material "blue"
+        {
+            token outputs:surface.connect = </colored_cube/Materials/blue/surfaceShader.outputs:surface>
+
+            def Shader "surfaceShader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0, 0, 1)
+                token outputs:surface
+            }
+        }
+
+        def Material "yellow"
+        {
+            token outputs:surface.connect = </colored_cube/Materials/yellow/surfaceShader.outputs:surface>
+
+            def Shader "surfaceShader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (1, 1, 0)
+                token outputs:surface
+            }
+        }
+
+        def Material "cyan"
+        {
+            token outputs:surface.connect = </colored_cube/Materials/cyan/surfaceShader.outputs:surface>
+
+            def Shader "surfaceShader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0, 1, 1)
+                token outputs:surface
+            }
+        }
+
+        def Material "magenta"
+        {
+            token outputs:surface.connect = </colored_cube/Materials/magenta/surfaceShader.outputs:surface>
+
+            def Shader "surfaceShader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (1, 0, 1)
+                token outputs:surface
+            }
+        }
+    }
+
+    def Scope "Geom"
+    {
+        def Mesh "default"
+        {
+            float3[] extent = [(-1, -1.000001, -1), (1, 1, 1)]
+            int[] faceVertexCounts = [4, 4, 4, 4, 4, 4]
+            int[] faceVertexIndices = [0, 1, 2, 3, 4, 7, 6, 5, 0, 4, 5, 1, 1, 5, 6, 2, 2, 6, 7, 3, 4, 0, 3, 7]
+            point3f[] points = [(1, 1, -1), (1, -1, -1), (-1, -1, -1), (-1, 1, -1), (1, 0.999999, 1), (0.999999, -1.000001, 1), (-1, -1, 1), (-1, 1, 1)]
+            uniform token subdivisionScheme = "none"
+            uniform token subsetFamily:materialBind:familyType = "nonOverlapping"
+
+            def GeomSubset "redSubset"
+            {
+                uniform token elementType = "face"
+                uniform token familyName = "materialBind"
+                int[] indices = [0]
+                rel material:binding = </colored_cube/Materials/red>
+            }
+
+            def GeomSubset "greenSubset"
+            {
+                uniform token elementType = "face"
+                uniform token familyName = "materialBind"
+                int[] indices = [1]
+                rel material:binding = </colored_cube/Materials/green>
+            }
+
+            def GeomSubset "blueSubset"
+            {
+                uniform token elementType = "face"
+                uniform token familyName = "materialBind"
+                int[] indices = [2]
+                rel material:binding = </colored_cube/Materials/blue>
+            }
+
+            def GeomSubset "yellowSubset"
+            {
+                uniform token elementType = "face"
+                uniform token familyName = "materialBind"
+                int[] indices = [3]
+                rel material:binding = </colored_cube/Materials/yellow>
+            }
+
+            def GeomSubset "cyanSubset"
+            {
+                uniform token elementType = "face"
+                uniform token familyName = "materialBind"
+                int[] indices = [4]
+                rel material:binding = </colored_cube/Materials/cyan>
+            }
+
+            def GeomSubset "magentaSubset"
+            {
+                uniform token elementType = "face"
+                uniform token familyName = "materialBind"
+                int[] indices = [5]
+                rel material:binding = </colored_cube/Materials/magenta>
+            }
+        }
+    }
+}

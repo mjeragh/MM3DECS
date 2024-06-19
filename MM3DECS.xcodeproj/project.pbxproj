@@ -10,6 +10,9 @@
 		B22D8DDF2BE54A15005EE7D9 /* DebugBoundingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = B22D8DDD2BE54A15005EE7D9 /* DebugBoundingBox.swift */; };
 		B22D8DE02BE54A15005EE7D9 /* DebugBoundingBox.metal in Sources */ = {isa = PBXBuildFile; fileRef = B22D8DDE2BE54A15005EE7D9 /* DebugBoundingBox.metal */; };
 		B240EDD02C04A38B001DAFEB /* traina.usda in Resources */ = {isa = PBXBuildFile; fileRef = B240EDCF2C04A38B001DAFEB /* traina.usda */; };
+		B2480B042C22E53D00566FFE /* sc.usda in Resources */ = {isa = PBXBuildFile; fileRef = B2480B032C22E53D00566FFE /* sc.usda */; };
+		B2480B062C22E72D00566FFE /* colored_cube_z.usdz in Resources */ = {isa = PBXBuildFile; fileRef = B2480B052C22E72D00566FFE /* colored_cube_z.usdz */; };
+		B2480B082C22EA1400566FFE /* colored_cube2z.usdz in Resources */ = {isa = PBXBuildFile; fileRef = B2480B072C22EA1400566FFE /* colored_cube2z.usdz */; };
 		B249134F2BDAB7DB00A31CCA /* peg.usda in Resources */ = {isa = PBXBuildFile; fileRef = B249134E2BDAB7DB00A31CCA /* peg.usda */; };
 		B24913512BDAB7E700A31CCA /* plane1000.usda in Resources */ = {isa = PBXBuildFile; fileRef = B24913502BDAB7E700A31CCA /* plane1000.usda */; };
 		B24913552BDD6E0E00A31CCA /* Ray.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24913542BDD6E0E00A31CCA /* Ray.swift */; };
@@ -44,6 +47,9 @@
 		B2B60A542C21DE2100DA40EB /* tent_smallOpen.mtl in Resources */ = {isa = PBXBuildFile; fileRef = B2B60A512C21DE2100DA40EB /* tent_smallOpen.mtl */; };
 		B2B60A572C21DFCB00DA40EB /* tree_pineRoundC.obj in Resources */ = {isa = PBXBuildFile; fileRef = B2B60A562C21DFCB00DA40EB /* tree_pineRoundC.obj */; };
 		B2B60A582C21DFCB00DA40EB /* tree_pineRoundC.mtl in Resources */ = {isa = PBXBuildFile; fileRef = B2B60A552C21DFCB00DA40EB /* tree_pineRoundC.mtl */; };
+		B2B60A5A2C21F47700DA40EB /* lowpoly-house.usdz in Resources */ = {isa = PBXBuildFile; fileRef = B2B60A592C21F47700DA40EB /* lowpoly-house.usdz */; };
+		B2B60A5F2C21F8E700DA40EB /* colored_cube.mtl in Resources */ = {isa = PBXBuildFile; fileRef = B2B60A5D2C21F8E700DA40EB /* colored_cube.mtl */; };
+		B2B60A602C21F8E700DA40EB /* colored_cube.obj in Resources */ = {isa = PBXBuildFile; fileRef = B2B60A5E2C21F8E700DA40EB /* colored_cube.obj */; };
 		B2DFFD552C0F99F50072082F /* RenderableComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2DFFD542C0F99F50072082F /* RenderableComponent.swift */; };
 		B2DFFD572C1361E30072082F /* barrel.usdz in Resources */ = {isa = PBXBuildFile; fileRef = B2DFFD562C1361E30072082F /* barrel.usdz */; };
 		B2DFFD592C1362B00072082F /* walker.usda in Resources */ = {isa = PBXBuildFile; fileRef = B2DFFD582C1362B00072082F /* walker.usda */; };
@@ -61,6 +67,9 @@
 		B22D8DDD2BE54A15005EE7D9 /* DebugBoundingBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugBoundingBox.swift; sourceTree = "<group>"; };
 		B22D8DDE2BE54A15005EE7D9 /* DebugBoundingBox.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = DebugBoundingBox.metal; sourceTree = "<group>"; };
 		B240EDCF2C04A38B001DAFEB /* traina.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = traina.usda; sourceTree = "<group>"; };
+		B2480B032C22E53D00566FFE /* sc.usda */ = {isa = PBXFileReference; lastKnownFileType = text; path = sc.usda; sourceTree = "<group>"; };
+		B2480B052C22E72D00566FFE /* colored_cube_z.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = colored_cube_z.usdz; sourceTree = "<group>"; };
+		B2480B072C22EA1400566FFE /* colored_cube2z.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = colored_cube2z.usdz; sourceTree = "<group>"; };
 		B249134E2BDAB7DB00A31CCA /* peg.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = peg.usda; sourceTree = "<group>"; };
 		B24913502BDAB7E700A31CCA /* plane1000.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = plane1000.usda; sourceTree = "<group>"; };
 		B24913542BDD6E0E00A31CCA /* Ray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ray.swift; sourceTree = "<group>"; };
@@ -100,6 +109,9 @@
 		B2B60A522C21DE2100DA40EB /* tent_smallOpen.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = tent_smallOpen.obj; sourceTree = "<group>"; };
 		B2B60A552C21DFCB00DA40EB /* tree_pineRoundC.mtl */ = {isa = PBXFileReference; lastKnownFileType = text; path = tree_pineRoundC.mtl; sourceTree = "<group>"; };
 		B2B60A562C21DFCB00DA40EB /* tree_pineRoundC.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = tree_pineRoundC.obj; sourceTree = "<group>"; };
+		B2B60A592C21F47700DA40EB /* lowpoly-house.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = "lowpoly-house.usdz"; sourceTree = "<group>"; };
+		B2B60A5D2C21F8E700DA40EB /* colored_cube.mtl */ = {isa = PBXFileReference; lastKnownFileType = text; path = colored_cube.mtl; sourceTree = "<group>"; };
+		B2B60A5E2C21F8E700DA40EB /* colored_cube.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = colored_cube.obj; sourceTree = "<group>"; };
 		B2DFFD542C0F99F50072082F /* RenderableComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderableComponent.swift; sourceTree = "<group>"; };
 		B2DFFD562C1361E30072082F /* barrel.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = barrel.usdz; sourceTree = "<group>"; };
 		B2DFFD582C1362B00072082F /* walker.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = walker.usda; sourceTree = "<group>"; };
@@ -195,6 +207,12 @@
 		B259C28C2BA304690049BA2C /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				B2480B072C22EA1400566FFE /* colored_cube2z.usdz */,
+				B2480B052C22E72D00566FFE /* colored_cube_z.usdz */,
+				B2480B032C22E53D00566FFE /* sc.usda */,
+				B2B60A5D2C21F8E700DA40EB /* colored_cube.mtl */,
+				B2B60A5E2C21F8E700DA40EB /* colored_cube.obj */,
+				B2B60A592C21F47700DA40EB /* lowpoly-house.usdz */,
 				B2B60A552C21DFCB00DA40EB /* tree_pineRoundC.mtl */,
 				B2B60A562C21DFCB00DA40EB /* tree_pineRoundC.obj */,
 				B2B60A512C21DE2100DA40EB /* tent_smallOpen.mtl */,
@@ -337,16 +355,22 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B2B60A5F2C21F8E700DA40EB /* colored_cube.mtl in Resources */,
+				B2B60A602C21F8E700DA40EB /* colored_cube.obj in Resources */,
 				B24913512BDAB7E700A31CCA /* plane1000.usda in Resources */,
+				B2B60A5A2C21F47700DA40EB /* lowpoly-house.usdz in Resources */,
 				B2DFFD592C1362B00072082F /* walker.usda in Resources */,
 				B2B60A532C21DE2100DA40EB /* tent_smallOpen.obj in Resources */,
 				B2B60A542C21DE2100DA40EB /* tent_smallOpen.mtl in Resources */,
+				B2480B042C22E53D00566FFE /* sc.usda in Resources */,
 				B2DFFD5D2C1362BC0072082F /* house1.usdz in Resources */,
 				B240EDD02C04A38B001DAFEB /* traina.usda in Resources */,
+				B2480B082C22EA1400566FFE /* colored_cube2z.usdz in Resources */,
 				B2DFFD612C1362C90072082F /* birch-3.usdz in Resources */,
 				B259C26D2BA2FABF0049BA2C /* Preview Assets.xcassets in Resources */,
 				B259C26A2BA2FABF0049BA2C /* Assets.xcassets in Resources */,
 				B26654762C05E7C100EB7A20 /* pegTexture.usda in Resources */,
+				B2480B062C22E72D00566FFE /* colored_cube_z.usdz in Resources */,
 				B259C28D2BA304690049BA2C /* train.usd in Resources */,
 				B2DFFD632C1362C90072082F /* blacksmith.usdz in Resources */,
 				B2B60A572C21DFCB00DA40EB /* tree_pineRoundC.obj in Resources */,
