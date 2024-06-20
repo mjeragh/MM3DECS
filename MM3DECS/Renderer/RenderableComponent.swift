@@ -3,8 +3,6 @@ import OSLog
 
 struct RenderableComponent: Component {
     var meshes: [MTKMesh] = []
-    var textures: [MTLTexture?] = []
-    var baseColors: [SIMD4<Float>?] = []
     var argumentBuffers: [[MTLBuffer?]] = []
     let name: String
     let boundingBox: MDLAxisAlignedBoundingBox
@@ -71,9 +69,6 @@ struct RenderableComponent: Component {
                     }
                 }
 
-                self.textures.append(texture)
-                self.baseColors.append(baseColor)
-
                 // Create Argument Encoder from the fragment function
                 guard let fragmentFunction = Renderer.library.makeFunction(name: "fragment_main") else {
                     fatalError("Fragment function not found")
@@ -107,7 +102,7 @@ struct RenderableComponent: Component {
                 hasTexturePointer.copyMemory(from: &hasTexture, byteCount: MemoryLayout<UInt>.size)
 
                 submeshArgumentBuffers.append(argumentBuffer)
-            }
+            }//for submesh
             self.argumentBuffers.append(submeshArgumentBuffers)
         }
     }
