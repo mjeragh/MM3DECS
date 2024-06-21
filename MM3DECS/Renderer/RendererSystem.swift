@@ -8,9 +8,6 @@
 import Foundation
 import MetalKit
 
-import Foundation
-import MetalKit
-
 class RenderSystem: SystemProtocol {
     var timer: Float = 0.0
 
@@ -32,7 +29,7 @@ class RenderSystem: SystemProtocol {
         uniforms.modelMatrix = transformConstant.modelMatrix
         uniforms.projectionMatrix = projectionMatrix
 
-        renderEncoder.setVertexBytes(&uniforms, length: MemoryLayout<Uniforms>.stride, index: UniformsBuffer.index)
-        renderable.render(encoder: renderEncoder, parentTransform: transformConstant.modelMatrix)
+        //renderEncoder.setVertexBytes(&uniforms, length: MemoryLayout<Uniforms>.stride, index: UniformsBuffer.index)
+        renderable.render(encoder: renderEncoder, uniformsConstant: uniforms)
     }
 }

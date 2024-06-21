@@ -71,16 +71,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "6A1E4601-E4DA-4794-AD9C-46ACC6247A99"
-            shouldBeEnabled = "Yes"
+            uuid = "BE9743AE-4CCF-46C9-A6F4-F55DE2628674"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MM3DECS/Renderer/RenderableComponent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "118"
-            endingLineNumber = "118"
-            landmarkName = "init(device:name:)"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
+            landmarkName = "render(encoder:uniformsConstant:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -111,9 +111,9 @@ struct RenderableComponent: Component {
                 hasTexturePointer.copyMemory(from: &hasTexture, byteCount: MemoryLayout<UInt>.size)
 
                 submeshArgumentBuffers.append(argumentBuffer)
-            }//for submesh
+            }//for subMesh
             self.argumentBuffers.append(submeshArgumentBuffers)
-            
+
             // Capture the transformation of the mesh
             if let transformComponent = mdlMesh.transform as? MDLTransformComponent {
                 self.transforms.append(transformComponent.matrix)
@@ -123,15 +123,18 @@ struct RenderableComponent: Component {
         }//for mdlMesh
     }
 
-    func render(encoder: MTLRenderCommandEncoder, parentTransform: matrix_float4x4 = matrix_identity_float4x4) {
+    func render(encoder: MTLRenderCommandEncoder, uniformsConstant: Uniforms) {
         for (meshIndex, mesh) in meshes.enumerated() {
             encoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: VertexBuffer.index)
+            
+            var uniforms = uniformsConstant
+            
+            uniforms.modelMatrix = uniforms.modelMatrix * self.transforms[meshIndex]
 
-            var modelMatrix = parentTransform * self.transforms[meshIndex]
+            encoder.setVertexBytes(&uniforms, length: MemoryLayout<Uniforms>.stride, index: UniformsBuffer.index)
 
             for (submeshIndex, submesh) in mesh.submeshes.enumerated() {
                 encoder.setFragmentBuffer(argumentBuffers[meshIndex][submeshIndex], offset: 0, index: ArgumentsBuffer.index)
-                encoder.setVertexBytes(&modelMatrix, length: MemoryLayout<matrix_float4x4>.size, index: 1)
                 encoder.drawIndexedPrimitives(
                     type: .triangle,
                     indexCount: submesh.indexCount,
