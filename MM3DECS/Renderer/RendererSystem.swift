@@ -33,6 +33,6 @@ class RenderSystem: SystemProtocol {
         uniforms.projectionMatrix = projectionMatrix
 
         renderEncoder.setVertexBytes(&uniforms, length: MemoryLayout<Uniforms>.stride, index: UniformsBuffer.index)
-        renderable.render(encoder: renderEncoder)
+        renderable.render(encoder: renderEncoder, parentTransform: transformConstant.modelMatrix)
     }
 }

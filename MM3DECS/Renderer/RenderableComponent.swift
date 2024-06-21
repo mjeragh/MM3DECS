@@ -11,6 +11,7 @@ private let semantics: [MDLMaterialSemantic] = [
 struct RenderableComponent: Component {
     var meshes: [MTKMesh] = []
     var argumentBuffers: [[MTLBuffer?]] = []
+    var transforms: [matrix_float4x4] = []
     let name: String
     let boundingBox: MDLAxisAlignedBoundingBox
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "RenderableComponent")
@@ -110,17 +111,27 @@ struct RenderableComponent: Component {
                 hasTexturePointer.copyMemory(from: &hasTexture, byteCount: MemoryLayout<UInt>.size)
 
                 submeshArgumentBuffers.append(argumentBuffer)
-            }//for subMesh
+            }//for submesh
             self.argumentBuffers.append(submeshArgumentBuffers)
+            
+            // Capture the transformation of the mesh
+            if let transformComponent = mdlMesh.transform as? MDLTransformComponent {
+                self.transforms.append(transformComponent.matrix)
+            } else {
+                self.transforms.append(matrix_identity_float4x4)
+            }
         }//for mdlMesh
     }
 
-    func render(encoder: MTLRenderCommandEncoder) {
+    func render(encoder: MTLRenderCommandEncoder, parentTransform: matrix_float4x4 = matrix_identity_float4x4) {
         for (meshIndex, mesh) in meshes.enumerated() {
             encoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: VertexBuffer.index)
 
+            var modelMatrix = parentTransform * self.transforms[meshIndex]
+
             for (submeshIndex, submesh) in mesh.submeshes.enumerated() {
                 encoder.setFragmentBuffer(argumentBuffers[meshIndex][submeshIndex], offset: 0, index: ArgumentsBuffer.index)
+                encoder.setVertexBytes(&modelMatrix, length: MemoryLayout<matrix_float4x4>.size, index: 1)
                 encoder.drawIndexedPrimitives(
                     type: .triangle,
                     indexCount: submesh.indexCount,
