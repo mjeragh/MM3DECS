@@ -37,6 +37,15 @@ struct RenderableComponent: Component {
 
         self.name = name
         self.boundingBox = asset.boundingBox
+        
+        // Create Argument Encoder from the fragment function
+        guard let fragmentFunction = Renderer.library.makeFunction(name: "fragment_main") else {
+            fatalError("Fragment function not found")
+        }
+
+        let argumentEncoder = fragmentFunction.makeArgumentEncoder(bufferIndex: ArgumentsBuffer.index)
+        let argumentBufferSize = argumentEncoder.encodedLength
+        
 
         // Process each MDL mesh
         for mdlMesh in mdlMeshes {
@@ -75,15 +84,8 @@ struct RenderableComponent: Component {
                     }
                 }
 
-                // Create Argument Encoder from the fragment function
-                guard let fragmentFunction = Renderer.library.makeFunction(name: "fragment_main") else {
-                    fatalError("Fragment function not found")
-                }
-
-                let argumentEncoder = fragmentFunction.makeArgumentEncoder(bufferIndex: ArgumentsBuffer.index)
-                
+               
                 // Create Argument Buffer
-                let argumentBufferSize = argumentEncoder.encodedLength
                 let argumentBuffer = device.makeBuffer(length: argumentBufferSize, options: [])
                 argumentBuffer?.label = "ArgumentBuffer"
                 argumentEncoder.setArgumentBuffer(argumentBuffer, offset: 0)
