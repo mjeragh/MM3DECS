@@ -1,6 +1,13 @@
 import MetalKit
 import OSLog
 
+// Define semantics array once, outside the struct
+private let semantics: [MDLMaterialSemantic] = [
+    .baseColor, .specular, .metallic, .roughness, .emission, .opacity,
+    .displacement, .ambientOcclusion, .anisotropic,
+    .clearcoatGloss, .sheen, .bump, .ambientOcclusionScale
+]
+
 struct RenderableComponent: Component {
     var meshes: [MTKMesh] = []
     var argumentBuffers: [[MTLBuffer?]] = []
@@ -31,19 +38,17 @@ struct RenderableComponent: Component {
         self.name = name
         self.boundingBox = asset.boundingBox
 
+        // Process each MDL mesh
         for mdlMesh in mdlMeshes {
             var submeshArgumentBuffers: [MTLBuffer?] = []
+
+            // Process each submesh
             for submesh in mdlMesh.submeshes as? [MDLSubmesh] ?? [] {
                 var foundTextureOrColor = false
                 var texture: MTLTexture?
                 var baseColor: SIMD4<Float>?
 
                 if let material = submesh.material {
-                    let semantics: [MDLMaterialSemantic] = [
-                        .baseColor, .specular, .metallic, .roughness, .emission, .opacity,
-                        .displacement, .ambientOcclusion, .anisotropic,
-                        .clearcoatGloss, .sheen, .bump, .ambientOcclusionScale
-                    ]
                     for semantic in semantics {
                         if let property = material.property(with: semantic) {
                             if property.type == .texture, let mdlTexture = property.textureSamplerValue?.texture {
@@ -61,7 +66,8 @@ struct RenderableComponent: Component {
                     }
                 }
 
-                if (!foundTextureOrColor) {
+                // Use a placeholder if no valid texture or color found
+                if !foundTextureOrColor {
                     logger.error("No valid texture or color found for submesh in \(name)")
                     texture = TextureController.shared.loadTexture(name: "\(name)-placeholder")
                     if texture != nil {
@@ -102,9 +108,9 @@ struct RenderableComponent: Component {
                 hasTexturePointer.copyMemory(from: &hasTexture, byteCount: MemoryLayout<UInt>.size)
 
                 submeshArgumentBuffers.append(argumentBuffer)
-            }//for submesh
+            }//for subMesh
             self.argumentBuffers.append(submeshArgumentBuffers)
-        }
+        }//for mdlMesh
     }
 
     func render(encoder: MTLRenderCommandEncoder) {
