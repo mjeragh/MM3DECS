@@ -50,6 +50,7 @@
 		B2B60A5A2C21F47700DA40EB /* lowpoly-house.usdz in Resources */ = {isa = PBXBuildFile; fileRef = B2B60A592C21F47700DA40EB /* lowpoly-house.usdz */; };
 		B2B60A5F2C21F8E700DA40EB /* colored_cube.mtl in Resources */ = {isa = PBXBuildFile; fileRef = B2B60A5D2C21F8E700DA40EB /* colored_cube.mtl */; };
 		B2B60A602C21F8E700DA40EB /* colored_cube.obj in Resources */ = {isa = PBXBuildFile; fileRef = B2B60A5E2C21F8E700DA40EB /* colored_cube.obj */; };
+		B2C36E522C2749FC00CE3C06 /* modelVerticesTransform.metal in Sources */ = {isa = PBXBuildFile; fileRef = B2C36E512C2749DD00CE3C06 /* modelVerticesTransform.metal */; };
 		B2DFFD552C0F99F50072082F /* RenderableComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2DFFD542C0F99F50072082F /* RenderableComponent.swift */; };
 		B2DFFD572C1361E30072082F /* barrel.usdz in Resources */ = {isa = PBXBuildFile; fileRef = B2DFFD562C1361E30072082F /* barrel.usdz */; };
 		B2DFFD592C1362B00072082F /* walker.usda in Resources */ = {isa = PBXBuildFile; fileRef = B2DFFD582C1362B00072082F /* walker.usda */; };
@@ -112,6 +113,7 @@
 		B2B60A592C21F47700DA40EB /* lowpoly-house.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = "lowpoly-house.usdz"; sourceTree = "<group>"; };
 		B2B60A5D2C21F8E700DA40EB /* colored_cube.mtl */ = {isa = PBXFileReference; lastKnownFileType = text; path = colored_cube.mtl; sourceTree = "<group>"; };
 		B2B60A5E2C21F8E700DA40EB /* colored_cube.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = colored_cube.obj; sourceTree = "<group>"; };
+		B2C36E512C2749DD00CE3C06 /* modelVerticesTransform.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = modelVerticesTransform.metal; sourceTree = "<group>"; };
 		B2DFFD542C0F99F50072082F /* RenderableComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderableComponent.swift; sourceTree = "<group>"; };
 		B2DFFD562C1361E30072082F /* barrel.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = barrel.usdz; sourceTree = "<group>"; };
 		B2DFFD582C1362B00072082F /* walker.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = walker.usda; sourceTree = "<group>"; };
@@ -182,6 +184,7 @@
 		B259C2772BA2FB930049BA2C /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
+				B2C36E512C2749DD00CE3C06 /* modelVerticesTransform.metal */,
 				B22D8DDE2BE54A15005EE7D9 /* DebugBoundingBox.metal */,
 				B259C2872BA303B80049BA2C /* Fragment.metal */,
 				B259C2882BA303B90049BA2C /* Vertex.metal */,
@@ -419,6 +422,7 @@
 				B259C28A2BA303B90049BA2C /* Vertex.metal in Sources */,
 				B2DFFD552C0F99F50072082F /* RenderableComponent.swift in Sources */,
 				B2E6D6DC2BCAE7C500F7D9B0 /* GameScene.swift in Sources */,
+				B2C36E522C2749FC00CE3C06 /* modelVerticesTransform.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

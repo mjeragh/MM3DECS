@@ -50,7 +50,7 @@ struct RenderableComponent: Component {
             // Check and apply transformations during loading
             let transformMatrix = (mdlMesh.transform)?.matrix ?? matrix_identity_float4x4
             if transformMatrix != matrix_identity_float4x4 {
-                applyTransformToVertices(of: mdlMesh, with: transformMatrix)
+                applyTransformToVerticesGPU(of: mdlMesh, with: transformMatrix)
             }
 
             for submesh in mdlMesh.submeshes as? [MDLSubmesh] ?? [] {
@@ -133,6 +133,9 @@ struct RenderableComponent: Component {
         }
     }
 
+    
+
+    
     private func applyTransformToVertices(of mesh: MDLMesh, with transform: matrix_float4x4) {
         os_signpost(.begin, log: log, name: "applyTransformToVertices")
         defer {
@@ -163,4 +166,51 @@ struct RenderableComponent: Component {
             logger.debug("Original Position: \(position), Transformed Position: \(transformedPosition)")
         }
     }
-}
+    
+    private func applyTransformToVerticesGPU(of mesh: MDLMesh, with transform: matrix_float4x4) {
+        os_signpost(.begin, log: log, name: "applyTransformToVerticesGPU")
+        defer {
+            os_signpost(.end, log: log, name: "applyTransformToVerticesGPU")
+        }
+        
+        guard let mdlVertexBuffer = mesh.vertexBuffers.first else { return }
+        guard let mtkVertexBuffer = mdlVertexBuffer as? MTKMeshBuffer else {
+            fatalError("Expected MTKMeshBuffer but found another type")
+        }
+        
+        let vertexBuffer = mtkVertexBuffer.buffer
+        let vertexCount = mesh.vertexCount
+
+        guard let commandQueue = Renderer.device.makeCommandQueue(),
+              let commandBuffer = commandQueue.makeCommandBuffer(),
+              let computeEncoder = commandBuffer.makeComputeCommandEncoder() else { return }
+
+        let computePipelineState: MTLComputePipelineState
+        let library = Renderer.device.makeDefaultLibrary()
+        guard let computeFunction = library?.makeFunction(name: "transformVertices") else {
+            fatalError("Unable to find function transformVertices in Metal library")
+        }
+
+        do {
+            computePipelineState = try Renderer.device.makeComputePipelineState(function: computeFunction)
+        } catch {
+            fatalError("Unable to create compute pipeline state: \(error)")
+        }
+
+        computeEncoder.setComputePipelineState(computePipelineState)
+        computeEncoder.setBuffer(vertexBuffer, offset: 0, index: 0)
+        
+        // Since transform is a constant in the shader, we pass it directly
+        var transformMatrix = transform
+        computeEncoder.setBytes(&transformMatrix, length: MemoryLayout<matrix_float4x4>.stride, index: 1)
+
+        let gridSize = MTLSize(width: vertexCount, height: 1, depth: 1)
+        let threadGroupSize = MTLSize(width: min(Renderer.device.maxThreadsPerThreadgroup.width, gridSize.width), height: 1, depth: 1)
+        
+        computeEncoder.dispatchThreads(gridSize, threadsPerThreadgroup: threadGroupSize)
+        computeEncoder.endEncoding()
+        
+        commandBuffer.commit()
+        commandBuffer.waitUntilCompleted()
+    }
+}//class
