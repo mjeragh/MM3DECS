@@ -1,7 +1,6 @@
 import MetalKit
 import OSLog
 
-// Define semantics array once, outside the struct
 private let semantics: [MDLMaterialSemantic] = [
     .baseColor, .specular, .metallic, .roughness, .emission, .opacity,
     .displacement, .ambientOcclusion, .anisotropic,
@@ -11,10 +10,10 @@ private let semantics: [MDLMaterialSemantic] = [
 struct RenderableComponent: Component {
     var meshes: [MTKMesh] = []
     var argumentBuffers: [[MTLBuffer?]] = []
-    var transforms: [matrix_float4x4] = []
     let name: String
     let boundingBox: MDLAxisAlignedBoundingBox
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "RenderableComponent")
+    let log = OSLog(subsystem: "com.lanterntech.mm3decs", category: .pointsOfInterest)
 
     init(device: MTLDevice, name: String) {
         guard let assetURL = Bundle.main.url(forResource: name, withExtension: nil) else {
@@ -24,7 +23,6 @@ struct RenderableComponent: Component {
         let allocator = MTKMeshBufferAllocator(device: device)
         let asset = MDLAsset(url: assetURL, vertexDescriptor: .defaultLayout, bufferAllocator: allocator)
         
-        // Load textures
         asset.loadTextures()
         
         var mdlMeshes: [MDLMesh] = []
@@ -39,7 +37,6 @@ struct RenderableComponent: Component {
         self.name = name
         self.boundingBox = asset.boundingBox
         
-        // Create Argument Encoder from the fragment function
         guard let fragmentFunction = Renderer.library.makeFunction(name: "fragment_main") else {
             fatalError("Fragment function not found")
         }
@@ -47,12 +44,15 @@ struct RenderableComponent: Component {
         let argumentEncoder = fragmentFunction.makeArgumentEncoder(bufferIndex: ArgumentsBuffer.index)
         let argumentBufferSize = argumentEncoder.encodedLength
         
-
-        // Process each MDL mesh
         for mdlMesh in mdlMeshes {
             var submeshArgumentBuffers: [MTLBuffer?] = []
 
-            // Process each submesh
+            // Check and apply transformations during loading
+            let transformMatrix = (mdlMesh.transform)?.matrix ?? matrix_identity_float4x4
+            if transformMatrix != matrix_identity_float4x4 {
+                applyTransformToVertices(of: mdlMesh, with: transformMatrix)
+            }
+
             for submesh in mdlMesh.submeshes as? [MDLSubmesh] ?? [] {
                 var foundTextureOrColor = false
                 var texture: MTLTexture?
@@ -76,7 +76,6 @@ struct RenderableComponent: Component {
                     }
                 }
 
-                // Use a placeholder if no valid texture or color found
                 if !foundTextureOrColor {
                     logger.error("No valid texture or color found for submesh in \(name)")
                     texture = TextureController.shared.loadTexture(name: "\(name)-placeholder")
@@ -85,13 +84,10 @@ struct RenderableComponent: Component {
                     }
                 }
 
-               
-                // Create Argument Buffer
                 let argumentBuffer = device.makeBuffer(length: argumentBufferSize, options: [])
                 argumentBuffer?.label = "ArgumentBuffer"
                 argumentEncoder.setArgumentBuffer(argumentBuffer, offset: 0)
                 
-                // Set Arguments
                 if let texture = texture {
                     argumentEncoder.setTexture(texture, index: 1)
                     logger.debug("Texture loaded for submesh in \(name)")
@@ -111,16 +107,9 @@ struct RenderableComponent: Component {
                 hasTexturePointer.copyMemory(from: &hasTexture, byteCount: MemoryLayout<UInt>.size)
 
                 submeshArgumentBuffers.append(argumentBuffer)
-            }//for subMesh
-            self.argumentBuffers.append(submeshArgumentBuffers)
-
-            // Capture the transformation of the mesh
-            if let transformComponent = mdlMesh.transform as? MDLTransformComponent {
-                self.transforms.append(transformComponent.matrix)
-            } else {
-                self.transforms.append(matrix_identity_float4x4)
             }
-        }//for mdlMesh
+            self.argumentBuffers.append(submeshArgumentBuffers)
+        }
     }
 
     func render(encoder: MTLRenderCommandEncoder, uniformsConstant: Uniforms) {
@@ -128,8 +117,6 @@ struct RenderableComponent: Component {
             encoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: VertexBuffer.index)
             
             var uniforms = uniformsConstant
-            
-            uniforms.modelMatrix = uniforms.modelMatrix * self.transforms[meshIndex]
 
             encoder.setVertexBytes(&uniforms, length: MemoryLayout<Uniforms>.stride, index: UniformsBuffer.index)
 
@@ -143,6 +130,37 @@ struct RenderableComponent: Component {
                     indexBufferOffset: submesh.indexBuffer.offset
                 )
             }
+        }
+    }
+
+    private func applyTransformToVertices(of mesh: MDLMesh, with transform: matrix_float4x4) {
+        os_signpost(.begin, log: log, name: "applyTransformToVertices")
+        defer {
+            os_signpost(.end, log: log, name: "applyTransformToVertices")
+        }
+        guard let vertexBuffer = mesh.vertexBuffers.first else { return }
+        let bufferPointer = vertexBuffer.map().bytes.bindMemory(to: Float.self, capacity: vertexBuffer.length)
+        let vertexCount = mesh.vertexCount
+        let vertexDescriptor = mesh.vertexDescriptor
+
+        // Correctly cast the position attribute and layout
+        guard let positionAttribute = vertexDescriptor.attributes[Int(Position.rawValue)] as? MDLVertexAttribute,
+              let layout = vertexDescriptor.layouts[Int(positionAttribute.bufferIndex)] as? MDLVertexBufferLayout else {
+            return
+        }
+        let positionStride = layout.stride
+        let positionOffset = positionAttribute.offset
+
+        for i in 0..<vertexCount {
+            let positionPointer = bufferPointer.advanced(by: i * positionStride / MemoryLayout<Float>.size + positionOffset / MemoryLayout<Float>.size)
+            let position = SIMD4<Float>(positionPointer[0], positionPointer[1], positionPointer[2], 1.0)
+            let transformedPosition = transform * position
+            positionPointer[0] = transformedPosition.x
+            positionPointer[1] = transformedPosition.y
+            positionPointer[2] = transformedPosition.z
+            
+            // Debug log
+            logger.debug("Original Position: \(position), Transformed Position: \(transformedPosition)")
         }
     }
 }
