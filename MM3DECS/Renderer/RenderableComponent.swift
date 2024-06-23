@@ -267,20 +267,20 @@ struct RenderableComponent: Component {
         let bufferPointer = vertexBuffer.contents().bindMemory(to: ModelVertexCPU.self, capacity: vertexCount)
         for i in 0..<vertexCount {
             let vertex = bufferPointer[i]
-            print("Initial Vertex \(i): \(vertex.position)")
+            logger.debug("Initial Vertex \(i): \(vertex.position)")
         }
 
         // Debugging: Print the debug information
         let debugPointer = debugBuffer.contents().bindMemory(to: DebugInfoCPU.self, capacity: vertexCount)
         for i in 0..<vertexCount {
             let debugInfo = debugPointer[i]
-            print("Debug Info for Vertex \(i):")
-            print("  Input Position: \(debugInfo.inputPosition)")
-            print("  Transform Row 0: \(debugInfo.transformRow0)")
-            print("  Transform Row 1: \(debugInfo.transformRow1)")
-            print("  Transform Row 2: \(debugInfo.transformRow2)")
-            print("  Transform Row 3: \(debugInfo.transformRow3)")
-            print("  Output Position: \(debugInfo.outputPosition)")
+            logger.debug("Debug Info for Vertex \(i):")
+            logger.debug("  Input Position: \(debugInfo.inputPosition)")
+            logger.debug("  Transform Row 0: \(debugInfo.transformRow0)")
+            logger.debug("  Transform Row 1: \(debugInfo.transformRow1)")
+            logger.debug("  Transform Row 2: \(debugInfo.transformRow2)")
+            logger.debug("  Transform Row 3: \(debugInfo.transformRow3)")
+            logger.debug("  Output Position: \(debugInfo.outputPosition)")
         }
     }
     
