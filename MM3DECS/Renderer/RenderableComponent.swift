@@ -172,14 +172,23 @@ struct RenderableComponent: Component {
         defer {
             os_signpost(.end, log: log, name: "applyTransformToVerticesGPU")
         }
-        
-        guard let mdlVertexBuffer = mesh.vertexBuffers.first else { return }
-        guard let mtkVertexBuffer = mdlVertexBuffer as? MTKMeshBuffer else {
+
+        guard let mtkVertexBuffer = mesh.vertexBuffers.first as? MTKMeshBuffer else {
             fatalError("Expected MTKMeshBuffer but found another type")
         }
-        
-        let vertexBuffer = mtkVertexBuffer.buffer
+
+        let originalBuffer = mtkVertexBuffer.buffer
         let vertexCount = mesh.vertexCount
+
+        // Create a new buffer for transformed vertices
+        guard let transformedVertexBuffer = Renderer.device.makeBuffer(length: originalBuffer.length, options: .storageModeShared) else {
+            fatalError("Failed to create transformed vertex buffer")
+        }
+
+        // Create a debug buffer
+        guard let debugBuffer = Renderer.device.makeBuffer(length: MemoryLayout<DebugInfoCPU>.stride * vertexCount, options: .storageModeShared) else {
+            fatalError("Failed to create debug buffer")
+        }
 
         guard let commandQueue = Renderer.device.makeCommandQueue(),
               let commandBuffer = commandQueue.makeCommandBuffer(),
@@ -198,19 +207,49 @@ struct RenderableComponent: Component {
         }
 
         computeEncoder.setComputePipelineState(computePipelineState)
-        computeEncoder.setBuffer(vertexBuffer, offset: 0, index: 0)
-        
-        // Since transform is a constant in the shader, we pass it directly
+        computeEncoder.setBuffer(originalBuffer, offset: 0, index: 0)
+        computeEncoder.setBuffer(transformedVertexBuffer, offset: 0, index: 1)
+
         var transformMatrix = transform
-        computeEncoder.setBytes(&transformMatrix, length: MemoryLayout<matrix_float4x4>.stride, index: 1)
+        computeEncoder.setBytes(&transformMatrix, length: MemoryLayout<matrix_float4x4>.stride, index: 2)
+        computeEncoder.setBuffer(debugBuffer, offset: 0, index: 3)
 
         let gridSize = MTLSize(width: vertexCount, height: 1, depth: 1)
         let threadGroupSize = MTLSize(width: min(Renderer.device.maxThreadsPerThreadgroup.width, gridSize.width), height: 1, depth: 1)
-        
+
         computeEncoder.dispatchThreads(gridSize, threadsPerThreadgroup: threadGroupSize)
         computeEncoder.endEncoding()
-        
+
         commandBuffer.commit()
         commandBuffer.waitUntilCompleted()
+
+        // Debugging: Print the initial and transformed buffer contents
+        var bufferPointer = originalBuffer.contents().bindMemory(to: ModelVertexCPU.self, capacity: vertexCount)
+        for i in 0..<vertexCount {
+            let vertex = bufferPointer[i]
+            print("Initial Vertex \(i): \(vertex.position)")
+        }
+
+        bufferPointer = transformedVertexBuffer.contents().bindMemory(to: ModelVertexCPU.self, capacity: vertexCount)
+        for i in 0..<vertexCount {
+            let vertex = bufferPointer[i]
+            print("Transformed Vertex \(i): \(vertex.position)")
+        }
+
+        // Debugging: Print the debug information
+        let debugPointer = debugBuffer.contents().bindMemory(to: DebugInfoCPU.self, capacity: vertexCount)
+        for i in 0..<vertexCount {
+            let debugInfo = debugPointer[i]
+            print("Debug Info for Vertex \(i):")
+            print("  Input Position: \(debugInfo.inputPosition)")
+            print("  Transform Row 0: \(debugInfo.transformRow0)")
+            print("  Transform Row 1: \(debugInfo.transformRow1)")
+            print("  Transform Row 2: \(debugInfo.transformRow2)")
+            print("  Transform Row 3: \(debugInfo.transformRow3)")
+            print("  Output Position: \(debugInfo.outputPosition)")
+        }
+
+        // Copy transformed vertices back to the original vertex buffer
+        memcpy(originalBuffer.contents(), transformedVertexBuffer.contents(), originalBuffer.length)
     }
 }//class

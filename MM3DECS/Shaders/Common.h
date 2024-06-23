@@ -11,6 +11,19 @@
 #import <simd/simd.h>
 #import "stdbool.h"
 
+typedef struct {
+    vector_float4 inputPosition;
+    vector_float4 outputPosition;
+    vector_float4 transformRow0;
+    vector_float4 transformRow1;
+    vector_float4 transformRow2;
+    vector_float4 transformRow3;
+} DebugInfoCPU;
+
+typedef struct {
+    vector_float4 position;
+    // other attributes if necessary
+} ModelVertexCPU;
 
 typedef struct {
   matrix_float4x4 viewMatrix;
