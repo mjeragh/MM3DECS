@@ -27,9 +27,9 @@ kernel void transformVertices(device ModelVertex *vertices [[buffer(0)]],
     debugBuffer[id].transformRow3 = transform[3];
 
     // Apply matrix transformation directly to the vertex buffer
-    float4 transformedPosition = transform * vertices[id].position;
-    vertices[id].position = transformedPosition;
+    float4 position = vertices[id].position;
+    vertices[id].position = transform * position;
 
     // Store output position
-    debugBuffer[id].outputPosition = transformedPosition;
+    debugBuffer[id].outputPosition = vertices[id].position;
 }

@@ -88,14 +88,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "1CF020FD-89D8-4E58-9ED9-DF299C128B66"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MM3DECS/Renderer/RenderableComponent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "166"
-            endingLineNumber = "166"
+            startingLineNumber = "157"
+            endingLineNumber = "157"
             landmarkName = "applyTransformToVertices(of:with:)"
             landmarkType = "7">
          </BreakpointContent>
