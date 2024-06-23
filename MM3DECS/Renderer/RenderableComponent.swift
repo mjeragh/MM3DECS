@@ -50,7 +50,7 @@ struct RenderableComponent: Component {
             // Check and apply transformations during loading
             let transformMatrix = (mdlMesh.transform)?.matrix ?? matrix_identity_float4x4
             if transformMatrix != matrix_identity_float4x4 {
-                applyTransformToVerticesGPU(of: mdlMesh, with: transformMatrix)
+                applyTransformToVerticesParallelCPU(of: mdlMesh, with: transformMatrix)
             }
             
             for submesh in mdlMesh.submeshes as? [MDLSubmesh] ?? [] {
@@ -166,6 +166,54 @@ struct RenderableComponent: Component {
             logger.debug("Original Position: \(position), Transformed Position: \(transformedPosition)")
         }
     }
+    
+    
+    private func applyTransformToVerticesParallelCPU(of mesh: MDLMesh, with transform: matrix_float4x4) {
+        os_signpost(.begin, log: log, name: "applyTransformToVerticesParallelCPU")
+        defer {
+            os_signpost(.end, log: log, name: "applyTransformToVerticesParallelCPU")
+        }
+        
+        guard let vertexBuffer = mesh.vertexBuffers.first else { return }
+        let bufferPointer = vertexBuffer.map().bytes.bindMemory(to: Float.self, capacity: vertexBuffer.length)
+        let vertexCount = mesh.vertexCount
+        let vertexDescriptor = mesh.vertexDescriptor
+        
+        // Correctly cast the position attribute and layout
+        guard let positionAttribute = vertexDescriptor.attributes[Int(Position.rawValue)] as? MDLVertexAttribute,
+              let layout = vertexDescriptor.layouts[Int(positionAttribute.bufferIndex)] as? MDLVertexBufferLayout else {
+            return
+        }
+        let positionStride = layout.stride
+        let positionOffset = positionAttribute.offset
+        
+        let queue = DispatchQueue(label: "com.example.vertexTransformation", attributes: .concurrent)
+        let group = DispatchGroup()
+        
+        let chunkSize = 4 // Number of vertices to process in each concurrent task
+        
+        for chunkStart in stride(from: 0, to: vertexCount, by: chunkSize) {
+            queue.async(group: group) {
+                let chunkEnd = min(chunkStart + chunkSize, vertexCount)
+                for i in chunkStart..<chunkEnd {
+                    let positionPointer = bufferPointer.advanced(by: i * positionStride / MemoryLayout<Float>.size + positionOffset / MemoryLayout<Float>.size)
+                    let position = SIMD4<Float>(positionPointer[0], positionPointer[1], positionPointer[2], 1.0)
+                    let transformedPosition = transform * position
+                    positionPointer[0] = transformedPosition.x
+                    positionPointer[1] = transformedPosition.y
+                    positionPointer[2] = transformedPosition.z
+                    
+                    // Debug log
+                    self.logger.debug("Original Position: \(position), Transformed Position: \(transformedPosition)")
+                }
+            }
+        }
+        
+        group.wait() // Wait for all chunks to be processed before continuing
+    }
+    
+    
+    
     private func applyTransformToVerticesGPU(of mesh: MDLMesh, with transform: matrix_float4x4) {
         os_signpost(.begin, log: log, name: "applyTransformToVerticesGPU")
         defer {
