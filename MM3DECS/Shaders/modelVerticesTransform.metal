@@ -1,9 +1,3 @@
-//
-//  modelVerticesTransform.metal
-//  MM3DECS
-//
-//  Created by Mohammad Jeragh on 22/06/2024.
-//
 #include <metal_stdlib>
 using namespace metal;
 
@@ -21,21 +15,21 @@ struct DebugInfo {
     float4 transformRow3;
 };
 
-kernel void transformVertices(device const ModelVertex *inputVertices [[buffer(0)]],
-                              device ModelVertex *outputVertices [[buffer(1)]],
-                              constant float4x4 &transform [[buffer(2)]],
-                              device DebugInfo *debugBuffer [[buffer(3)]],
+kernel void transformVertices(device ModelVertex *vertices [[buffer(0)]],
+                              constant float4x4 &transform [[buffer(1)]],
+                              device DebugInfo *debugBuffer [[buffer(2)]],
                               uint id [[thread_position_in_grid]]) {
     // Store debug info
-    debugBuffer[id].inputPosition = inputVertices[id].position;
+    debugBuffer[id].inputPosition = vertices[id].position;
     debugBuffer[id].transformRow0 = transform[0];
     debugBuffer[id].transformRow1 = transform[1];
     debugBuffer[id].transformRow2 = transform[2];
     debugBuffer[id].transformRow3 = transform[3];
 
-    // Apply transformation
-    outputVertices[id].position = transform * inputVertices[id].position;
+    // Apply matrix transformation directly to the vertex buffer
+    float4 transformedPosition = transform * vertices[id].position;
+    vertices[id].position = transformedPosition;
 
     // Store output position
-    debugBuffer[id].outputPosition = outputVertices[id].position;
+    debugBuffer[id].outputPosition = transformedPosition;
 }

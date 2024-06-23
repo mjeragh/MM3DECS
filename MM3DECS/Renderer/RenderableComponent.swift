@@ -14,12 +14,12 @@ struct RenderableComponent: Component {
     let boundingBox: MDLAxisAlignedBoundingBox
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "RenderableComponent")
     let log = OSLog(subsystem: "com.lanterntech.mm3decs", category: .pointsOfInterest)
-
+    
     init(device: MTLDevice, name: String) {
         guard let assetURL = Bundle.main.url(forResource: name, withExtension: nil) else {
             fatalError("Model: \(name) not found")
         }
-
+        
         let allocator = MTKMeshBufferAllocator(device: device)
         let asset = MDLAsset(url: assetURL, vertexDescriptor: .defaultLayout, bufferAllocator: allocator)
         
@@ -33,31 +33,40 @@ struct RenderableComponent: Component {
         } catch {
             fatalError("Failed to load meshes: \(error)")
         }
-
+        
         self.name = name
         self.boundingBox = asset.boundingBox
         
         guard let fragmentFunction = Renderer.library.makeFunction(name: "fragment_main") else {
             fatalError("Fragment function not found")
         }
-
+        
         let argumentEncoder = fragmentFunction.makeArgumentEncoder(bufferIndex: ArgumentsBuffer.index)
         let argumentBufferSize = argumentEncoder.encodedLength
         
         for mdlMesh in mdlMeshes {
             var submeshArgumentBuffers: [MTLBuffer?] = []
-
+            
             // Check and apply transformations during loading
             let transformMatrix = (mdlMesh.transform)?.matrix ?? matrix_identity_float4x4
             if transformMatrix != matrix_identity_float4x4 {
-                applyTransformToVerticesGPU(of: mdlMesh, with: transformMatrix)
-            }
+                // Example of creating a scaling transformation matrix
+                let scale: Float = 200.0
+                let scalingMatrix = matrix_float4x4(
+                    [scale, 0, 0, 0],
+                    [0, scale, 0, 0],
+                    [0, 0, scale, 0],
+                    [0, 0, 0, 1]
+                )
 
+                applyTransformToVerticesGPU(of: mdlMesh, with: scalingMatrix)
+            }
+            
             for submesh in mdlMesh.submeshes as? [MDLSubmesh] ?? [] {
                 var foundTextureOrColor = false
                 var texture: MTLTexture?
                 var baseColor: SIMD4<Float>?
-
+                
                 if let material = submesh.material {
                     for semantic in semantics {
                         if let property = material.property(with: semantic) {
@@ -75,7 +84,7 @@ struct RenderableComponent: Component {
                         }
                     }
                 }
-
+                
                 if !foundTextureOrColor {
                     logger.error("No valid texture or color found for submesh in \(name)")
                     texture = TextureController.shared.loadTexture(name: "\(name)-placeholder")
@@ -83,7 +92,7 @@ struct RenderableComponent: Component {
                         logger.debug("Created placeholder texture with color for: \(name)")
                     }
                 }
-
+                
                 let argumentBuffer = device.makeBuffer(length: argumentBufferSize, options: [])
                 argumentBuffer?.label = "ArgumentBuffer"
                 argumentEncoder.setArgumentBuffer(argumentBuffer, offset: 0)
@@ -105,21 +114,21 @@ struct RenderableComponent: Component {
                 logger.debug("HasTexture: \(hasTexture) for submesh in \(name)")
                 let hasTexturePointer = argumentEncoder.constantData(at: 2)
                 hasTexturePointer.copyMemory(from: &hasTexture, byteCount: MemoryLayout<UInt>.size)
-
+                
                 submeshArgumentBuffers.append(argumentBuffer)
             }
             self.argumentBuffers.append(submeshArgumentBuffers)
         }
     }
-
+    
     func render(encoder: MTLRenderCommandEncoder, uniformsConstant: Uniforms) {
         for (meshIndex, mesh) in meshes.enumerated() {
             encoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: VertexBuffer.index)
             
             var uniforms = uniformsConstant
-
+            
             encoder.setVertexBytes(&uniforms, length: MemoryLayout<Uniforms>.stride, index: UniformsBuffer.index)
-
+            
             for (submeshIndex, submesh) in mesh.submeshes.enumerated() {
                 encoder.setFragmentBuffer(argumentBuffers[meshIndex][submeshIndex], offset: 0, index: ArgumentsBuffer.index)
                 encoder.drawIndexedPrimitives(
@@ -132,9 +141,9 @@ struct RenderableComponent: Component {
             }
         }
     }
-
     
-
+    
+    
     
     private func applyTransformToVertices(of mesh: MDLMesh, with transform: matrix_float4x4) {
         os_signpost(.begin, log: log, name: "applyTransformToVertices")
@@ -145,7 +154,7 @@ struct RenderableComponent: Component {
         let bufferPointer = vertexBuffer.map().bytes.bindMemory(to: Float.self, capacity: vertexBuffer.length)
         let vertexCount = mesh.vertexCount
         let vertexDescriptor = mesh.vertexDescriptor
-
+        
         // Correctly cast the position attribute and layout
         guard let positionAttribute = vertexDescriptor.attributes[Int(Position.rawValue)] as? MDLVertexAttribute,
               let layout = vertexDescriptor.layouts[Int(positionAttribute.bufferIndex)] as? MDLVertexBufferLayout else {
@@ -153,7 +162,7 @@ struct RenderableComponent: Component {
         }
         let positionStride = layout.stride
         let positionOffset = positionAttribute.offset
-
+        
         for i in 0..<vertexCount {
             let positionPointer = bufferPointer.advanced(by: i * positionStride / MemoryLayout<Float>.size + positionOffset / MemoryLayout<Float>.size)
             let position = SIMD4<Float>(positionPointer[0], positionPointer[1], positionPointer[2], 1.0)
@@ -177,13 +186,8 @@ struct RenderableComponent: Component {
             fatalError("Expected MTKMeshBuffer but found another type")
         }
 
-        let originalBuffer = mtkVertexBuffer.buffer
+        let vertexBuffer = mtkVertexBuffer.buffer
         let vertexCount = mesh.vertexCount
-
-        // Create a new buffer for transformed vertices
-        guard let transformedVertexBuffer = Renderer.device.makeBuffer(length: originalBuffer.length, options: .storageModeShared) else {
-            fatalError("Failed to create transformed vertex buffer")
-        }
 
         // Create a debug buffer
         guard let debugBuffer = Renderer.device.makeBuffer(length: MemoryLayout<DebugInfoCPU>.stride * vertexCount, options: .storageModeShared) else {
@@ -207,12 +211,10 @@ struct RenderableComponent: Component {
         }
 
         computeEncoder.setComputePipelineState(computePipelineState)
-        computeEncoder.setBuffer(originalBuffer, offset: 0, index: 0)
-        computeEncoder.setBuffer(transformedVertexBuffer, offset: 0, index: 1)
-
-        var transformMatrix = transform
-        computeEncoder.setBytes(&transformMatrix, length: MemoryLayout<matrix_float4x4>.stride, index: 2)
-        computeEncoder.setBuffer(debugBuffer, offset: 0, index: 3)
+        computeEncoder.setBuffer(vertexBuffer, offset: 0, index: 0)
+        var transformVar = transform
+        computeEncoder.setBytes(&transformVar, length: MemoryLayout<matrix_float4x4>.stride, index: 1)
+        computeEncoder.setBuffer(debugBuffer, offset: 0, index: 2)
 
         let gridSize = MTLSize(width: vertexCount, height: 1, depth: 1)
         let threadGroupSize = MTLSize(width: min(Renderer.device.maxThreadsPerThreadgroup.width, gridSize.width), height: 1, depth: 1)
@@ -224,20 +226,18 @@ struct RenderableComponent: Component {
         commandBuffer.waitUntilCompleted()
 
         // Debugging: Print the initial and transformed buffer contents
-        var bufferPointer = originalBuffer.contents().bindMemory(to: ModelVertexCPU.self, capacity: vertexCount)
+        let vertexStride = MemoryLayout<ModelVertexCPU>.stride
+        let vertexCapacity = vertexBuffer.length / vertexStride
+        var bufferPointer = vertexBuffer.contents().bindMemory(to: ModelVertexCPU.self, capacity: vertexCapacity)
         for i in 0..<vertexCount {
             let vertex = bufferPointer[i]
             print("Initial Vertex \(i): \(vertex.position)")
         }
 
-        bufferPointer = transformedVertexBuffer.contents().bindMemory(to: ModelVertexCPU.self, capacity: vertexCount)
-        for i in 0..<vertexCount {
-            let vertex = bufferPointer[i]
-            print("Transformed Vertex \(i): \(vertex.position)")
-        }
-
         // Debugging: Print the debug information
-        let debugPointer = debugBuffer.contents().bindMemory(to: DebugInfoCPU.self, capacity: vertexCount)
+        let debugStride = MemoryLayout<DebugInfoCPU>.stride
+        let debugCapacity = debugBuffer.length / debugStride
+        let debugPointer = debugBuffer.contents().bindMemory(to: DebugInfoCPU.self, capacity: debugCapacity)
         for i in 0..<vertexCount {
             let debugInfo = debugPointer[i]
             print("Debug Info for Vertex \(i):")
@@ -249,7 +249,43 @@ struct RenderableComponent: Component {
             print("  Output Position: \(debugInfo.outputPosition)")
         }
 
-        // Copy transformed vertices back to the original vertex buffer
-        memcpy(originalBuffer.contents(), transformedVertexBuffer.contents(), originalBuffer.length)
+        // Print the MDLMesh vertex buffer
+        if let mdlVertexBuffer = mesh.vertexBuffers.first {
+            let mdlVertexStride = MemoryLayout<Float>.stride * 3 // Assuming 3 floats per vertex position
+            let mdlVertexCapacity = mdlVertexBuffer.length / mdlVertexStride
+            let mdlBufferPointer = mdlVertexBuffer.map().bytes.bindMemory(to: Float.self, capacity: mdlVertexCapacity)
+            let vertexDescriptor = mesh.vertexDescriptor
+            guard let positionAttribute = vertexDescriptor.attributes[Int(Position.rawValue)] as? MDLVertexAttribute,
+                  let layout = vertexDescriptor.layouts[Int(positionAttribute.bufferIndex)] as? MDLVertexBufferLayout else {
+                return
+            }
+            let positionStride = layout.stride
+            let positionOffset = positionAttribute.offset
+
+            print("MDLMesh Vertex Buffer Contents:")
+            for i in 0..<vertexCount {
+                let positionPointer = mdlBufferPointer.advanced(by: i * positionStride / MemoryLayout<Float>.size + positionOffset / MemoryLayout<Float>.size)
+                let position = SIMD3<Float>(positionPointer[0], positionPointer[1], positionPointer[2])
+                print("MDLMesh Vertex \(i): \(position)")
+            }
+
+            // Manually update the MDLMesh vertex buffer with the transformed data from GPU
+            for i in 0..<vertexCount {
+                let gpuVertex = bufferPointer[i]
+                let positionPointer = mdlBufferPointer.advanced(by: i * positionStride / MemoryLayout<Float>.size + positionOffset / MemoryLayout<Float>.size)
+                positionPointer[0] = gpuVertex.position.x
+                positionPointer[1] = gpuVertex.position.y
+                positionPointer[2] = gpuVertex.position.z
+            }
+
+            // Verify the update
+            print("Updated MDLMesh Vertex Buffer Contents:")
+            for i in 0..<vertexCount {
+                let positionPointer = mdlBufferPointer.advanced(by: i * positionStride / MemoryLayout<Float>.size + positionOffset / MemoryLayout<Float>.size)
+                let position = SIMD3<Float>(positionPointer[0], positionPointer[1], positionPointer[2])
+                print("Updated MDLMesh Vertex \(i): \(position)")
+            }
+        }
     }
+    
 }//class

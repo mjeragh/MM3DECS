@@ -94,8 +94,8 @@
             filePath = "MM3DECS/Renderer/RenderableComponent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "157"
-            endingLineNumber = "157"
+            startingLineNumber = "166"
+            endingLineNumber = "166"
             landmarkName = "applyTransformToVertices(of:with:)"
             landmarkType = "7">
          </BreakpointContent>
