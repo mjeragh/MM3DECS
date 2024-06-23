@@ -22,7 +22,13 @@ typedef struct {
 
 typedef struct {
     vector_float4 position;
-    // other attributes if necessary
+    vector_float3 normal;
+    vector_float2 uv;
+    vector_float3 color;
+    vector_float3 tangent;
+    vector_float3 bitangent;
+    vector_ushort4 joints ;
+    vector_float4 weights;
 } ModelVertexCPU;
 
 typedef struct {

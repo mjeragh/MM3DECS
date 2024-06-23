@@ -1,9 +1,16 @@
 #include <metal_stdlib>
 using namespace metal;
+#import "Vertex.h"
 
 struct ModelVertex {
-    float4 position;
-    // other attributes if necessary
+    float4 position [[attribute(Position)]];
+    float3 normal [[attribute(Normal)]];
+    float2 uv [[attribute(UV)]];
+    float3 color [[attribute(Color)]];
+    float3 tangent [[attribute(Tangent)]];
+    float3 bitangent [[attribute(Bitangent)]];
+    ushort4 joints [[attribute(Joints)]];
+    float4 weights [[attribute(Weights)]];
 };
 
 struct DebugInfo {
