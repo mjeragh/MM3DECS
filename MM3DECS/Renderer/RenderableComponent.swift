@@ -133,40 +133,7 @@ struct RenderableComponent: Component {
         }
     }
     
-    
-    
-    
-    private func applyTransformToVertices(of mesh: MDLMesh, with transform: matrix_float4x4) {
-        os_signpost(.begin, log: log, name: "applyTransformToVertices")
-        defer {
-            os_signpost(.end, log: log, name: "applyTransformToVertices")
-        }
-        guard let vertexBuffer = mesh.vertexBuffers.first else { return }
-        let bufferPointer = vertexBuffer.map().bytes.bindMemory(to: Float.self, capacity: vertexBuffer.length)
-        let vertexCount = mesh.vertexCount
-        let vertexDescriptor = mesh.vertexDescriptor
-        
-        // Correctly cast the position attribute and layout
-        guard let positionAttribute = vertexDescriptor.attributes[Int(Position.rawValue)] as? MDLVertexAttribute,
-              let layout = vertexDescriptor.layouts[Int(positionAttribute.bufferIndex)] as? MDLVertexBufferLayout else {
-            return
-        }
-        let positionStride = layout.stride
-        let positionOffset = positionAttribute.offset
-        
-        for i in 0..<vertexCount {
-            let positionPointer = bufferPointer.advanced(by: i * positionStride / MemoryLayout<Float>.size + positionOffset / MemoryLayout<Float>.size)
-            let position = SIMD4<Float>(positionPointer[0], positionPointer[1], positionPointer[2], 1.0)
-            let transformedPosition = transform * position
-            positionPointer[0] = transformedPosition.x
-            positionPointer[1] = transformedPosition.y
-            positionPointer[2] = transformedPosition.z
-            
-            // Debug log
-            logger.debug("Original Position: \(position), Transformed Position: \(transformedPosition)")
-        }
-    }
-    
+ 
     
     private func applyTransformToVerticesParallelCPU(of mesh: MDLMesh, with transform: matrix_float4x4) {
         os_signpost(.begin, log: log, name: "applyTransformToVerticesParallelCPU")
@@ -212,6 +179,37 @@ struct RenderableComponent: Component {
         group.wait() // Wait for all chunks to be processed before continuing
     }
     
+    
+    private func applyTransformToVertices(of mesh: MDLMesh, with transform: matrix_float4x4) {
+        os_signpost(.begin, log: log, name: "applyTransformToVertices")
+        defer {
+            os_signpost(.end, log: log, name: "applyTransformToVertices")
+        }
+        guard let vertexBuffer = mesh.vertexBuffers.first else { return }
+        let bufferPointer = vertexBuffer.map().bytes.bindMemory(to: Float.self, capacity: vertexBuffer.length)
+        let vertexCount = mesh.vertexCount
+        let vertexDescriptor = mesh.vertexDescriptor
+        
+        // Correctly cast the position attribute and layout
+        guard let positionAttribute = vertexDescriptor.attributes[Int(Position.rawValue)] as? MDLVertexAttribute,
+              let layout = vertexDescriptor.layouts[Int(positionAttribute.bufferIndex)] as? MDLVertexBufferLayout else {
+            return
+        }
+        let positionStride = layout.stride
+        let positionOffset = positionAttribute.offset
+        
+        for i in 0..<vertexCount {
+            let positionPointer = bufferPointer.advanced(by: i * positionStride / MemoryLayout<Float>.size + positionOffset / MemoryLayout<Float>.size)
+            let position = SIMD4<Float>(positionPointer[0], positionPointer[1], positionPointer[2], 1.0)
+            let transformedPosition = transform * position
+            positionPointer[0] = transformedPosition.x
+            positionPointer[1] = transformedPosition.y
+            positionPointer[2] = transformedPosition.z
+            
+            // Debug log
+            logger.debug("Original Position: \(position), Transformed Position: \(transformedPosition)")
+        }
+    }
     
     
     private func applyTransformToVerticesGPU(of mesh: MDLMesh, with transform: matrix_float4x4) {
