@@ -1,6 +1,11 @@
 import MetalKit
 import OSLog
 
+struct Arguments {
+    var baseColor: SIMD4<Float>
+    var hasTexture: UInt32
+}
+
 private let semantics: [MDLMaterialSemantic] = [
     .baseColor, .specular, .metallic, .roughness, .emission, .opacity,
     .displacement, .ambientOcclusion, .anisotropic,
@@ -42,7 +47,6 @@ struct RenderableComponent: Component {
         }
         
         let argumentEncoder = fragmentFunction.makeArgumentEncoder(bufferIndex: ArgumentsBuffer.index)
-        let argumentBufferSize = argumentEncoder.encodedLength
         
         for mdlMesh in mdlMeshes {
             var submeshArgumentBuffers: [MTLBuffer?] = []
@@ -56,7 +60,7 @@ struct RenderableComponent: Component {
             for submesh in mdlMesh.submeshes as? [MDLSubmesh] ?? [] {
                 var foundTextureOrColor = false
                 var texture: MTLTexture?
-                var baseColor: SIMD4<Float>?
+                var baseColor: SIMD4<Float> = SIMD4<Float>(1.0, 1.0, 1.0, 1.0) // Default base color
                 
                 if let material = submesh.material {
                     for semantic in semantics {
@@ -78,33 +82,33 @@ struct RenderableComponent: Component {
                 
                 if !foundTextureOrColor {
                     logger.error("No valid texture or color found for submesh in \(name)")
+                    // Use a default placeholder texture if needed
                     texture = TextureController.shared.loadTexture(name: "\(name)-placeholder")
                     if texture != nil {
                         logger.debug("Created placeholder texture with color for: \(name)")
                     }
                 }
                 
-                let argumentBuffer = device.makeBuffer(length: argumentBufferSize, options: [])
+                let argumentBuffer = device.makeBuffer(length: argumentEncoder.encodedLength, options: [])
                 argumentBuffer?.label = "ArgumentBuffer"
                 argumentEncoder.setArgumentBuffer(argumentBuffer, offset: 0)
                 
+                // Set base color
+                let bufferPointer = argumentEncoder.constantData(at: 0)
+                bufferPointer.copyMemory(from: &baseColor, byteCount: MemoryLayout<SIMD4<Float>>.stride)
+                logger.debug("BaseColor: \(baseColor)")
+                
+                // Set texture if available
                 if let texture = texture {
-                    argumentEncoder.setTexture(texture, index: 1)
+                    argumentEncoder.setTexture(texture, index: 0)
                     logger.debug("Texture loaded for submesh in \(name)")
                 }
                 
-                if var baseColor = baseColor {
-                    let bufferPointer = argumentEncoder.constantData(at: 0)
-                    bufferPointer.copyMemory(from: &baseColor, byteCount: MemoryLayout<SIMD4<Float>>.size)
-                    logger.debug("BaseColor: \(baseColor)")
-                } else {
-                    logger.debug("BaseColor is nil for submesh in \(name)")
-                }
-                
-                var hasTexture: UInt = texture != nil ? 1 : 0
+                // Set hasTexture flag
+                var hasTexture: UInt32 = texture != nil ? 1 : 0
                 logger.debug("HasTexture: \(hasTexture) for submesh in \(name)")
-                let hasTexturePointer = argumentEncoder.constantData(at: 2)
-                hasTexturePointer.copyMemory(from: &hasTexture, byteCount: MemoryLayout<UInt>.size)
+                let hasTexturePointer = argumentEncoder.constantData(at: MemoryLayout<SIMD4<Float>>.stride)
+                hasTexturePointer.copyMemory(from: &hasTexture, byteCount: MemoryLayout<UInt32>.stride)
                 
                 submeshArgumentBuffers.append(argumentBuffer)
             }
@@ -132,7 +136,6 @@ struct RenderableComponent: Component {
             }
         }
     }
-    
     private func applyTransformToVerticesParallelCPU(of mesh: MDLMesh, with transform: matrix_float4x4) {
         os_signpost(.begin, log: log, name: "applyTransformToVerticesParallelCPU")
         defer {
