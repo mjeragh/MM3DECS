@@ -51,8 +51,9 @@
 		B2B60A5F2C21F8E700DA40EB /* colored_cube.mtl in Resources */ = {isa = PBXBuildFile; fileRef = B2B60A5D2C21F8E700DA40EB /* colored_cube.mtl */; };
 		B2B60A602C21F8E700DA40EB /* colored_cube.obj in Resources */ = {isa = PBXBuildFile; fileRef = B2B60A5E2C21F8E700DA40EB /* colored_cube.obj */; };
 		B2C36E522C2749FC00CE3C06 /* modelVerticesTransform.metal in Sources */ = {isa = PBXBuildFile; fileRef = B2C36E512C2749DD00CE3C06 /* modelVerticesTransform.metal */; };
-		B2DD4BE12C2A04CA00477684 /* File.txt in Resources */ = {isa = PBXBuildFile; fileRef = B2DD4BE02C2A04CA00477684 /* File.txt */; };
-		B2DD4BE32C2A04E800477684 /* File 2.txt in Resources */ = {isa = PBXBuildFile; fileRef = B2DD4BE22C2A04E800477684 /* File 2.txt */; };
+		B2DD4BE52C2B21E000477684 /* modified_train.usda in Resources */ = {isa = PBXBuildFile; fileRef = B2DD4BE42C2B21E000477684 /* modified_train.usda */; };
+		B2DD4BE72C2B268D00477684 /* trainSCN.scn in Resources */ = {isa = PBXBuildFile; fileRef = B2DD4BE62C2B268D00477684 /* trainSCN.scn */; };
+		B2DD4BE92C2B2EEC00477684 /* trainGPT.usda in Resources */ = {isa = PBXBuildFile; fileRef = B2DD4BE82C2B2EEC00477684 /* trainGPT.usda */; };
 		B2DFFD552C0F99F50072082F /* RenderableComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2DFFD542C0F99F50072082F /* RenderableComponent.swift */; };
 		B2DFFD572C1361E30072082F /* barrel.usdz in Resources */ = {isa = PBXBuildFile; fileRef = B2DFFD562C1361E30072082F /* barrel.usdz */; };
 		B2DFFD592C1362B00072082F /* walker.usda in Resources */ = {isa = PBXBuildFile; fileRef = B2DFFD582C1362B00072082F /* walker.usda */; };
@@ -116,8 +117,9 @@
 		B2B60A5D2C21F8E700DA40EB /* colored_cube.mtl */ = {isa = PBXFileReference; lastKnownFileType = text; path = colored_cube.mtl; sourceTree = "<group>"; };
 		B2B60A5E2C21F8E700DA40EB /* colored_cube.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = colored_cube.obj; sourceTree = "<group>"; };
 		B2C36E512C2749DD00CE3C06 /* modelVerticesTransform.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = modelVerticesTransform.metal; sourceTree = "<group>"; };
-		B2DD4BE02C2A04CA00477684 /* File.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = File.txt; sourceTree = "<group>"; };
-		B2DD4BE22C2A04E800477684 /* File 2.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "File 2.txt"; sourceTree = "<group>"; };
+		B2DD4BE42C2B21E000477684 /* modified_train.usda */ = {isa = PBXFileReference; lastKnownFileType = text; path = modified_train.usda; sourceTree = "<group>"; };
+		B2DD4BE62C2B268D00477684 /* trainSCN.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = trainSCN.scn; sourceTree = "<group>"; };
+		B2DD4BE82C2B2EEC00477684 /* trainGPT.usda */ = {isa = PBXFileReference; lastKnownFileType = text; path = trainGPT.usda; sourceTree = "<group>"; };
 		B2DFFD542C0F99F50072082F /* RenderableComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderableComponent.swift; sourceTree = "<group>"; };
 		B2DFFD562C1361E30072082F /* barrel.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = barrel.usdz; sourceTree = "<group>"; };
 		B2DFFD582C1362B00072082F /* walker.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = walker.usda; sourceTree = "<group>"; };
@@ -214,6 +216,8 @@
 		B259C28C2BA304690049BA2C /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				B2DD4BE82C2B2EEC00477684 /* trainGPT.usda */,
+				B2DD4BE42C2B21E000477684 /* modified_train.usda */,
 				B2480B072C22EA1400566FFE /* colored_cube2z.usdz */,
 				B2480B052C22E72D00566FFE /* colored_cube_z.usdz */,
 				B2480B032C22E53D00566FFE /* sc.usda */,
@@ -234,9 +238,8 @@
 				B2DFFD5C2C1362BC0072082F /* house1.usdz */,
 				B26654752C05E7C100EB7A20 /* pegTexture.usda */,
 				B240EDCF2C04A38B001DAFEB /* traina.usda */,
-				B2DD4BE02C2A04CA00477684 /* File.txt */,
-				B2DD4BE22C2A04E800477684 /* File 2.txt */,
 				B259C28B2BA304690049BA2C /* train.usd */,
+				B2DD4BE62C2B268D00477684 /* trainSCN.scn */,
 				B24913502BDAB7E700A31CCA /* plane1000.usda */,
 				B249134E2BDAB7DB00A31CCA /* peg.usda */,
 			);
@@ -365,7 +368,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B2B60A5F2C21F8E700DA40EB /* colored_cube.mtl in Resources */,
-				B2DD4BE32C2A04E800477684 /* File 2.txt in Resources */,
 				B2B60A602C21F8E700DA40EB /* colored_cube.obj in Resources */,
 				B24913512BDAB7E700A31CCA /* plane1000.usda in Resources */,
 				B2B60A5A2C21F47700DA40EB /* lowpoly-house.usdz in Resources */,
@@ -374,12 +376,13 @@
 				B2B60A542C21DE2100DA40EB /* tent_smallOpen.mtl in Resources */,
 				B2480B042C22E53D00566FFE /* sc.usda in Resources */,
 				B2DFFD5D2C1362BC0072082F /* house1.usdz in Resources */,
+				B2DD4BE92C2B2EEC00477684 /* trainGPT.usda in Resources */,
 				B240EDD02C04A38B001DAFEB /* traina.usda in Resources */,
 				B2480B082C22EA1400566FFE /* colored_cube2z.usdz in Resources */,
 				B2DFFD612C1362C90072082F /* birch-3.usdz in Resources */,
 				B259C26D2BA2FABF0049BA2C /* Preview Assets.xcassets in Resources */,
 				B259C26A2BA2FABF0049BA2C /* Assets.xcassets in Resources */,
-				B2DD4BE12C2A04CA00477684 /* File.txt in Resources */,
+				B2DD4BE52C2B21E000477684 /* modified_train.usda in Resources */,
 				B26654762C05E7C100EB7A20 /* pegTexture.usda in Resources */,
 				B2480B062C22E72D00566FFE /* colored_cube_z.usdz in Resources */,
 				B259C28D2BA304690049BA2C /* train.usd in Resources */,
@@ -390,6 +393,7 @@
 				B26FB56C2C1E202700DC6842 /* colored_cube.usda in Resources */,
 				B2DFFD5B2C1362B60072082F /* pine-5.usdz in Resources */,
 				B249134F2BDAB7DB00A31CCA /* peg.usda in Resources */,
+				B2DD4BE72C2B268D00477684 /* trainSCN.scn in Resources */,
 				B2DFFD572C1361E30072082F /* barrel.usdz in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

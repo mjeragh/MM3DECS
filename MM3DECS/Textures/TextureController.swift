@@ -2,7 +2,6 @@ import Foundation
 import MetalKit
 import OSLog
 
-
 class TextureController {
     static let shared = TextureController()
     private var textures: [String: MTLTexture] = [:]
@@ -22,7 +21,7 @@ class TextureController {
             logger.debug("Failed to load texture from USD file")
             return nil
         }
-        print("Loaded texture from USD file")
+        logger.debug("Loaded texture from USD file with dimensions: \(texture.width)x\(texture.height) and pixelFormat: \(texture.pixelFormat.rawValue)")
         textures[name] = texture
         return texture
     }
@@ -34,8 +33,8 @@ class TextureController {
         let textureLoader = MTKTextureLoader(device: Renderer.device)
         var texture: MTLTexture?
         texture = try? textureLoader.newTexture(name: name, scaleFactor: 1.0, bundle: Bundle.main, options: nil)
-        if texture != nil {
-            logger.debug("Loaded texture: \(name)")
+        if let texture = texture {
+            logger.debug("Loaded texture: \(name) with dimensions: \(texture.width)x\(texture.height) and pixelFormat: \(texture.pixelFormat.rawValue)")
             textures[name] = texture
         } else {
             logger.debug("Failed to load texture: \(name), creating placeholder")

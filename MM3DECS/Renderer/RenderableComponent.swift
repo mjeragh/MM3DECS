@@ -133,8 +133,6 @@ struct RenderableComponent: Component {
         }
     }
     
- 
-    
     private func applyTransformToVerticesParallelCPU(of mesh: MDLMesh, with transform: matrix_float4x4) {
         os_signpost(.begin, log: log, name: "applyTransformToVerticesParallelCPU")
         defer {
@@ -179,7 +177,6 @@ struct RenderableComponent: Component {
         group.wait() // Wait for all chunks to be processed before continuing
     }
     
-    
     private func applyTransformToVertices(of mesh: MDLMesh, with transform: matrix_float4x4) {
         os_signpost(.begin, log: log, name: "applyTransformToVertices")
         defer {
@@ -211,63 +208,62 @@ struct RenderableComponent: Component {
         }
     }
     
-    
     private func applyTransformToVerticesGPU(of mesh: MDLMesh, with transform: matrix_float4x4) {
         os_signpost(.begin, log: log, name: "applyTransformToVerticesGPU")
         defer {
             os_signpost(.end, log: log, name: "applyTransformToVerticesGPU")
         }
-
+        
         guard let mtkVertexBuffer = mesh.vertexBuffers.first as? MTKMeshBuffer else {
             fatalError("Expected MTKMeshBuffer but found another type")
         }
-
+        
         let vertexBuffer = mtkVertexBuffer.buffer
         let vertexCount = vertexBuffer.length / MemoryLayout<ModelVertexCPU>.stride
-
+        
         // Create a debug buffer
         guard let debugBuffer = Renderer.device.makeBuffer(length: MemoryLayout<DebugInfoCPU>.stride * vertexCount, options: .storageModeShared) else {
             fatalError("Failed to create debug buffer")
         }
-
+        
         guard let commandQueue = Renderer.device.makeCommandQueue(),
               let commandBuffer = commandQueue.makeCommandBuffer(),
               let computeEncoder = commandBuffer.makeComputeCommandEncoder() else { return }
-
+        
         let computePipelineState: MTLComputePipelineState
         let library = Renderer.device.makeDefaultLibrary()
         guard let computeFunction = library?.makeFunction(name: "transformVertices") else {
             fatalError("Unable to find function transformVertices in Metal library")
         }
-
+        
         do {
             computePipelineState = try Renderer.device.makeComputePipelineState(function: computeFunction)
         } catch {
             fatalError("Unable to create compute pipeline state: \(error)")
         }
-
+        
         computeEncoder.setComputePipelineState(computePipelineState)
         computeEncoder.setBuffer(vertexBuffer, offset: 0, index: 0)
         var transformVar = transform
         computeEncoder.setBytes(&transformVar, length: MemoryLayout<matrix_float4x4>.stride, index: 1)
         computeEncoder.setBuffer(debugBuffer, offset: 0, index: 2)
-
+        
         let gridSize = MTLSize(width: vertexCount, height: 1, depth: 1)
         let threadGroupSize = MTLSize(width: min(Renderer.device.maxThreadsPerThreadgroup.width, gridSize.width), height: 1, depth: 1)
-
+        
         computeEncoder.dispatchThreads(gridSize, threadsPerThreadgroup: threadGroupSize)
         computeEncoder.endEncoding()
-
+        
         commandBuffer.commit()
         commandBuffer.waitUntilCompleted()
-
+        
         // Debugging: Print the initial and transformed buffer contents
         let bufferPointer = vertexBuffer.contents().bindMemory(to: ModelVertexCPU.self, capacity: vertexCount)
         for i in 0..<vertexCount {
             let vertex = bufferPointer[i]
             logger.debug("Initial Vertex \(i): \(vertex.position)")
         }
-
+        
         // Debugging: Print the debug information
         let debugPointer = debugBuffer.contents().bindMemory(to: DebugInfoCPU.self, capacity: vertexCount)
         for i in 0..<vertexCount {
@@ -281,5 +277,4 @@ struct RenderableComponent: Component {
             logger.debug("  Output Position: \(debugInfo.outputPosition)")
         }
     }
-    
-}//class
+}
