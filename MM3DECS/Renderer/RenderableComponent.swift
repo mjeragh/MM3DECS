@@ -118,6 +118,10 @@ struct RenderableComponent: Component {
             }
         }
     }
+    
+}
+
+extension RenderableComponent{
     private func applyTransformToVerticesParallelCPU(of mesh: MDLMesh, with transform: matrix_float4x4) {
         os_signpost(.begin, log: log, name: "applyTransformToVerticesParallelCPU")
         defer {

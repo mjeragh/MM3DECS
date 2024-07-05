@@ -7,6 +7,7 @@ constant bool hasColorTexture [[function_constant(0)]];
 struct Arguments {
     float4 baseColor;
     uint hasTexture;
+    // No texture reference here
 };
 
 fragment float4 fragment_main(VertexOut in [[stage_in]],
@@ -22,7 +23,7 @@ fragment float4 fragment_main(VertexOut in [[stage_in]],
 
     float3 color;
     if (args.hasTexture == 1) {
-        color = colorTexture.sample(textureSampler, in.uv * 1).rgb;
+        color = colorTexture.sample(textureSampler, in.uv * params.tiling).rgb;
     } else {
         color = args.baseColor.rgb;
     }
