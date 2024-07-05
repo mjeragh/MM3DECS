@@ -15,6 +15,7 @@ private let semantics: [MDLMaterialSemantic] = [
 struct RenderableComponent: Component {
     var meshes: [MTKMesh] = []
     var argumentBuffers: [[MTLBuffer?]] = []
+    var textures: [[MTLTexture?]] = []
     let name: String
     let boundingBox: MDLAxisAlignedBoundingBox
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "RenderableComponent")
@@ -42,14 +43,9 @@ struct RenderableComponent: Component {
         self.name = name
         self.boundingBox = asset.boundingBox
         
-        guard let fragmentFunction = Renderer.library.makeFunction(name: "fragment_main") else {
-            fatalError("Fragment function not found")
-        }
-        
-        let argumentEncoder = fragmentFunction.makeArgumentEncoder(bufferIndex: ArgumentsBuffer.index)
-        
         for mdlMesh in mdlMeshes {
             var submeshArgumentBuffers: [MTLBuffer?] = []
+            var submeshTextures: [MTLTexture?] = []
             
             // Check and apply transformations during loading
             let transformMatrix = (mdlMesh.transform)?.matrix ?? matrix_identity_float4x4
@@ -89,30 +85,13 @@ struct RenderableComponent: Component {
                     }
                 }
                 
-                let argumentBuffer = device.makeBuffer(length: argumentEncoder.encodedLength, options: [])
-                argumentBuffer?.label = "ArgumentBuffer"
-                argumentEncoder.setArgumentBuffer(argumentBuffer, offset: 0)
-                
-                // Set base color
-                let bufferPointer = argumentEncoder.constantData(at: 0)
-                bufferPointer.copyMemory(from: &baseColor, byteCount: MemoryLayout<SIMD4<Float>>.stride)
-                logger.debug("BaseColor: \(baseColor)")
-                
-                // Set texture if available
-                if let texture = texture {
-                    argumentEncoder.setTexture(texture, index: 0)
-                    logger.debug("Texture loaded for submesh in \(name)")
-                }
-                
-                // Set hasTexture flag
-                var hasTexture: UInt32 = texture != nil ? 1 : 0
-                logger.debug("HasTexture: \(hasTexture) for submesh in \(name)")
-                let hasTexturePointer = argumentEncoder.constantData(at: MemoryLayout<SIMD4<Float>>.stride)
-                hasTexturePointer.copyMemory(from: &hasTexture, byteCount: MemoryLayout<UInt32>.stride)
-                
+                var arguments = Arguments(baseColor: baseColor, hasTexture: texture != nil ? 1 : 0)
+                let argumentBuffer = device.makeBuffer(bytes: &arguments, length: MemoryLayout<Arguments>.stride, options: [])
                 submeshArgumentBuffers.append(argumentBuffer)
+                submeshTextures.append(texture)
             }
             self.argumentBuffers.append(submeshArgumentBuffers)
+            self.textures.append(submeshTextures)
         }
     }
     
@@ -126,6 +105,9 @@ struct RenderableComponent: Component {
             
             for (submeshIndex, submesh) in mesh.submeshes.enumerated() {
                 encoder.setFragmentBuffer(argumentBuffers[meshIndex][submeshIndex], offset: 0, index: ArgumentsBuffer.index)
+                if let texture = textures[meshIndex][submeshIndex] {
+                    encoder.setFragmentTexture(texture, index: 0)
+                }
                 encoder.drawIndexedPrimitives(
                     type: .triangle,
                     indexCount: submesh.indexCount,
