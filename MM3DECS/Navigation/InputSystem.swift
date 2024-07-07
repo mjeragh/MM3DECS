@@ -224,8 +224,8 @@ class InputSystem: SystemProtocol {
     
   
     func touchToNDC(touchPoint: float2) -> float3 {
-        let clipX = (2.0 * Float(touchPoint.x) / Float(Renderer.params.width)) - 1.0
-        let clipY = 1.0 - (2.0 * Float(touchPoint.y) / Float(Renderer.params.height))
+        let clipX = (2.0 * Float(touchPoint.x) / Float(SceneManager.cameraManager.getAspectWidth())) - 1.0
+        let clipY = 1.0 - (2.0 * Float(touchPoint.y) / Float(SceneManager.cameraManager.getAspectHeight()))
         return float3(x: clipX, y: clipY, z: 0.0)  // Assume clip space is hemicube, -Z is into the screen
     }
     

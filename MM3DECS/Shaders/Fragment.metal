@@ -13,7 +13,7 @@ struct Arguments {
 fragment float4 fragment_main(VertexOut in [[stage_in]],
                               constant Params &params [[buffer(ParamsBuffer)]],
                               constant Arguments &args [[buffer(ArgumentsBuffer)]],
-                              texture2d<float> colorTexture [[texture(0)]]) {
+                              texture2d<float> colorTexture [[texture(BaseColor)]]) {
     constexpr sampler textureSampler(
         filter::linear,
         mip_filter::linear,
@@ -23,7 +23,7 @@ fragment float4 fragment_main(VertexOut in [[stage_in]],
 
     float3 color;
     if (args.hasTexture == 1) {
-        color = colorTexture.sample(textureSampler, in.uv * params.tiling).rgb;
+        color = colorTexture.sample(textureSampler, in.uv * float2(params.tiling)).rgb;
     } else {
         color = args.baseColor.rgb;
     }

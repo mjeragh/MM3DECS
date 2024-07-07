@@ -20,7 +20,7 @@ class Renderer: NSObject {
     var logger = Logger(subsystem: "MM3DECS", category: "Renderer")
     
 //    var isReadyToRender = false
-    static var params = Params()
+//    static var params = Params()
     
     init(metalView: MTKView) {
         guard
@@ -89,10 +89,10 @@ extension Renderer {
         }
 
         renderEncoder.setDepthStencilState(depthStencilState)
-        renderEncoder.setFragmentBytes(
-            &Renderer.params,
-            length: MemoryLayout<Params>.stride,
-            index: ParamsBuffer.index)
+//        renderEncoder.setFragmentBytes(
+//            &Renderer.params,
+//            length: MemoryLayout<Params>.stride,
+//            index: ParamsBuffer.index)
         renderEncoder.setRenderPipelineState(forwardPassPipelineState)
         
         let deltaTime = 1 / Float(view.preferredFramesPerSecond)

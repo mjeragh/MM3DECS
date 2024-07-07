@@ -46,9 +46,9 @@ class SceneManager {
         scene.setUp()
     }
 
-    func updateCurrentSceneCameraAspectRatio(with aspectRatio: Float) {
+    func updateCurrentSceneCameraAspectRatio(aspectWidth: Float, aspectHieght: Float) {
         // Update Perspective Camera
-        SceneManager.cameraManager.updateAspect(aspectRatio)
+        SceneManager.cameraManager.updateAspect(aspectWidth, aspectHeight: aspectHieght)
         
     }
     

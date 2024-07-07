@@ -66,10 +66,10 @@ extension Engine : RendererDelegate{
 extension Engine : MTKViewDelegate {
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         let aspect = Float(view.bounds.width) / Float(view.bounds.height)
-        Renderer.params.width = uint(view.bounds.width) //UInt32(size.width)
-        Renderer.params.height = uint(view.bounds.height)//UInt32(size.height)
-        logger.debug("inside Engine: width: \(Renderer.params.width), height: \(Renderer.params.height)")
-        sceneManager?.updateCurrentSceneCameraAspectRatio(with: aspect)
+//        Renderer.params.width = uint(view.bounds.width) //UInt32(size.width)
+//        Renderer.params.height = uint(view.bounds.height)//UInt32(size.height)
+//        logger.debug("inside Engine: width: \(Renderer.params.width), height: \(Renderer.params.height)")
+        sceneManager?.updateCurrentSceneCameraAspectRatio(aspectWidth: Float(view.bounds.width), aspectHieght: Float(view.bounds.height))
     }
     
     func draw(in view: MTKView) {

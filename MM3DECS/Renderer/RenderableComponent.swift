@@ -16,12 +16,14 @@ struct RenderableComponent: Component {
     var meshes: [MTKMesh] = []
     var argumentBuffers: [[MTLBuffer?]] = []
     var textures: [[MTLTexture?]] = []
+    var paramsBuffer: MTLBuffer
+    var params: Params
     let name: String
     let boundingBox: MDLAxisAlignedBoundingBox
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "RenderableComponent")
     let log = OSLog(subsystem: "com.lanterntech.mm3decs", category: .pointsOfInterest)
     
-    init(device: MTLDevice, name: String) {
+    init(device: MTLDevice, name: String, tiling: UInt = 1) {
         guard let assetURL = Bundle.main.url(forResource: name, withExtension: nil) else {
             fatalError("Model: \(name) not found")
         }
@@ -42,6 +44,12 @@ struct RenderableComponent: Component {
         
         self.name = name
         self.boundingBox = asset.boundingBox
+        
+        // Initialize Params
+        self.params = Params(width: UInt32(SceneManager.cameraManager.getAspectWidth()), height: UInt32(SceneManager.cameraManager.getAspectHeight()), tiling: UInt32(tiling), lightCount: 0, cameraPosition: SIMD3<Float>(0,0,0), scaleFactor: 1.0, alphaTesting: false, alphaBlending: false, transparency: false)
+        
+        // Create a buffer for Params
+        self.paramsBuffer = device.makeBuffer(bytes: &params, length: MemoryLayout<Params>.stride, options: [])!
         
         for mdlMesh in mdlMeshes {
             var submeshArgumentBuffers: [MTLBuffer?] = []
@@ -103,10 +111,13 @@ struct RenderableComponent: Component {
             
             encoder.setVertexBytes(&uniforms, length: MemoryLayout<Uniforms>.stride, index: UniformsBuffer.index)
             
+            // Update Params buffer
+            encoder.setFragmentBuffer(paramsBuffer, offset: 0, index: ParamsBuffer.index)
+            
             for (submeshIndex, submesh) in mesh.submeshes.enumerated() {
                 encoder.setFragmentBuffer(argumentBuffers[meshIndex][submeshIndex], offset: 0, index: ArgumentsBuffer.index)
                 if let texture = textures[meshIndex][submeshIndex] {
-                    encoder.setFragmentTexture(texture, index: 0)
+                    encoder.setFragmentTexture(texture, index: BaseColor.index)
                 }
                 encoder.drawIndexedPrimitives(
                     type: .triangle,
@@ -119,6 +130,7 @@ struct RenderableComponent: Component {
         }
     }
     
+    // Functions to transform vertices are omitted for brevity
 }
 
 extension RenderableComponent{

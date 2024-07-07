@@ -22,11 +22,15 @@ class CameraManager {
     private var entityManager: EntityManager
     private var activeCameraEntity: Entity?
     private var activeCameraType: CameraType?
+    private var activeCameraAspectWidth : Float
+    private var activeCameraAspectHeight : Float
     
     let logger = Logger(subsystem: "com.lanterntech.mm3decs", category: "CameraManager")
     
     init(entityManager: EntityManager) {
         self.entityManager = entityManager
+        activeCameraAspectWidth = 0
+        activeCameraAspectHeight = 0
     }
     
     func setCamera(type: CameraType, withCameraInputComponent:Bool = false) {
@@ -38,7 +42,10 @@ class CameraManager {
         return activeCameraEntity
     }
     
-    func updateAspect(_ aspectRatio: Float) {
+    func updateAspect(_ aspectWidth: Float, aspectHeight: Float) {
+        let aspectRatio = aspectWidth / aspectHeight
+        activeCameraAspectWidth = aspectWidth
+        activeCameraAspectHeight = aspectHeight
         guard let cameraEntity = activeCameraEntity else { return }
         switch activeCameraType {
         case .perspective:
@@ -62,6 +69,12 @@ class CameraManager {
         logger.debug("CameraManager: Aspect ratio updated to: \(aspectRatio)")
     }
     
+    func getAspectWidth() -> Float {
+        return activeCameraAspectWidth
+    }
+    func getAspectHeight() -> Float {
+            return activeCameraAspectHeight
+        }
     func getActiveCameraComponent() -> CameraComponent? {
         switch activeCameraType {
         case .perspective:
@@ -87,7 +100,7 @@ class CameraManager {
         let transformComponent = TransformComponent(position: [0, 2, 15])
         entityManager.addComponent(component: transformComponent, to: cameraEntity)
         
-        let aspect = Float(Renderer.params.width) / Float(Renderer.params.height) // Example aspect ratio
+        let aspect = Float(16.0/9.0)//Float(Renderer.params.width) / Float(Renderer.params.height) // Example aspect ratio
         logger.debug("inside creating camera Aspect ratio: \(aspect)")
         
         switch type {
