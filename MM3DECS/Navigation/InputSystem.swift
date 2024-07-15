@@ -24,7 +24,7 @@ class InputSystem: SystemProtocol {
     
     func handleZoomGesture() {
         if InputManager.shared.mouseScroll.x != 0 {
-            SceneManager.cameraManager.updateCameraDistance()
+            SceneManager.cameraManager.updateCameraDistanceFromInputManager()
             ///look at the comment inside touchEnd method
             touchEnded()
         }

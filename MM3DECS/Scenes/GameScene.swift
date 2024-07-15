@@ -32,6 +32,7 @@ class GameScene: SceneProtocol {
     
             systems.append(RenderSystem())
             systems.append(InputSystem())//, rayDebugSystem: rayDebugSystem))
+        SceneManager.cameraManager.updateCamera(withDistance: 40)
            
     }
 
@@ -48,13 +49,15 @@ class GameScene: SceneProtocol {
     func setupEntites() {
         delegate?.addEntityToScene(name: "land", with: RenderableComponent(device: Renderer.device, name: "plane1000.usda"), with: TransformComponent(position: float3(0,0,0), rotation: float3(0,0,0), scale: float3(1,1,1)), withInputComponent: false, withSelectionComponent: false)
         delegate?.addEntityToScene(name: "traina", with: RenderableComponent(device: Renderer.device, name: "traina.usda"), with: TransformComponent(position: float3(-7,0,0), rotation: float3(0,0,0), scale: float3(1,1,1)), withInputComponent: true, withSelectionComponent: true)
-        delegate?.addEntityToScene(name: "tree", with: RenderableComponent(device: Renderer.device, name: "tree_pineRoundC.obj"), with: TransformComponent(position: float3(-10,0,0), rotation: float3(0,0,0), scale: float3(1,1,1)), withInputComponent: true, withSelectionComponent: true)
-        delegate?.addEntityToScene(name: "house", with: RenderableComponent(device: Renderer.device, name: "lowpoly-house.usdz"), with: TransformComponent(position: float3(10, 0, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), withInputComponent: true, withSelectionComponent: true)
-        delegate?.addEntityToScene(name: "colored_cube", with: RenderableComponent(device: Renderer.device, name: "colored_cube.usda"), with: TransformComponent(position: float3(5, 0, 3), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), withInputComponent: true, withSelectionComponent: true)
-        delegate?.addEntityToScene(name: "colored_cube2z", with: RenderableComponent(device: Renderer.device, name: "colored_cube2z.usdz"), with: TransformComponent(position: float3(-5, 0, 3), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), withInputComponent: true, withSelectionComponent: true)// Add other entities and components as needed
+        delegate?.addEntityToScene(name: "house", with: RenderableComponent(device: Renderer.device, name: "lowpoly-house.usdz"), with: TransformComponent(position: float3(-10,0,0), rotation: float3(0,0,0), scale: float3(1,1,1)), withInputComponent: true, withSelectionComponent: true)
+        delegate?.addEntityToScene(name: "barrel", with: RenderableComponent(device: Renderer.device, name: "barrel.usdz"), with: TransformComponent(position: float3(10, 0, 0), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), withInputComponent: true, withSelectionComponent: true)
+        delegate?.addEntityToScene(name: "blacksmith", with: RenderableComponent(device: Renderer.device, name: "blacksmith.usdz"), with: TransformComponent(position: float3(5, 0, 3), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), withInputComponent: true, withSelectionComponent: true)
+        delegate?.addEntityToScene(name: "pine-5", with: RenderableComponent(device: Renderer.device, name: "pine-5.usdz"), with: TransformComponent(position: float3(-5, 0, 3), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), withInputComponent: true, withSelectionComponent: true)// Add other entities and components as needed
        
         
-        
+        delegate?.addEntityToScene(name: "colored_cube", with: RenderableComponent(device: Renderer.device, name: "colored_cube.usda"), with: TransformComponent(position: float3(20, 0, 3), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), withInputComponent: true, withSelectionComponent: true)
+        delegate?.addEntityToScene(name: "colored_cube2z", with: RenderableComponent(device: Renderer.device, name: "colored_cube2z.usdz"), with: TransformComponent(position: float3(-15, 0, 3), rotation: float3(0, 0, 0), scale: float3(1, 1, 1)), withInputComponent: true, withSelectionComponent: true)// Add other entities and components as needed
+        delegate?.addEntityToScene(name: "tree", with: RenderableComponent(device: Renderer.device, name: "tree_pineRoundC.obj"), with: TransformComponent(position: float3(-12,0,4), rotation: float3(0,0,0), scale: float3(1,1,1)), withInputComponent: true, withSelectionComponent: true)
     }
 }
 

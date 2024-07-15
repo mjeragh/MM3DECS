@@ -197,7 +197,7 @@ class CameraManager {
         entityManager.addComponent(component: transform, to: camera)
     }
     
-    func updateCameraDistance() {
+    func updateCameraDistanceFromInputManager() {
         guard let camera = getActiveCameraEntity(),
         var archballCamera = entityManager.getComponent(type: ArcballCameraComponent.self, for: camera),
         var archballTranspose = entityManager.getComponent(type: TransformComponent.self, for: camera)
@@ -212,6 +212,29 @@ class CameraManager {
         archballCamera.distance = min(archballCamera.maxDistance, archballCamera.distance)
         archballCamera.distance = max(archballCamera.minDistance, archballCamera.distance)
         input.mouseScroll = .zero
+        
+        
+        let rotateMatrix = float4x4(
+            rotationYXZ: [-archballTranspose.rotation.x, archballTranspose.rotation.y, 0])
+        let distanceVector = float4(0, 0, -archballCamera.distance, 0)
+        let rotatedVector = rotateMatrix * distanceVector
+        archballTranspose.position = archballCamera.target + rotatedVector.xyz
+        entityManager.addComponent(component: archballTranspose, to: camera)
+        entityManager.addComponent(component: archballCamera, to: camera)
+        logger.debug("new distance from userInput: \(archballCamera.distance)")
+    }
+    
+    func updateCamera(withDistance: Float){
+        guard let camera = getActiveCameraEntity(),
+        var archballCamera = entityManager.getComponent(type: ArcballCameraComponent.self, for: camera),
+        var archballTranspose = entityManager.getComponent(type: TransformComponent.self, for: camera)
+            else {
+            logger.warning("Updating non archball camera!!!!")
+            return
+        }
+        archballCamera.distance = withDistance
+        archballCamera.distance = min(archballCamera.maxDistance, archballCamera.distance)
+        archballCamera.distance = max(archballCamera.minDistance, archballCamera.distance)
         
         
         let rotateMatrix = float4x4(

@@ -90,6 +90,7 @@ protocol SceneDelegate: AnyObject {
     // Camera Management
     func createCamera(type: CameraType,withCameraInputComponent: Bool)
     func updateActiveCamera(with transform: TransformComponent)
+    func getActiveCameraTransformComponent() -> TransformComponent
    
     // Additional scene management
     //TODO: Implement these functions
@@ -99,6 +100,10 @@ protocol SceneDelegate: AnyObject {
 }
 
 extension SceneManager : SceneDelegate{
+    func getActiveCameraTransformComponent() -> TransformComponent {
+        SceneManager.cameraManager.getActiveTransformComponent()
+    }
+    
     
     func addEntityToScene(name: String, with renderableComponent:RenderableComponent, with tranformComponent:TransformComponent, withInputComponent: Bool = false, withSelectionComponent: Bool = false) {
         let entity = Entity(name: name)
